@@ -183,6 +183,25 @@
             max-width: 420px;
             margin: 0 auto;
             background: transparent !important;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* 🌸 INVISIBLE TOUCH BRIDGE INPUT (SUMMONS MOBILE KEYBOARD) */
+        .slot-input-bridge {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.001;
+            z-index: 10;
+            cursor: pointer;
+            font-size: 16px;
+            background: transparent;
+            color: transparent;
+            border: none;
+            outline: none;
+            caret-color: transparent;
         }
 
         .wordle-row {
@@ -416,7 +435,8 @@
 
                     <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center" style="position: relative;">
                         <div id="ambientDustContainer" style="position:absolute; inset:0; pointer-events:none;"></div>
-                        <div class="wordle-matrix-container" id="wordleGridBox"></div>
+                        <!-- 🟢 ONCLICK DELEGATE ON GRID CONTAINER ENSURES TOUCH ALWAYS REACHES INPUT -->
+                        <div class="wordle-matrix-container" id="wordleGridBox" onclick="focusSlotBridge()"></div>
                     </div>
 
                     <div id="roundIntermissionBlock" class="d-none z-3 text-center position-absolute top-50 start-50 translate-middle" style="width: max-content;">
@@ -509,6 +529,7 @@
                     setTimeout(() => row.classList.remove('shake-row'), 400);
                 }
                 isLocked = false;
+                focusSlotBridge();
             });
 
             socket.on('minele_row_result', (data) => {
@@ -520,11 +541,16 @@
                 renderScoreboard(data.leaderboard);
                 curRow = data.newRow;
                 curInput = "";
+                const bridge = document.getElementById('slotInputBridge');
+                if (bridge) bridge.value = "";
                 const me = data.leaderboard.find(p => p.name === clientName);
                 if (me) {
                     isLocked = me.isFinishedCorrectly;
                 } else {
                     isLocked = false;
+                }
+                if (!isLocked) {
+                    focusSlotBridge();
                 }
             });
 
@@ -541,6 +567,8 @@
                 document.getElementById('roundIntermissionBlock').classList.remove('d-none');
                 document.getElementById('intermissionTimerLabel').innerText = `Next round in ${data.intermissionDuration}s`;
                 isLocked = true;
+                const bridge = document.getElementById('slotInputBridge');
+                if (bridge) bridge.blur();
             });
 
             socket.on('intermission_tick', (data) => {
@@ -601,9 +629,24 @@
             });
         }
 
+        // 🟢 BUILDS GRID WITH ONCLICK DELEGATES ON CONTAINER AND SLOTS
         function buildGrid(cols, rows) {
             const grid = document.getElementById('wordleGridBox');
             grid.innerHTML = "";
+
+            const bridge = document.createElement('input');
+            bridge.type = 'text';
+            bridge.id = 'slotInputBridge';
+            bridge.className = 'slot-input-bridge';
+            bridge.autocomplete = 'off';
+            bridge.autocorrect = 'off';
+            bridge.autocapitalize = 'characters';
+            bridge.spellcheck = false;
+            bridge.setAttribute('inputmode', 'text');
+            grid.appendChild(bridge);
+
+            setupBridgeListener(bridge);
+
             for (let r = 0; r < rows; r++) {
                 const row = document.createElement('div');
                 row.className = "wordle-row";
@@ -612,9 +655,47 @@
                     const cell = document.createElement('div');
                     cell.className = "wordle-cell";
                     cell.id = `cell-${r}-${c}`;
+                    cell.onclick = (e) => {
+                        e.stopPropagation();
+                        focusSlotBridge();
+                    };
                     row.appendChild(cell);
                 }
                 grid.appendChild(row);
+            }
+        }
+
+        function setupBridgeListener(bridge) {
+            bridge.addEventListener('input', () => {
+                if (isLocked) {
+                    bridge.value = "";
+                    return;
+                }
+                let val = bridge.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
+                if (val.length > curWordLen) val = val.slice(0, curWordLen);
+                curInput = val;
+                bridge.value = val;
+                updateCell();
+            });
+
+            bridge.addEventListener('keydown', (e) => {
+                e.stopPropagation();
+                if (isLocked) return;
+                if (e.key === "Enter" || e.keyCode === 13) {
+                    e.preventDefault();
+                    if (curInput.length === curWordLen) {
+                        socket.emit('submit_guess', curInput);
+                        isLocked = true;
+                        bridge.value = "";
+                    }
+                }
+            });
+        }
+
+        function focusSlotBridge() {
+            const bridge = document.getElementById('slotInputBridge');
+            if (bridge && !isLocked) {
+                bridge.focus();
             }
         }
 
@@ -633,15 +714,21 @@
         }
 
         function processPhysicalKeyboardInput(e) {
+            const bridge = document.getElementById('slotInputBridge');
+            if (document.activeElement === bridge) return;
+
             if (isLocked) return;
             if (e.key === "Enter" && curInput.length === curWordLen) {
                 socket.emit('submit_guess', curInput);
                 isLocked = true;
+                if (bridge) bridge.value = "";
             } else if (e.key === "Backspace") {
                 curInput = curInput.slice(0, -1);
+                if (bridge) bridge.value = curInput;
                 updateCell();
             } else if (/^[a-zA-Z]$/.test(e.key) && curInput.length < curWordLen) {
                 curInput += e.key.toUpperCase();
+                if (bridge) bridge.value = curInput;
                 updateCell();
             }
         }
