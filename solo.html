@@ -168,6 +168,25 @@
             width: 100%;
             max-width: 380px;
             margin: 0 auto;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* 🌸 INVISIBLE TOUCH BRIDGE INPUT (SUMMONS MOBILE KEYBOARD) */
+        .slot-input-bridge {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.001;
+            z-index: 10;
+            cursor: pointer;
+            font-size: 16px;
+            background: transparent;
+            color: transparent;
+            border: none;
+            outline: none;
+            caret-color: transparent;
         }
 
         .wordle-row {
@@ -474,7 +493,7 @@
                         if (badge) badge.innerText = `${currentUserScore} PTS`;
                     }
                 })
-                .catch(() => { });
+                .catch(() => {});
         }
 
         async function loadDictionary() {
@@ -550,10 +569,26 @@
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(gameState));
         }
 
+        // 🟢 BUILDS GRID WITH TRANSPARENT INPUT BRIDGE (SUMMONS MOBILE KEYBOARD)
         function buildGrid() {
             const grid = document.getElementById('wordleGridBox');
             if (!grid) return;
             grid.innerHTML = "";
+
+            // Invisible bridge input that covers the slots to summon mobile soft keyboard
+            const bridge = document.createElement('input');
+            bridge.type = 'text';
+            bridge.id = 'slotInputBridge';
+            bridge.className = 'slot-input-bridge';
+            bridge.autocomplete = 'off';
+            bridge.autocorrect = 'off';
+            bridge.autocapitalize = 'characters';
+            bridge.spellcheck = false;
+            bridge.setAttribute('inputmode', 'text');
+            grid.appendChild(bridge);
+
+            setupBridgeListener(bridge);
+
             for (let r = 0; r < gameState.totalAttempts; r++) {
                 const row = document.createElement('div');
                 row.className = "wordle-row";
@@ -565,6 +600,35 @@
                     row.appendChild(cell);
                 }
                 grid.appendChild(row);
+            }
+        }
+
+        function setupBridgeListener(bridge) {
+            bridge.addEventListener('input', () => {
+                if (gameState.isCompleted) {
+                    bridge.value = "";
+                    return;
+                }
+                let val = bridge.value.replace(/[^a-zA-Z]/g, '').toUpperCase();
+                if (val.length > gameState.wordLength) val = val.slice(0, gameState.wordLength);
+                gameState.currentInput = val;
+                bridge.value = val;
+                updateCurrentRowCells();
+            });
+
+            bridge.addEventListener('keydown', (e) => {
+                if (gameState.isCompleted) return;
+                if (e.key === "Enter" || e.keyCode === 13) {
+                    e.preventDefault();
+                    submitGuess();
+                }
+            });
+        }
+
+        function focusSlotBridge() {
+            const bridge = document.getElementById('slotInputBridge');
+            if (bridge && !gameState.isCompleted) {
+                bridge.focus();
             }
         }
 
@@ -622,6 +686,7 @@
                     row.classList.add('shake-row');
                     setTimeout(() => row.classList.remove('shake-row'), 400);
                 }
+                focusSlotBridge();
                 return;
             }
 
@@ -638,6 +703,7 @@
                     row.classList.add('shake-row');
                     setTimeout(() => row.classList.remove('shake-row'), 400);
                 }
+                focusSlotBridge();
                 return;
             }
 
@@ -649,6 +715,8 @@
             }
 
             gameState.attempts.push({ guess: guess, feedback: feedback });
+
+            const bridge = document.getElementById('slotInputBridge');
 
             // 🟢 INSTANT 0MS VICTORY DISPLAY
             if (guess === gameState.targetWord) {
@@ -663,6 +731,7 @@
 
                 // 2. Pop up victory banner instantly!
                 showResultBanner(true, true, bonusEarned);
+                if (bridge) bridge.blur();
 
                 // 3. Sync score in background without blocking UI
                 syncPointsToDatabase(currentStreak, bonusEarned);
@@ -672,6 +741,7 @@
             // Loss Condition
             gameState.currentRow++;
             gameState.currentInput = "";
+            if (bridge) bridge.value = "";
             saveGameState();
             updateAttemptCounter();
 
@@ -681,6 +751,9 @@
                 saveGameState();
                 localStorage.setItem(STREAK_KEY, "0");
                 showResultBanner(false, false, 0);
+                if (bridge) bridge.blur();
+            } else {
+                focusSlotBridge();
             }
         }
 
@@ -744,6 +817,9 @@
             }
             window.focus();
 
+            const bridge = document.getElementById('slotInputBridge');
+            if (bridge) bridge.value = "";
+
             localStorage.removeItem(LOCAL_STORAGE_KEY);
             hideResultBanner();
             loadDictionary().then(dict => {
@@ -752,6 +828,10 @@
         }
 
         window.addEventListener('keydown', (e) => {
+            const bridge = document.getElementById('slotInputBridge');
+            // If the transparent bridge input is already focused, let it handle the event
+            if (document.activeElement === bridge) return;
+
             if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
                 document.activeElement.blur();
                 window.focus();
@@ -768,11 +848,13 @@
             } else if (e.key === 'Backspace') {
                 if (gameState.currentInput.length > 0) {
                     gameState.currentInput = gameState.currentInput.slice(0, -1);
+                    if (bridge) bridge.value = gameState.currentInput;
                     updateCurrentRowCells();
                 }
             } else if (/^[a-zA-Z]$/.test(e.key)) {
                 if (gameState.currentInput.length < gameState.wordLength) {
                     gameState.currentInput += e.key.toUpperCase();
+                    if (bridge) bridge.value = gameState.currentInput;
                     updateCurrentRowCells();
                 }
             }
