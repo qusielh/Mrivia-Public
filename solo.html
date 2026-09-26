@@ -509,7 +509,6 @@
 
         // 🟢 INSTANT 0MS INITIALIZATION: Renders saved state immediately with zero network delay
         function initGame() {
-            // Step 1: Draw saved game from localStorage instantly
             const savedRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
             let hasActiveState = false;
 
@@ -525,10 +524,8 @@
                 }
             }
 
-            // Step 2: Fetch score in background (never blocks the grid)
             fetchUserScore();
 
-            // Step 3: Load dictionary in background; pick new word only if no saved game exists
             loadDictionary().then(dict => {
                 if (!dict) return;
                 if (!hasActiveState || !gameState.targetWord) {
@@ -575,7 +572,6 @@
             if (!grid) return;
             grid.innerHTML = "";
 
-            // Invisible bridge input that covers the slots to summon mobile soft keyboard
             const bridge = document.createElement('input');
             bridge.type = 'text';
             bridge.id = 'slotInputBridge';
@@ -603,6 +599,7 @@
             }
         }
 
+        // 🟢 EVENT BUBBLING STOPPED: Keystrokes will never accidentally trigger next word on solve
         function setupBridgeListener(bridge) {
             bridge.addEventListener('input', () => {
                 if (gameState.isCompleted) {
@@ -617,10 +614,14 @@
             });
 
             bridge.addEventListener('keydown', (e) => {
-                if (gameState.isCompleted) return;
+                e.stopPropagation(); // Stops bubbling to window so the same Enter stroke never skips the banner!
                 if (e.key === "Enter" || e.keyCode === 13) {
                     e.preventDefault();
-                    submitGuess();
+                    if (gameState.isCompleted) {
+                        pickNextWordDirect();
+                    } else {
+                        submitGuess();
+                    }
                 }
             });
         }
@@ -718,27 +719,21 @@
 
             const bridge = document.getElementById('slotInputBridge');
 
-            // 🟢 INSTANT 0MS VICTORY DISPLAY
+            // 🟢 SOLVED CONDITION: Shows banner and keeps it on screen smoothly
             if (guess === gameState.targetWord) {
                 gameState.isCompleted = true;
                 gameState.isWon = true;
 
-                // 1. Calculate streak locally in 0ms (zero wait)
                 let currentStreak = parseInt(localStorage.getItem(STREAK_KEY) || "0") + 1;
                 let bonusEarned = (currentStreak % 5 === 0) ? 500 : 0;
 
                 saveGameState();
-
-                // 2. Pop up victory banner instantly!
                 showResultBanner(true, true, bonusEarned);
-                if (bridge) bridge.blur();
-
-                // 3. Sync score in background without blocking UI
                 syncPointsToDatabase(currentStreak, bonusEarned);
                 return;
             }
 
-            // Loss Condition
+            // LOSS CONDITION: Runs out of attempts, shows banner and keeps it on screen
             gameState.currentRow++;
             gameState.currentInput = "";
             if (bridge) bridge.value = "";
@@ -751,13 +746,11 @@
                 saveGameState();
                 localStorage.setItem(STREAK_KEY, "0");
                 showResultBanner(false, false, 0);
-                if (bridge) bridge.blur();
             } else {
                 focusSlotBridge();
             }
         }
 
-        // Non-blocking background score update
         async function syncPointsToDatabase(currentStreak, bonusEarned) {
             if (gameState.pointsAwarded) return;
             localStorage.setItem(STREAK_KEY, String(currentStreak));
@@ -827,9 +820,10 @@
             });
         }
 
+        // Physical desktop keyboard listener
         window.addEventListener('keydown', (e) => {
             const bridge = document.getElementById('slotInputBridge');
-            // If the transparent bridge input is already focused, let it handle the event
+            // If the transparent bridge input handled it, don't double process
             if (document.activeElement === bridge) return;
 
             if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
@@ -837,6 +831,7 @@
                 window.focus();
             }
 
+            // If game is completed, Enter advances to next word
             if (gameState.isCompleted) {
                 if (e.key === 'Enter') pickNextWordDirect();
                 return;
