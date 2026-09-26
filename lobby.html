@@ -703,7 +703,7 @@
                 <!-- 🍔 ALWAYS VISIBLE: FOR community (Creator & community only) -->
                 <a id="communityBtn" href="letter%20to%20community.html" class="mc-btn gold py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🍔 For community</a>
 
-                <!-- ☰ CLEAN MENU DROPDOWN (Rules & Notices, Feedback, Report, Sign Out) -->
+                <!-- ☰ CLEAN MENU DROPDOWN (Rules, Fullscreen, Feedback, Report, Sign Out) -->
                 <div class="dropdown d-inline-block">
                     <button class="mc-btn stone py-1 px-3 font-pixel dropdown-toggle" type="button" id="lobbyMenuDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.75rem; width: auto;">
                         ☰ Menu
@@ -712,6 +712,11 @@
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openLobbyNotice()">
                                 🛡️ Rules & Notices
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="toggleFullscreen()">
+                                ⛶ Fullscreen
                             </button>
                         </li>
                         <li>
@@ -881,6 +886,22 @@
         };
 
         let globalUsername = "";
+
+        // ⛶ FULLSCREEN TOGGLE
+        function toggleFullscreen() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+                const docEl = document.documentElement;
+                if (docEl.requestFullscreen) docEl.requestFullscreen();
+                else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
+                else if (docEl.mozRequestFullScreen) docEl.mozRequestFullScreen();
+                else if (docEl.msRequestFullscreen) docEl.msRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+                else if (document.msExitFullscreen) document.msExitFullscreen();
+            }
+        }
 
         function lockThisDevice(token) {
             const val = token || 'BANNED_PERMANENT';
@@ -1323,12 +1344,12 @@
             const rankClass = numericRank === 1 ? 'rank-1' : numericRank === 2 ? 'rank-2' : numericRank === 3 ? 'rank-3' : 'bg-dark text-white';
 
             row.innerHTML = `
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="rank-badge ${rankClass}">${rankLabel}</div>
-                        <span class="${isCurrentUser ? 'text-sakura' : 'text-white'} fw-bold">${username}</span>
-                    </div>
-                    <span class="font-pixel" style="color: #4dede2;">${score} pts</span>
-                `;
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rank-badge ${rankClass}">${rankLabel}</div>
+                    <span class="${isCurrentUser ? 'text-sakura' : 'text-white'} fw-bold">${username}</span>
+                </div>
+                <span class="font-pixel" style="color: #4dede2;">${score} pts</span>
+            `;
             container.appendChild(row);
         }
 
@@ -1362,10 +1383,10 @@
             petal.style.setProperty('--rot-start', rotStartVal + 'deg');
 
             petal.innerHTML = `
-                    <svg viewBox="0 0 16 16" shapeRendering="crispEdges" width="100%" height="100%">
-                        <rect x="4" y="2" width="8" height="2" fill="#ffd1de" /><rect x="2" y="4" width="12" height="2" fill="#ffbccc" /><rect x="2" y="6" width="12" height="4" fill="#ff9ebb" /><rect x="4" y="10" width="8" height="2" fill="#f28da9" /><rect x="6" y="12" width="4" height="2" fill="#e07392" />
-                    </svg>
-                `;
+                <svg viewBox="0 0 16 16" shapeRendering="crispEdges" width="100%" height="100%">
+                    <rect x="4" y="2" width="8" height="2" fill="#ffd1de" /><rect x="2" y="4" width="12" height="2" fill="#ffbccc" /><rect x="2" y="6" width="12" height="4" fill="#ff9ebb" /><rect x="4" y="10" width="8" height="2" fill="#f28da9" /><rect x="6" y="12" width="4" height="2" fill="#e07392" />
+                </svg>
+            `;
             container.appendChild(petal);
         }
     </script>
