@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Recipe - Creative Arena</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Quicksand:wght@500;600;700&family=Silkscreen&display=swap" rel="stylesheet">
+
+    <style>
+        /* ---------- CORE DESIGN SYSTEM TOKENS ---------- */
+        :root {
+            --font-pixel: "Silkscreen", system-ui, sans-serif;
+            --font-display: "Fredoka", "Quicksand", system-ui, sans-serif;
+            --font-sans: "Quicksand", system-ui, sans-serif;
+            --background: #140811;
+            --foreground: oklch(0.98 0.01 90);
+            --card: rgba(25, 15, 22, 0.65);
+            --card-dark: rgba(0, 0, 0, 0.3);
+            --sakura: oklch(0.82 0.14 355);
+            --bright-rose: #ff4081;
+            --gold: oklch(0.84 0.16 82);
+            --diamond: #4dede2;
+            --redstone: oklch(0.62 0.22 28);
+        }
+
+        body {
+            background-color: var(--background);
+            background: linear-gradient(135deg, #180915 0%, #291124 50%, #11050e 100%);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            margin: 0;
+            position: relative;
+        }
+
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -3;
+            background: linear-gradient(135deg, #1a0b16 0%, #2a1125 100%);
+        }
+
+        .hero-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(20, 12, 18, 0.2), rgba(20, 12, 18, 0.75));
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .sakura-fx {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .sakura-petal {
+            position: absolute;
+            top: -20px;
+            display: block;
+            opacity: 0.85;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) translateX(0) rotate(var(--rot-start));
+                opacity: 0.85;
+            }
+
+            100% {
+                transform: translateY(105vh) translateX(var(--drift)) rotate(calc(var(--rot-start) + 360deg));
+                opacity: 0;
+            }
+        }
+
+        .mc-panel {
+            background: linear-gradient(180deg, rgba(42, 20, 36, 0.85), rgba(26, 11, 22, 0.92));
+            border: 3px solid oklch(0.82 0.14 355);
+            border-radius: 28px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 183, 197, 0.25);
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            background: rgba(15, 8, 13, 0.45);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .header-center-title {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .mc-btn-gray {
+            background: linear-gradient(180deg, #4e4e4e 0%, #2d2d2d 100%);
+            border: 2px solid #1c1c1c;
+            box-shadow: inset -2px -2px 0 #141414, inset 2px 2px 0 #777;
+            color: #ffffff;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: filter 0.1s ease;
+        }
+
+            .mc-btn-gray:hover {
+                filter: brightness(1.15);
+                color: #ffffff;
+            }
+
+        .mc-btn-send {
+            background: linear-gradient(180deg, #4dede2 0%, #20b0a7 100%);
+            border: 1px solid #0f5450;
+            box-shadow: inset -2px -2px 0 #0d423f, inset 2px 2px 0 #a2fff9;
+            color: #0c3331;
+            font-family: var(--font-pixel);
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 0 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+            .mc-btn-send:hover:not(:disabled) {
+                filter: brightness(1.1);
+            }
+
+            .mc-btn-send:disabled {
+                background: #2d2d2d;
+                border: 1px solid #1c1c1c;
+                box-shadow: none;
+                color: #777;
+                cursor: not-allowed;
+            }
+
+        .chat-body {
+            overflow-y: auto;
+            padding: 1rem;
+            height: 100%;
+        }
+
+        .chat-msg {
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: var(--card-dark);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            font-size: 0.9rem;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+            .chat-msg.system {
+                color: var(--gold);
+                font-family: var(--font-display);
+            }
+
+            .chat-msg.success {
+                color: var(--diamond);
+            }
+
+            .chat-msg.error {
+                color: var(--redstone);
+            }
+
+        .mc-input {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            font-weight: 500;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            outline: none;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+            .mc-input:focus:not(:disabled) {
+                border-color: var(--sakura);
+                background: rgba(0, 0, 0, 0.4);
+            }
+
+        /* --- SAKURA SCOREBOARD & VICTORY MODAL STYLING --- */
+        .leader-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            background: rgba(18, 7, 15, 0.6);
+            margin-bottom: 0.6rem;
+            border: 2px solid rgba(255, 183, 197, 0.15);
+            transition: all 0.2s ease;
+        }
+
+            .leader-card.rank-1 {
+                border-color: var(--diamond) !important;
+                background: linear-gradient(90deg, rgba(77, 237, 226, 0.12), rgba(18, 7, 15, 0.6));
+                box-shadow: 0 0 12px rgba(77, 237, 226, 0.25);
+            }
+
+            .leader-card.is-you {
+                border-color: var(--sakura);
+                background: linear-gradient(90deg, rgba(255, 183, 197, 0.15), rgba(18, 7, 15, 0.6));
+            }
+
+            .leader-card.rank-1.is-you {
+                border-color: var(--diamond) !important;
+                box-shadow: 0 0 15px rgba(77, 237, 226, 0.35);
+            }
+
+        .player-name-text {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .leader-card.is-you .player-name-text {
+            color: var(--sakura) !important;
+            text-shadow: 0 0 8px rgba(255, 183, 197, 0.4);
+        }
+
+        .leader-card.rank-1 .player-name-text {
+            color: var(--diamond) !important;
+            text-shadow: 0 0 8px rgba(77, 237, 226, 0.4);
+        }
+
+        /* ---------- 3x3 RECIPE CRAFTING GRID ---------- */
+        .crafting-container {
+            display: grid;
+            grid-template-columns: repeat(3, 85px);
+            grid-template-rows: repeat(3, 85px);
+            gap: 10px;
+            justify-content: center;
+            align-content: center;
+            background: rgba(15, 8, 13, 0.75);
+            padding: 20px;
+            border-radius: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8), 0 8px 24px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 2;
+        }
+
+        .grid-slot {
+            background: rgba(30, 16, 26, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: inset 2px 2px 6px rgba(0,0,0,0.6);
+            transition: all 0.2s ease;
+        }
+
+            .grid-slot:hover {
+                border-color: var(--sakura);
+                background: rgba(45, 22, 38, 0.8);
+            }
+
+            .grid-slot img {
+                max-width: 75%;
+                max-height: 75%;
+                object-fit: contain;
+                display: block;
+                margin: auto;
+                image-rendering: pixelated;
+            }
+
+        .matrix-ambient-space {
+            position: relative;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .ambient-dust-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .dust-particle {
+            position: absolute;
+            background: linear-gradient(135deg, var(--sakura), var(--diamond));
+            border-radius: 2px;
+            opacity: 0;
+            box-shadow: 0 0 8px var(--bright-rose);
+            animation: driftUpwards linear infinite;
+        }
+
+        @keyframes driftUpwards {
+            0% {
+                transform: translateY(110%) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.45;
+            }
+
+            85% {
+                opacity: 0.45;
+            }
+
+            100% {
+                transform: translateY(-10%) translateX(var(--drift-x)) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        .cute-pink-panel {
+            background: linear-gradient(135deg, rgba(224, 115, 146, 0.2), rgba(255, 183, 197, 0.1));
+            border: 2px solid var(--sakura);
+            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            text-align: center;
+            box-shadow: inset 0 2px 6px rgba(255, 183, 197, 0.2);
+        }
+
+        .match-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 8, 13, 0.85);
+            backdrop-filter: blur(16px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pop-number {
+            font-family: var(--font-pixel);
+            font-size: 6rem;
+            color: var(--sakura);
+            text-shadow: 0 0 30px rgba(255, 183, 197, 0.4);
+            display: inline-block;
+            will-change: transform, opacity;
+        }
+
+        .pulse-tick {
+            animation: popPulse 0.2s ease-out forwards;
+        }
+
+        @keyframes popPulse {
+            0% {
+                transform: scale(1.6);
+                opacity: 0.2;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .mc-btn-sakura {
+            background: linear-gradient(180deg, oklch(0.92 0.1 355) 0%, oklch(0.8 0.14 350) 45%, oklch(0.62 0.16 350) 100%);
+            border: 2px solid oklch(0.3 0.1 350);
+            color: oklch(0.2 0.06 350);
+            box-shadow: inset 0 2px 0 oklch(0.98 0.08 355 / 0.85), inset 0 -3px 0 oklch(0.4 0.14 350 / 0.85), 0 4px 0 oklch(0.25 0.08 350);
+            font-family: var(--font-display);
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: transform 0.08s ease, filter 0.15s ease;
+        }
+
+            .mc-btn-sakura:hover {
+                filter: brightness(1.08);
+                transform: translateY(-1px);
+                color: #000;
+            }
+
+            .mc-btn-sakura:active {
+                transform: translateY(2px);
+            }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 158, 187, 0.2);
+            border-radius: 10px;
+        }
+
+        .font-pixel {
+            font-family: var(--font-pixel);
+            letter-spacing: 0.05em;
+        }
+
+        .font-meta {
+            font-family: var(--font-pixel);
+            font-size: 0.6rem;
+            letter-spacing: 0.08em;
+            opacity: 0.7;
+        }
+
+        /* ---------- 📱 MOBILE ORIENTATION SHIELD (PORTRAIT LOCK) ---------- */
+        #rotatePromptOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(14, 6, 12, 0.97);
+            backdrop-filter: blur(16px);
+            z-index: 99999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .rotate-phone-animation {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1.5rem;
+            animation: rotateDevice 2.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes rotateDevice {
+            0%, 40% {
+                transform: rotate(0deg);
+            }
+
+            70%, 100% {
+                transform: rotate(90deg);
+            }
+        }
+
+        @media (max-width: 1024px) and (orientation: portrait) {
+            #rotatePromptOverlay {
+                display: flex !important;
+            }
+        }
+
+        /* 📱 COMPACT SIDEWAYS MOBILE SCALING (Zero scrolling in landscape) */
+        @media (max-height: 520px) and (orientation: landscape) {
+            header.w-100 {
+                padding: 0.35rem 0.8rem !important;
+            }
+
+            main.container-fluid {
+                padding: 0.35rem 0.6rem !important;
+            }
+
+            .recipe-main-row {
+                height: calc(100dvh - 65px) !important;
+            }
+
+            .mc-panel {
+                border-radius: 16px !important;
+            }
+
+            .crafting-container {
+                grid-template-columns: repeat(3, 58px) !important;
+                grid-template-rows: repeat(3, 58px) !important;
+                gap: 6px !important;
+                padding: 10px !important;
+                border-radius: 14px !important;
+            }
+
+            .chat-body {
+                padding: 0.5rem !important;
+            }
+
+            .chat-msg {
+                padding: 0.35rem 0.5rem !important;
+                font-size: 0.78rem !important;
+                margin-bottom: 0.3rem !important;
+            }
+
+            .mc-input {
+                padding: 0.4rem 0.6rem !important;
+                font-size: 0.8rem !important;
+            }
+
+            .leader-card {
+                padding: 0.4rem 0.6rem !important;
+                margin-bottom: 0.35rem !important;
+            }
+
+            .player-name-text {
+                font-size: 0.8rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 📱 ROTATE SCREEN SHIELD (Only appears on mobile portrait) -->
+    <div id="rotatePromptOverlay">
+        <svg class="rotate-phone-animation" viewBox="0 0 24 24" fill="none" stroke="var(--sakura)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+            <path d="M12 18h.01" />
+        </svg>
+        <span class="font-pixel text-sakura small d-block mb-2">🌸 LANDSCAPE MODE REQUIRED 🌸</span>
+        <h2 class="fs-4 fw-bold text-white mb-2" style="font-family: var(--font-display);">Please Rotate Your Device</h2>
+        <p class="text-white-50 small mb-0" style="max-width: 320px; font-family: var(--font-sans);">
+            MineTrivia is designed for a horizontal screen. Turn your phone sideways to solve recipes!
+        </p>
+    </div>
+
+    <img src="assets/sakura-16.jpg" alt="" class="hero-bg" onerror="this.style.display='none'">
+    <div class="hero-overlay"></div>
+    <div class="sakura-fx" id="queueLeavesContainer"></div>
+
+    <div id="waitingOverlay" class="match-overlay">
+        <h1 class="fw-bold text-white mb-3 font-pixel" style="font-size: 1.5rem;">Waiting for Players...</h1>
+        <div id="waitingTimerTxt" class="font-pixel py-2 rounded-3 text-center" style="font-size: 1.8rem; color: var(--redstone); background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); min-width: 100px;">10s</div>
+    </div>
+
+    <div id="countdownOverlay" class="match-overlay d-none">
+        <div id="countdownNumberTxt" class="pop-number">5</div>
+    </div>
+
+    <!-- 🌸 SAKURA VICTORY MODAL OVERLAY -->
+    <div id="gameOverOverlay" class="match-overlay d-none">
+        <div class="mc-panel p-4 text-center" style="max-width: 440px; width: 90%;">
+            <h1 class="font-pixel text-uppercase mb-3" style="color: var(--sakura); font-size: 1.5rem; text-shadow: 0 0 15px rgba(255, 183, 197, 0.5);">🌸 MATCH OVER 🌸</h1>
+            <div class="cute-pink-panel mx-auto mb-4" style="width: 100%;">
+                <span id="winnerTitleLabel" class="font-meta d-block text-uppercase text-white-50 mb-1">👑 Final Champion 👑</span>
+                <span id="finalWinnerName" class="font-pixel" style="color: var(--sakura); font-size: 1rem; text-shadow: 0 0 8px rgba(255, 183, 197, 0.6);">---</span>
+            </div>
+            <div class="border-bottom border-light border-opacity-10 pb-2 mb-2 text-start">
+                <span class="font-meta text-white-50 text-uppercase">Final Standings</span>
+            </div>
+            <div id="finalScoresStack" class="overflow-y-auto custom-scrollbar mb-4 pe-1" style="max-height: 200px; min-height: 80px;"></div>
+            <button onclick="location.href='lobby.html'" class="mc-btn-sakura w-100 font-pixel" style="font-size: 0.8rem;">RETURN TO LOBBY</button>
+        </div>
+    </div>
+
+    <header class="w-100 p-3 px-4 flex-shrink-0">
+        <h2 id="hudRoundTitle" class="fs-5 fw-bold text-white mb-0 header-center-title" style="font-family: var(--font-display); z-index: 2;">Round 1 of 10</h2>
+        <div class="d-flex align-items-center justify-content-between w-100" style="position: relative; z-index: 1;">
+            <h1 class="font-pixel mb-0" style="color: var(--bright-rose); font-size: 1.2rem; text-shadow: 0 0 12px rgba(255, 64, 129, 0.45);">Recipe</h1>
+            <div>
+                <button onclick="leaveArena()" class="mc-btn-gray font-pixel">Leave Arena</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container-fluid flex-grow-1 p-3 p-lg-4 overflow-hidden d-flex flex-column justify-content-center">
+        <div class="row g-2 g-lg-4 justify-content-center align-items-stretch recipe-main-row" style="height: 520px;">
+            <section class="col-4 col-lg-3 col-xl-3 d-flex flex-column gap-2 gap-lg-3" style="min-height: 0; height: 100%;">
+                <div class="mc-panel flex-grow-1" style="min-height: 0;">
+                    <div id="chatWindowBox" class="chat-body custom-scrollbar"></div>
+                </div>
+                <form onsubmit="submitPlayerGuess(event)" class="mc-panel p-2 p-lg-3 d-flex flex-row gap-2 flex-shrink-0">
+                    <input type="text" id="chatInputField" class="mc-input" placeholder="Type recipe guess..." autocomplete="off">
+                    <button type="submit" id="chatSendBtn" class="mc-btn-send">SEND</button>
+                </form>
+            </section>
+
+            <section class="col-5 col-lg-6 col-xl-6 d-flex flex-column" style="min-height: 0; height: 100%;">
+                <div class="mc-panel position-relative h-100" style="background:transparent; border:none; box-shadow:none;">
+                    <div class="d-flex justify-content-between w-100 mb-2 mb-lg-3 font-pixel">
+                        <div class="px-2 px-lg-3 py-1 rounded-3 bg-black border border-light border-opacity-10">
+                            <span class="text-white-50" style="font-size: 0.55rem; margin-right: 4px;">HINT:</span>
+                            <span id="hudHintTimer" class="fw-bold">--s</span>
+                        </div>
+                        <div class="px-2 px-lg-3 py-1 rounded-3 bg-black border border-light border-opacity-10">
+                            <span id="hudMatchClock" class="fw-bold">??:??</span>
+                        </div>
+                    </div>
+
+                    <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center" style="position: relative;">
+                        <div class="ambient-dust-layer" id="ambientDustContainer"></div>
+                        <div class="crafting-container" id="recipeMatrixGrid">
+                            <div class="grid-slot" id="slot-0"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIvPg=="></div>
+                            <div class="grid-slot" id="slot-1"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIvPg=="></div>
+                            <div class="grid-slot" id="slot-2"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIvPg=="></div>
+                            <div class="grid-slot" id="slot-3"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIvPg=="></div>
+                            <div class="grid-slot" id="slot-4"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIvPg=="></div>
+                            <div class="grid-slot" id="slot-5"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIvPg=="></div>
+                            <div class="grid-slot" id="slot-6"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIvPg=="></div>
+                            <div class="grid-slot" id="slot-7"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIvPg=="></div>
+                            <div class="grid-slot" id="slot-8"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIvPg=="></div>
+                        </div>
+                    </div>
+
+                    <div id="roundIntermissionBlock" class="d-none position-absolute top-50 start-50 translate-middle text-center z-3" style="width: max-content;">
+                        <div id="intermissionTimerLabel" class="font-pixel text-white mb-1" style="font-size: 0.65rem;">Next round in 5s</div>
+                        <div class="cute-pink-panel">
+                            <span class="font-pixel" style="color: var(--sakura); font-size: 0.95rem;" id="revealedItemName">---</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="col-3 col-lg-3 col-xl-3 d-flex flex-column">
+                <div class="mc-panel p-2 p-lg-3 h-100">
+                    <h3 class="font-pixel text-white-50 mb-2 mb-lg-3" style="font-size: 0.65rem;">SCOREBOARD</h3>
+                    <div id="leaderboardStackBox" class="flex-grow-1 overflow-y-auto custom-scrollbar"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket;
+        let clientIdentityName = "";
+        let globalCachedLeaderboard = [];
+
+        window.onload = function () {
+            initAmbientDustParticles();
+            initSocketEngine();
+        };
+
+        function leaveArena() {
+            if (socket) socket.emit('player_leave_match');
+            window.location.href = 'lobby.html';
+        }
+
+        function initSocketEngine() {
+            socket = io();
+            socket.emit('join_match');
+
+            fetch('/api/user/profile').then(res => res.json()).then(data => {
+                if (data.username) clientIdentityName = data.username;
+            });
+
+            socket.on('game_waiting_tick', (data) => {
+                const seconds = typeof data === 'object' ? data.time : data;
+                document.getElementById('waitingOverlay').classList.remove('d-none');
+                document.getElementById('waitingTimerTxt').innerText = `${seconds}s`;
+            });
+
+            socket.on('game_countdown_tick', (data) => {
+                const count = typeof data === 'object' ? (data.time ?? data.count) : data;
+                document.getElementById('waitingOverlay').classList.add('d-none');
+                document.getElementById('countdownOverlay').classList.remove('d-none');
+                const countDisplay = document.getElementById('countdownNumberTxt');
+                countDisplay.textContent = count === 'START' ? "START!" : count;
+                countDisplay.classList.remove('pulse-tick');
+                void countDisplay.offsetWidth;
+                countDisplay.classList.add('pulse-tick');
+            });
+
+            socket.on('round_init', (data) => {
+                document.getElementById('waitingOverlay').classList.add('d-none');
+                document.getElementById('countdownOverlay').classList.add('d-none');
+                document.getElementById('roundIntermissionBlock').classList.add('d-none');
+                document.getElementById('hudRoundTitle').innerText = `Round ${data.round} of ${data.maxRounds}`;
+
+                document.querySelectorAll('.grid-slot img').forEach(img => {
+                    img.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIvPg==";
+                    img.alt = "";
+                });
+
+                if (data.revealedSlots && Array.isArray(data.revealedSlots)) {
+                    data.revealedSlots.forEach(slotData => {
+                        placeSlotImage(slotData.slot, slotData.src, slotData.alt);
+                    });
+                }
+
+                const input = document.getElementById('chatInputField');
+                input.disabled = false;
+                input.value = "";
+                input.placeholder = "Type recipe guess...";
+                document.getElementById('chatSendBtn').disabled = false;
+            });
+
+            socket.on('recipe_slot_reveal', (slotData) => {
+                if (slotData && slotData.slot !== undefined) {
+                    placeSlotImage(slotData.slot, slotData.src, slotData.alt);
+                }
+            });
+
+            socket.on('clock_tick', (data) => {
+                const sec = data.matchClock;
+                const hint = data.hintClock;
+                const clockDisplay = document.getElementById('hudMatchClock');
+                if (sec <= 5) {
+                    const min = Math.floor(sec / 60);
+                    const displaySec = String(sec % 60).padStart(2, '0');
+                    clockDisplay.innerText = `${min}:${displaySec}`;
+                } else {
+                    clockDisplay.innerText = "??:??";
+                }
+
+                const hintDisplay = document.getElementById('hudHintTimer');
+                if (sec > 7) hintDisplay.innerText = `${hint}s`;
+                else hintDisplay.innerText = "--s";
+            });
+
+            socket.on('round_intermission', (data) => {
+                document.getElementById('revealedItemName').innerText = data.correctWord.replace(/_/g, " ");
+                document.getElementById('roundIntermissionBlock').classList.remove('d-none');
+                document.getElementById('intermissionTimerLabel').innerText = `Next round in ${data.intermissionDuration}s`;
+                const input = document.getElementById('chatInputField');
+                input.disabled = true;
+                document.getElementById('chatSendBtn').disabled = true;
+            });
+
+            socket.on('intermission_tick', (data) => {
+                const timerLabel = document.getElementById('intermissionTimerLabel');
+                if (timerLabel) timerLabel.innerText = `Next round in ${data.time}s`;
+            });
+
+            socket.on('chat_message', (data) => {
+                pushToConsoleLog(data.sender, data.text, data.type || 'default');
+            });
+
+            socket.on('leaderboard_update', (data) => {
+                globalCachedLeaderboard = data.leaderboard || [];
+                renderScoreboard(globalCachedLeaderboard);
+                if (data.currentRound && data.maxRounds) {
+                    document.getElementById('hudRoundTitle').innerText = `Round ${data.currentRound} of ${data.maxRounds}`;
+                }
+            });
+
+            socket.on('game_over', (data) => {
+                const finalStandings = data.leaderboard || globalCachedLeaderboard || data.finalLeaderboard || [];
+                const ranked = [...finalStandings].sort((a, b) => b.score - a.score);
+                if (ranked.length === 0) return;
+
+                const topScore = ranked[0].score;
+                const topWinners = ranked.filter(p => p.score === topScore);
+
+                const winnerLabel = document.getElementById('winnerTitleLabel');
+                const winnerNameEl = document.getElementById('finalWinnerName');
+
+                if (topWinners.length > 1) {
+                    winnerLabel.innerText = "✨ Multi-Champion Tie! ✨";
+                    winnerNameEl.innerText = topWinners.map(w => w.name === clientIdentityName ? "You" : w.name).join(", ");
+                } else {
+                    winnerLabel.innerText = "👑 Final Champion 👑";
+                    winnerNameEl.innerText = topWinners[0].name === clientIdentityName ? "You" : topWinners[0].name;
+                }
+
+                const scoresStack = document.getElementById('finalScoresStack');
+                scoresStack.innerHTML = "";
+
+                ranked.forEach((p, idx) => {
+                    let displayRank = idx + 1;
+                    if (idx > 0 && p.score === ranked[idx - 1].score) {
+                        displayRank = ranked.findIndex(item => item.score === p.score) + 1;
+                    }
+
+                    const isYou = (p.name === clientIdentityName);
+                    const isHighest = (p.score === topScore && p.score > 0);
+
+                    const row = document.createElement('div');
+                    row.className = `leader-card ${isHighest ? 'rank-1' : ''} ${isYou ? 'is-you' : ''}`;
+
+                    let displayName = isYou ? "You" : p.name;
+                    let nameColorStyle = isHighest ? 'color: var(--diamond) !important;' : isYou ? 'color: var(--sakura) !important;' : '';
+
+                    row.innerHTML = `
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="font-pixel" style="font-size: 0.65rem; opacity: 0.5;">#${displayRank}</span>
+                                    <span class="player-name-text" style="${nameColorStyle}">${displayName}</span>
+                                </div>
+                                <span class="font-pixel" style="font-size: 0.75rem; color: ${isHighest ? 'var(--diamond)' : 'var(--sakura)'};">${p.score}p</span>
+                            `;
+                    scoresStack.appendChild(row);
+                });
+
+                document.getElementById('gameOverOverlay').classList.remove('d-none');
+            });
+
+            socket.on('redirect_to_lobby', (data) => {
+                if (data && data.reason) alert(data.reason);
+                location.href = 'lobby.html';
+            });
+        }
+
+        function placeSlotImage(slotNumber, imgSrc, imgAlt) {
+            const img = document.querySelector(`#slot-${slotNumber} img`);
+            if (img) { img.src = imgSrc; img.alt = imgAlt || ""; }
+        }
+
+        function renderScoreboard(players) {
+            const container = document.getElementById('leaderboardStackBox');
+            if (!container || !players) return;
+            container.innerHTML = "";
+            const ranked = [...players].sort((a, b) => b.score - a.score);
+            const highestScore = ranked.length > 0 ? ranked[0].score : -1;
+
+            ranked.forEach((p, idx) => {
+                const isYou = (p.name === clientIdentityName);
+                const isHighest = (p.score === highestScore && p.score > 0);
+
+                const card = document.createElement('div');
+                card.className = `leader-card ${isHighest ? 'rank-1' : ''} ${isYou ? 'is-you' : ''}`;
+
+                let nameColorStyle = isHighest ? 'color: var(--diamond) !important;' : isYou ? 'color: var(--sakura) !important;' : '';
+
+                if (isYou && p.hasGuessed) {
+                    const input = document.getElementById('chatInputField');
+                    input.placeholder = "Recipe solved! Waiting for others...";
+                    input.disabled = true;
+                    document.getElementById('chatSendBtn').disabled = true;
+                }
+
+                let statusBadge = "";
+                if (p.hasLeft || p.hasAbandoned) {
+                    statusBadge = `<span class="font-pixel text-danger" style="font-size: 0.55rem;">LEFT</span>`;
+                } else if (p.isDisconnected) {
+                    statusBadge = `<span class="font-pixel text-white-50" style="font-size: 0.55rem;">DISCONNECTED</span>`;
+                } else {
+                    statusBadge = `<span style="font-size: 0.55rem; font-family: var(--font-pixel); opacity: 0.6;">${p.hasGuessed ? 'RESOLVED' : 'CRAFTING'}</span>`;
+                }
+
+                card.innerHTML = `
+                            <div class="d-flex flex-column">
+                                <span class="player-name-text" style="${nameColorStyle}">${isYou ? 'You' : p.name}</span>
+                                ${statusBadge}
+                            </div>
+                            <span class="font-pixel" style="font-size: 0.75rem; color: ${isHighest ? 'var(--diamond)' : 'var(--sakura)'};">${p.score}p</span>
+                        `;
+                container.appendChild(card);
+            });
+        }
+
+        function pushToConsoleLog(sender, text, type) {
+            const chatBox = document.getElementById('chatWindowBox');
+            if (!chatBox) return;
+            const msg = document.createElement('div');
+            msg.className = `chat-msg ${type}`;
+            let name = sender === clientIdentityName ? "You" : sender;
+            msg.innerHTML = `<span style="opacity: 0.45; font-family: var(--font-pixel); font-size: 0.65rem;">[${name}]:</span> <span>${text}</span>`;
+            chatBox.appendChild(msg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function submitPlayerGuess(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInputField');
+            const val = input.value.trim();
+            if (val) { socket.emit('submit_guess', val); input.value = ""; }
+        }
+
+        function initAmbientDustParticles() {
+            const container = document.getElementById('ambientDustContainer');
+            if (!container) return;
+            for (let i = 0; i < 15; i++) {
+                const dust = document.createElement('div');
+                dust.className = 'dust-particle';
+                dust.style.left = (Math.random() * 100) + '%';
+                dust.style.bottom = "-20px";
+                dust.style.width = (2 + Math.random() * 3) + 'px';
+                dust.style.height = dust.style.width;
+                dust.style.animationDuration = (4 + Math.random() * 5) + 's';
+                dust.style.animationDelay = (Math.random() * 5) + 's';
+                dust.style.setProperty('--drift-x', (Math.random() * 60 - 30) + 'px');
+                container.appendChild(dust);
+            }
+        }
+    </script>
+</body>
+</html>

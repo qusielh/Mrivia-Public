@@ -1,0 +1,406 @@
+cap
+tunic
+pants
+boots
+helmet
+chestplate
+leggings
+apple
+shovel
+sword
+axe
+pickaxe
+flind and steel
+bow
+arrow
+coal
+iron
+gold
+copper
+ingot
+diamond
+stick
+bowl
+stew
+soup
+gunpowder
+cake
+string
+feather
+seeds
+wheat
+bread
+hoe
+flint
+porkchop
+painting
+golden apple
+bucket
+minecart
+saddle
+snowball
+boat
+leather
+paper
+book
+clay ball
+brick
+slimeball
+egg
+compass
+fishing rod
+clock
+glowstone dust
+cod
+bone
+bone meal
+lapis lazuli
+cocoa beans
+ink sac
+charcoal
+dye
+sugar
+cookie
+map
+shears
+chicken
+beef
+ender pearl
+melon slice
+rotten flesh
+blaze rod
+ghast tear
+nugget
+nether wart
+blaze powder
+fermented spider eye
+glass bottle
+magma cream
+spider eye
+awkward potion
+thick potion
+mundane potion
+potion
+splash potion
+lingering potion
+eye of ender
+water bottle
+glistering melon slice
+fire  charge
+book and quill
+written book
+emerald
+enchanted golden apple
+carrot
+golden carrot
+potato
+poisonous potato
+item frame
+empty map
+nether star
+carrot on a stick
+pumpkin pie
+enchanted book
+firework rocket
+firework star
+nether brick
+nether quartz
+horse armor
+lead
+name tag
+horse saddle
+tropical fish
+salmon
+pufferfish
+prismarine crystals
+prismarine shard
+mutton
+rabbit
+rabbit's foot
+rabbit hide
+spectral arrow
+beetroot
+chorus fruit
+creeper
+skeleton
+spider
+zombie
+slime
+ghast
+zombified piglin
+enderman
+cave spider
+silverfish
+blaze
+magma cube
+pig
+sheep
+cow
+squid
+wolf
+mooshroom
+vilager
+ocelot
+endermite
+guardian
+horse
+rabbit
+shulker
+dragon's breath
+shield
+brewing stand
+elytra
+end crystal
+cat
+donkey
+cauldron
+elder guardian
+husk
+mule
+polar bear
+skeleton horse
+stray
+wither skeleton
+zombie horse
+zombie villager
+banner
+villager
+llama
+evoker
+vex
+vindicator
+shulker shell
+totem of undying
+woodland explorer map
+ocean explorer map
+parrot
+trident
+kelp
+scute
+turtle
+turtle shell
+phantom
+buried treasure map
+drowned
+phantom membrane
+heart of the sea
+nautilus shell
+dolphin
+banner pattern
+crossbow
+bat
+ravager
+panda
+pillager
+sweet berries
+wandering trader
+trader llama
+fox
+honey bottle
+honeycomb
+bee
+netherite
+netherite scrap
+hoglin
+piglin
+strider
+zoglin
+warped fungus on a stick
+piglin brute
+amethyst shard
+bundle
+spyglass
+axolotl
+glow ink sac
+glow item frame
+glow berries
+glow squid
+goat
+warden
+frog
+tadpole
+allay
+echo shard
+recovery compass
+disc fragment
+goat horn
+bamboo raft
+camel
+iron golem
+snow golem
+ender dragon
+wither
+witch
+smithing template
+armor trim
+pottery sherd
+armor stand
+sniffer
+torchflower
+brush
+pitcher pod
+explorer map
+village map
+trial key
+breeze
+armadillo
+armadillo scute
+wolf armor
+wind charge
+bogged
+mace
+breeze rod
+ominous bottle
+ominous trial key
+creaking
+resin clump
+brown egg
+blue egg
+resin brick
+happy ghast
+harness
+copper golem
+nautilus
+zombie nautilus
+nautilus armor
+spear
+zombie pigman
+parched
+camel husk
+sulfur cube
+furnace
+stairs
+door
+log
+slab
+stone
+granite
+diorite
+andesite
+grass block
+dirt
+coarse dirt
+podzol
+cobblestone
+planks
+sapling
+oak
+spruce
+birch
+jungle
+acacia
+dark oak
+bed
+bedrock
+sand
+red sand
+gravel
+ore
+wood
+leaves
+sponge
+wet sponge
+glass
+dispenser
+sandstone
+powered rail
+detector rail
+piston
+sticky piston
+cobweb
+grass
+fern
+dead bush
+seagrass
+sea pickle
+wool
+dandelion
+poppy
+blue orchid
+allium
+azure bluet
+tulip
+oxeye daisy
+mushroom
+smooth stone
+bricks
+tnt
+bookshelf
+mossy cobblestone
+obsidian
+torch
+end rod
+spawner
+chest
+crafting table
+farmland
+ladder
+rail
+lever
+pressure plate
+button
+snow
+ice
+cactus
+clay
+fence
+pumpkin
+netherrack
+soul sand
+glowstone
+trapdoor
+mushroom stem
+iron bars
+glass pane
+melon
+vines
+fence gate
+mycelium
+lily pad
+enchating table
+dragon head
+end portal frame
+end stone
+dragon egg
+redstone lamp
+ender chest
+tripwire hook
+beacon
+wall
+anvil
+hopper
+daylight detector
+qurtz pillar
+dropper
+terracotta
+barrier
+hay bale
+carpet
+packed ice
+grass path
+sunflower
+lilac
+rose bush
+flower pot
+peony
+tall grass
+large fern
+stained glass
+stained glass pane
+prismarine
+sea lantern
+bone block
+observer
+shulker box
+glazed terracotta
+concrete
+concrete powder
+turtle egg
+coral block
+coral
+coral fan
+flint and steel
+sign
+water bucket
+lava bucket
+sugar cane

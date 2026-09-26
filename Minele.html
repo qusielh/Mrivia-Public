@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Minele - Creative Arena</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Quicksand:wght@500;600;700&family=Silkscreen&display=swap" rel="stylesheet">
+
+    <style>
+        /* ---------- CORE DESIGN SYSTEM TOKENS ---------- */
+        :root {
+            --font-pixel: "Silkscreen", system-ui, sans-serif;
+            --font-display: "Fredoka", "Quicksand", system-ui, sans-serif;
+            --font-sans: "Quicksand", system-ui, sans-serif;
+            --background: #140811;
+            --foreground: oklch(0.98 0.01 90);
+            --card: rgba(25, 15, 22, 0.65);
+            --card-dark: rgba(0, 0, 0, 0.3);
+            --sakura: oklch(0.82 0.14 355);
+            --bright-rose: #ff4081;
+            --gold: oklch(0.84 0.16 82);
+            --diamond: #4dede2;
+            --redstone: oklch(0.62 0.22 28);
+        }
+
+        body {
+            background-color: var(--background);
+            background: linear-gradient(135deg, #180915 0%, #291124 50%, #11050e 100%);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            margin: 0;
+            position: relative;
+        }
+
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -3;
+            background: linear-gradient(135deg, #1a0b16 0%, #2a1125 100%);
+        }
+
+        .hero-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(20, 12, 18, 0.2), rgba(20, 12, 18, 0.75));
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .sakura-fx {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .sakura-petal {
+            position: absolute;
+            top: -20px;
+            display: block;
+            opacity: 0.85;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) translateX(0) rotate(var(--rot-start));
+                opacity: 0.85;
+            }
+
+            100% {
+                transform: translateY(105vh) translateX(var(--drift)) rotate(calc(var(--rot-start) + 360deg));
+                opacity: 0;
+            }
+        }
+
+        .mc-panel {
+            background: linear-gradient(180deg, rgba(42, 20, 36, 0.85), rgba(26, 11, 22, 0.92));
+            border: 3px solid var(--sakura);
+            border-radius: 28px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 183, 197, 0.25);
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        header {
+            background: rgba(15, 8, 13, 0.45);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+
+        .header-center-title {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+            white-space: nowrap;
+            font-family: var(--font-display);
+        }
+
+        .mc-btn-gray {
+            background: linear-gradient(180deg, #4e4e4e 0%, #2d2d2d 100%);
+            border: 2px solid #1c1c1c;
+            box-shadow: inset -2px -2px 0 #141414, inset 2px 2px 0 #777;
+            color: #ffffff;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        /* --- SAKURA SCOREBOARD & VICTORY MODAL STYLING --- */
+        .leader-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            background: rgba(18, 7, 15, 0.6);
+            margin-bottom: 0.6rem;
+            border: 2px solid rgba(255, 183, 197, 0.15);
+            transition: all 0.2s ease;
+        }
+
+            .leader-card.rank-1 {
+                border-color: var(--diamond) !important;
+                background: linear-gradient(90deg, rgba(77, 237, 226, 0.12), rgba(18, 7, 15, 0.6));
+                box-shadow: 0 0 12px rgba(77, 237, 226, 0.25);
+            }
+
+            .leader-card.is-you {
+                border-color: var(--sakura);
+                background: linear-gradient(90deg, rgba(255, 183, 197, 0.15), rgba(18, 7, 15, 0.6));
+            }
+
+            .leader-card.rank-1.is-you {
+                border-color: var(--diamond) !important;
+                box-shadow: 0 0 15px rgba(77, 237, 226, 0.35);
+            }
+
+        .player-name-text {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .leader-card.is-you .player-name-text {
+            color: var(--sakura) !important;
+            text-shadow: 0 0 8px rgba(255, 183, 197, 0.4);
+        }
+
+        .leader-card.rank-1 .player-name-text {
+            color: var(--diamond) !important;
+            text-shadow: 0 0 8px rgba(77, 237, 226, 0.4);
+        }
+
+        .wordle-matrix-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            background: transparent !important;
+        }
+
+        .wordle-row {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .wordle-cell {
+            flex: 1;
+            aspect-ratio: 1 / 1;
+            max-width: 65px;
+            background: rgba(30, 16, 26, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-pixel) !important;
+            color: #ffffff;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            font-size: 1.4rem;
+        }
+
+            .wordle-cell.correct {
+                background: #27ae60 !important;
+                border-color: #2ecc71 !important;
+            }
+
+            .wordle-cell.present {
+                background: #f39c12 !important;
+                border-color: #f1c40f !important;
+            }
+
+            .wordle-cell.absent {
+                background: #2c3e50 !important;
+                border-color: #34495e !important;
+                opacity: 0.6;
+            }
+
+        .cute-pink-panel {
+            background: linear-gradient(135deg, rgba(224, 115, 146, 0.2), rgba(255, 183, 197, 0.1));
+            border: 2px solid var(--sakura);
+            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            text-align: center;
+            box-shadow: inset 0 2px 6px rgba(255, 183, 197, 0.2);
+        }
+
+        .match-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 8, 13, 0.85);
+            backdrop-filter: blur(16px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pop-number {
+            font-family: var(--font-pixel);
+            font-size: 6rem;
+            color: var(--sakura);
+            text-shadow: 0 0 30px rgba(255, 183, 197, 0.4);
+            display: inline-block;
+            will-change: transform, opacity;
+        }
+
+        .pulse-tick {
+            animation: popPulse 0.2s ease-out forwards;
+        }
+
+        @keyframes popPulse {
+            0% {
+                transform: scale(1.6);
+                opacity: 0.2;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .font-pixel {
+            font-family: var(--font-pixel) !important;
+            letter-spacing: 0.05em;
+        }
+
+        .font-meta {
+            font-family: var(--font-pixel);
+            font-size: 0.6rem;
+            letter-spacing: 0.08em;
+            opacity: 0.7;
+        }
+
+        .mc-btn-sakura {
+            background: linear-gradient(180deg, oklch(0.92 0.1 355) 0%, oklch(0.8 0.14 350) 45%, oklch(0.62 0.16 350) 100%);
+            border: 2px solid oklch(0.3 0.1 350);
+            color: oklch(0.2 0.06 350);
+            box-shadow: inset 0 2px 0 oklch(0.98 0.08 355 / 0.85), inset 0 -3px 0 oklch(0.4 0.14 350 / 0.85), 0 4px 0 oklch(0.25 0.08 350);
+            font-family: var(--font-display);
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: transform 0.08s ease, filter 0.15s ease;
+        }
+
+            .mc-btn-sakura:hover {
+                filter: brightness(1.08);
+                transform: translateY(-1px);
+                color: #000;
+            }
+
+            .mc-btn-sakura:active {
+                transform: translateY(2px);
+            }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+
+            20%, 60% {
+                transform: translateX(-8px);
+            }
+
+            40%, 80% {
+                transform: translateX(8px);
+            }
+        }
+
+        .shake-row {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .dust-particle {
+            position: absolute;
+            background: linear-gradient(135deg, var(--sakura), var(--diamond));
+            border-radius: 2px;
+            opacity: 0;
+            box-shadow: 0 0 8px var(--bright-rose);
+            animation: driftUpwards linear infinite;
+        }
+
+        @keyframes driftUpwards {
+            0% {
+                transform: translateY(110%) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.45;
+            }
+
+            85% {
+                opacity: 0.45;
+            }
+
+            100% {
+                transform: translateY(-10%) translateX(var(--drift-x)) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 158, 187, 0.2);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <img src="assets/sakura-13.jpg" class="hero-bg">
+    <div class="hero-overlay"></div>
+    <div class="sakura-fx" id="queueLeavesContainer"></div>
+
+    <div id="waitingOverlay" class="match-overlay">
+        <h1 class="fw-bold text-white mb-3 font-pixel" style="font-size: 1.5rem;">Waiting for Players...</h1>
+        <div id="waitingTimerTxt" class="font-pixel py-2 rounded-3 text-center" style="font-size: 1.8rem; color: var(--redstone); background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); min-width: 100px;">10s</div>
+    </div>
+    <div id="countdownOverlay" class="match-overlay d-none">
+        <div id="countdownNumberTxt" class="pop-number">5</div>
+    </div>
+
+    <!-- 🌸 SAKURA VICTORY MODAL OVERLAY -->
+    <div id="gameOverOverlay" class="match-overlay d-none">
+        <div class="mc-panel p-4 text-center" style="max-width: 440px; width: 90%; height: auto !important;">
+            <h1 class="font-pixel text-uppercase mb-3" style="color: var(--sakura); font-size: 1.5rem; text-shadow: 0 0 15px rgba(255, 183, 197, 0.5);">🌸 MATCH OVER 🌸</h1>
+            <div class="cute-pink-panel mx-auto mb-4" style="width: 100%;">
+                <span id="winnerTitleLabel" class="font-meta d-block text-uppercase text-white-50 mb-1">👑 Final Champion 👑</span>
+                <span id="finalWinnerName" class="font-pixel" style="color: var(--sakura); font-size: 1rem; text-shadow: 0 0 8px rgba(255, 183, 197, 0.6);">---</span>
+            </div>
+            <div class="border-bottom border-light border-opacity-10 pb-2 mb-2 text-start">
+                <span class="font-meta text-white-50 text-uppercase">Final Standings</span>
+            </div>
+            <div id="finalScoresStack" class="overflow-y-auto custom-scrollbar mb-4 pe-1" style="max-height: 200px; min-height: 80px;"></div>
+            <button onclick="location.href='lobby.html'" class="mc-btn-sakura w-100 font-pixel" style="font-size: 0.8rem;">RETURN TO LOBBY</button>
+        </div>
+    </div>
+
+    <header class="w-100 p-3 px-4 flex-shrink-0">
+        <h2 id="hudRoundTitle" class="fs-5 fw-bold text-white mb-0 header-center-title">Round --</h2>
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <h1 class="font-pixel mb-0" style="color: var(--bright-rose); font-size: 1.2rem;">Minele</h1>
+            <div><button onclick="leaveArena()" class="mc-btn-gray font-pixel">Leave Arena</button></div>
+        </div>
+    </header>
+
+    <main class="container-fluid flex-grow-1 p-4 overflow-hidden d-flex flex-column justify-content-center">
+        <div class="row g-4 justify-content-center align-items-stretch" style="height: 520px;">
+            <section class="col-xl-5 col-lg-6 d-flex flex-column">
+                <div class="mc-panel position-relative h-100" style="background:transparent; border:none; box-shadow:none;">
+
+                    <div class="d-flex justify-content-between w-100 mb-3">
+                        <div class="px-3 py-1 rounded-3 bg-black border border-light border-opacity-10">
+                            <span id="hudSubmittedCounter" class="text-info fw-bold font-pixel" style="font-size: 0.8rem;">0 / 0 WAITING</span>
+                        </div>
+                        <div class="px-3 py-1 rounded-3 bg-black border border-light border-opacity-10">
+                            <span id="hudAttemptClock" class="text-warning fw-bold font-pixel" style="font-size: 0.8rem;">90s</span>
+                        </div>
+                    </div>
+
+                    <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center" style="position: relative;">
+                        <div id="ambientDustContainer" style="position:absolute; inset:0; pointer-events:none;"></div>
+                        <div class="wordle-matrix-container" id="wordleGridBox"></div>
+                    </div>
+
+                    <div id="roundIntermissionBlock" class="d-none z-3 text-center position-absolute top-50 start-50 translate-middle" style="width: max-content;">
+                        <div id="intermissionTimerLabel" class="font-pixel text-white mb-1" style="font-size: 0.65rem; text-shadow: 0 2px 4px rgba(0,0,0,0.9);">Next round in 5s</div>
+                        <div class="cute-pink-panel">
+                            <span class="font-meta d-block text-uppercase text-white-50 mb-1" style="font-size: 0.5rem; opacity: 0.6;">The item was</span>
+                            <span class="font-pixel" style="color: var(--sakura); font-size: 0.95rem; text-shadow: 0 0 8px rgba(255,158,187,0.45);" id="revealedItemName">---</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="col-xl-3 col-lg-3 d-flex flex-column">
+                <div class="mc-panel p-3 h-100">
+                    <h3 class="font-pixel text-white-50 mb-3" style="font-size: 0.65rem; letter-spacing: 0.1em;">SCOREBOARD</h3>
+                    <div id="leaderboardStackBox" class="flex-grow-1 overflow-y-auto custom-scrollbar"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket, clientName = "";
+        let curRow = 0, curWordLen = 5, curInput = "", isLocked = false;
+        let globalCachedLeaderboard = [];
+
+        window.onload = function () {
+            initSakuraBackground();
+            initAmbientDustAtmosphere();
+            initSocketEngine();
+            window.addEventListener('keydown', processPhysicalKeyboardInput);
+        };
+
+        function leaveArena() {
+            if (socket) socket.emit('player_leave_match');
+            window.location.href = 'lobby.html';
+        }
+
+        function initSocketEngine() {
+            socket = io();
+            socket.emit('join_match');
+
+            fetch('/api/user/profile')
+                .then(r => r.json())
+                .then(d => {
+                    clientName = d.username;
+                });
+
+            socket.on('game_waiting_tick', (data) => {
+                document.getElementById('waitingOverlay').classList.remove('d-none');
+                document.getElementById('waitingTimerTxt').innerText = (data.time ?? data) + "s";
+            });
+
+            socket.on('game_countdown_tick', (data) => {
+                const count = typeof data === 'object' ? (data.time ?? data.count) : data;
+                document.getElementById('waitingOverlay').classList.add('d-none');
+                document.getElementById('countdownOverlay').classList.remove('d-none');
+
+                const countDisplay = document.getElementById('countdownNumberTxt');
+                countDisplay.textContent = count === 'START' ? "START!" : count;
+
+                countDisplay.classList.remove('pulse-tick');
+                void countDisplay.offsetWidth;
+                countDisplay.classList.add('pulse-tick');
+            });
+
+            socket.on('round_init', (data) => {
+                document.getElementById('waitingOverlay').classList.add('d-none');
+                document.getElementById('countdownOverlay').classList.add('d-none');
+                document.getElementById('roundIntermissionBlock').classList.add('d-none');
+                document.getElementById('hudRoundTitle').innerText = `Round ${data.round} of ${data.maxRounds}`;
+
+                curWordLen = data.wordLength;
+                curRow = 0;
+                curInput = "";
+                isLocked = false;
+
+                buildGrid(curWordLen, data.totalAttempts);
+            });
+
+            socket.on('clock_tick', (data) => {
+                document.getElementById('hudAttemptClock').innerText = data.matchClock + "s";
+            });
+
+            socket.on('minele_invalid_word', (data) => {
+                const row = document.getElementById(`row-${curRow}`);
+                if (row) {
+                    row.classList.add('shake-row');
+                    setTimeout(() => row.classList.remove('shake-row'), 400);
+                }
+                isLocked = false;
+            });
+
+            socket.on('minele_row_result', (data) => {
+                paintRow(data.row, data.feedback);
+                isLocked = true;
+            });
+
+            socket.on('minele_next_row', (data) => {
+                renderScoreboard(data.leaderboard);
+                curRow = data.newRow;
+                curInput = "";
+                const me = data.leaderboard.find(p => p.name === clientName);
+                if (me) {
+                    isLocked = me.isFinishedCorrectly;
+                } else {
+                    isLocked = false;
+                }
+            });
+
+            socket.on('leaderboard_update', (data) => {
+                globalCachedLeaderboard = data.leaderboard || [];
+                renderScoreboard(data.leaderboard);
+                if (data.currentRound && data.maxRounds) {
+                    document.getElementById('hudRoundTitle').innerText = `Round ${data.currentRound} of ${data.maxRounds}`;
+                }
+            });
+
+            socket.on('round_intermission', (data) => {
+                document.getElementById('revealedItemName').innerText = data.correctWord;
+                document.getElementById('roundIntermissionBlock').classList.remove('d-none');
+                document.getElementById('intermissionTimerLabel').innerText = `Next round in ${data.intermissionDuration}s`;
+                isLocked = true;
+            });
+
+            socket.on('intermission_tick', (data) => {
+                const timerLabel = document.getElementById('intermissionTimerLabel');
+                if (timerLabel) {
+                    timerLabel.innerText = `Next round in ${data.time}s`;
+                }
+            });
+
+            socket.on('game_over', (data) => {
+                const finalStandings = data.leaderboard || globalCachedLeaderboard || data.finalLeaderboard || [];
+                const ranked = [...finalStandings].sort((a, b) => b.score - a.score);
+                if (ranked.length === 0) return;
+
+                const topScore = ranked[0].score;
+                const topWinners = ranked.filter(p => p.score === topScore);
+
+                const winnerLabel = document.getElementById('winnerTitleLabel');
+                const winnerNameEl = document.getElementById('finalWinnerName');
+
+                if (topWinners.length > 1) {
+                    winnerLabel.innerText = "✨ Multi-Champion Tie! ✨";
+                    winnerNameEl.innerText = topWinners.map(w => w.name === clientName ? "You" : w.name).join(", ");
+                } else {
+                    winnerLabel.innerText = "👑 Final Champion 👑";
+                    winnerNameEl.innerText = topWinners[0].name === clientName ? "You" : topWinners[0].name;
+                }
+
+                const scoresStack = document.getElementById('finalScoresStack');
+                scoresStack.innerHTML = "";
+
+                ranked.forEach((p, idx) => {
+                    let displayRank = idx + 1;
+                    if (idx > 0 && p.score === ranked[idx - 1].score) {
+                        displayRank = ranked.findIndex(item => item.score === p.score) + 1;
+                    }
+
+                    const isYou = (p.name === clientName);
+                    const isHighest = (p.score === topScore && p.score > 0);
+
+                    const row = document.createElement('div');
+                    row.className = `leader-card ${isHighest ? 'rank-1' : ''} ${isYou ? 'is-you' : ''}`;
+
+                    let displayName = isYou ? "You" : p.name;
+                    let nameColorStyle = isHighest ? 'color: var(--diamond) !important;' : isYou ? 'color: var(--sakura) !important;' : '';
+
+                    row.innerHTML = `
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="font-pixel" style="font-size: 0.65rem; opacity: 0.5;">#${displayRank}</span>
+                                <span class="player-name-text" style="${nameColorStyle}">${displayName}</span>
+                            </div>
+                            <span class="font-pixel" style="font-size: 0.75rem; color: ${isHighest ? 'var(--diamond)' : 'var(--sakura)'};">${p.score}p</span>
+                        `;
+                    scoresStack.appendChild(row);
+                });
+
+                document.getElementById('gameOverOverlay').classList.remove('d-none');
+            });
+        }
+
+        function buildGrid(cols, rows) {
+            const grid = document.getElementById('wordleGridBox');
+            grid.innerHTML = "";
+            for (let r = 0; r < rows; r++) {
+                const row = document.createElement('div');
+                row.className = "wordle-row";
+                row.id = `row-${r}`;
+                for (let c = 0; c < cols; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = "wordle-cell";
+                    cell.id = `cell-${r}-${c}`;
+                    row.appendChild(cell);
+                }
+                grid.appendChild(row);
+            }
+        }
+
+        function updateCell() {
+            for (let c = 0; c < curWordLen; c++) {
+                const cell = document.getElementById(`cell-${curRow}-${c}`);
+                if (cell) cell.innerText = curInput[c] || "";
+            }
+        }
+
+        function paintRow(rowIdx, feedback) {
+            feedback.forEach((status, c) => {
+                const cell = document.getElementById(`cell-${rowIdx}-${c}`);
+                if (cell) cell.classList.add(status);
+            });
+        }
+
+        function processPhysicalKeyboardInput(e) {
+            if (isLocked) return;
+            if (e.key === "Enter" && curInput.length === curWordLen) {
+                socket.emit('submit_guess', curInput);
+                isLocked = true;
+            } else if (e.key === "Backspace") {
+                curInput = curInput.slice(0, -1);
+                updateCell();
+            } else if (/^[a-zA-Z]$/.test(e.key) && curInput.length < curWordLen) {
+                curInput += e.key.toUpperCase();
+                updateCell();
+            }
+        }
+
+        function renderScoreboard(players) {
+            const container = document.getElementById('leaderboardStackBox');
+            if (!container) return;
+            container.innerHTML = "";
+            const ranked = [...players].sort((a, b) => b.score - a.score);
+            const highestScore = ranked.length > 0 ? ranked[0].score : -1;
+
+            ranked.forEach((p, idx) => {
+                const isYou = (p.name === clientName);
+                const isHighest = (p.score === highestScore && p.score > 0);
+
+                const card = document.createElement('div');
+                card.className = `leader-card ${isHighest ? 'rank-1' : ''} ${isYou ? 'is-you' : ''}`;
+
+                let nameColorStyle = isHighest ? 'color: var(--diamond) !important;' : isYou ? 'color: var(--sakura) !important;' : '';
+
+                let statusBadge = "";
+                if (p.hasLeft || p.hasAbandoned) {
+                    statusBadge = `<span class="font-pixel text-danger" style="font-size: 0.55rem;">LEFT</span>`;
+                } else if (p.isDisconnected) {
+                    statusBadge = `<span class="font-pixel text-white-50" style="font-size: 0.55rem;">DISCONNECTED</span>`;
+                } else {
+                    const status = p.isFinishedCorrectly ? 'SOLVED' : p.hasSubmittedCurrentRow ? 'WAITING' : 'THINKING';
+                    statusBadge = `<span class="font-pixel" style="font-size:0.55rem; opacity:0.6;">${status}</span>`;
+                }
+
+                card.innerHTML = `
+                        <div class="d-flex flex-column">
+                            <span class="player-name-text" style="${nameColorStyle}">${isYou ? 'You' : p.name}</span>
+                            ${statusBadge}
+                        </div>
+                        <span class="font-pixel" style="font-size: 0.75rem; color: ${isHighest ? 'var(--diamond)' : 'var(--sakura)'};">${p.score}p</span>
+                    `;
+                container.appendChild(card);
+            });
+
+            const racers = players.filter(p => !p.isFinishedCorrectly && !p.hasLeft && !p.hasAbandoned && !p.isDisconnected);
+            const waitingCount = racers.filter(p => p.hasSubmittedCurrentRow).length;
+            document.getElementById('hudSubmittedCounter').innerText = `${waitingCount} / ${racers.length} WAITING`;
+        }
+
+        function initSakuraBackground() {
+            const container = document.getElementById('queueLeavesContainer');
+            if (!container) return;
+            for (let i = 0; i < 12; i++) {
+                const petal = document.createElement('span');
+                petal.className = 'sakura-petal';
+                petal.style.left = (Math.random() * 100) + 'vw';
+                petal.style.animationDuration = (5 + Math.random() * 10) + 's';
+                petal.style.setProperty('--drift', (Math.random() * 40 - 20) + 'px');
+                petal.style.setProperty('--rot-start', (Math.random() * 360) + 'deg');
+                container.appendChild(petal);
+            }
+        }
+
+        function initAmbientDustAtmosphere() {
+            const container = document.getElementById('ambientDustContainer');
+            if (!container) return;
+            for (let i = 0; i < 15; i++) {
+                const node = document.createElement('div');
+                node.className = 'dust-particle';
+                const size = 3 + (i % 3) * 2;
+                node.style.width = size + 'px';
+                node.style.height = size + 'px';
+                node.style.left = ((i * 7) % 100) + '%';
+                node.style.bottom = '-' + (10 + (i * 5) % 40) + 'px';
+                node.style.animationDelay = (i * 0.4).toFixed(1) + 's';
+                node.style.animationDuration = (6 + (i % 4) * 2.5) + 's';
+                node.style.setProperty('--drift-x', ((i % 2 === 0 ? 1 : -1) * (20 + (i * 6) % 45)) + 'px');
+                container.appendChild(node);
+            }
+        }
+    </script>
+</body>
+</html>

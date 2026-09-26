@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixelary - Creative Arena</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Quicksand:wght@500;600;700&family=Silkscreen&display=swap" rel="stylesheet">
+
+    <style>
+        /* ---------- CORE DESIGN SYSTEM TOKENS ---------- */
+        :root {
+            --font-pixel: "Silkscreen", system-ui, sans-serif;
+            --font-display: "Fredoka", "Quicksand", system-ui, sans-serif;
+            --font-sans: "Quicksand", system-ui, sans-serif;
+            --background: #140811;
+            --foreground: oklch(0.98 0.01 90);
+            --card: rgba(25, 15, 22, 0.65);
+            --card-dark: rgba(0, 0, 0, 0.3);
+            --sakura: oklch(0.82 0.14 355);
+            --bright-rose: #ff4081;
+            --gold: oklch(0.84 0.16 82);
+            --diamond: #4dede2;
+            --redstone: oklch(0.62 0.22 28);
+        }
+
+        body {
+            background-color: var(--background);
+            background: linear-gradient(135deg, #180915 0%, #291124 50%, #11050e 100%);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            margin: 0;
+            position: relative;
+        }
+
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -3;
+        }
+
+        .hero-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(20, 12, 18, 0.2), rgba(20, 12, 18, 0.75));
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .sakura-fx {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .sakura-petal {
+            position: absolute;
+            top: -20px;
+            display: block;
+            opacity: 0.85;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) translateX(0) rotate(var(--rot-start));
+                opacity: 0.85;
+            }
+
+            100% {
+                transform: translateY(105vh) translateX(var(--drift)) rotate(calc(var(--rot-start) + 360deg));
+                opacity: 0;
+            }
+        }
+
+        #vfx-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .mc-panel {
+            background: linear-gradient(180deg, rgba(42, 20, 36, 0.85), rgba(26, 11, 22, 0.92));
+            border: 3px solid var(--sakura);
+            border-radius: 24px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 183, 197, 0.25);
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .font-pixel {
+            font-family: var(--font-pixel) !important;
+            letter-spacing: 0.05em;
+        }
+
+        header {
+            background: rgba(15, 8, 13, 0.45);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+
+        .header-center-title {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .mc-btn-gray {
+            background: linear-gradient(180deg, #4e4e4e 0%, #2d2d2d 100%);
+            border: 2px solid #1c1c1c;
+            box-shadow: inset -2px -2px 0 #141414, inset 2px 2px 0 #777;
+            color: #ffffff;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .mc-btn-send {
+            background: linear-gradient(180deg, #4dede2 0%, #20b0a7 100%);
+            border: 1px solid #0f5450;
+            box-shadow: inset -2px -2px 0 #0d423f, inset 2px 2px 0 #a2fff9;
+            color: #0c3331;
+            font-family: var(--font-pixel);
+            font-size: 0.75rem;
+            padding: 0 1.25rem;
+            border-radius: 8px;
+        }
+
+        .chat-body {
+            overflow-y: auto;
+            padding: 0.85rem;
+            height: 100%;
+        }
+
+        .chat-msg {
+            padding: 0.45rem 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.4rem;
+            background: var(--card-dark);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            font-size: 0.88rem;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+            .chat-msg.system {
+                color: var(--gold);
+            }
+
+            .chat-msg.success {
+                color: var(--diamond) !important;
+                font-family: var(--font-display);
+                font-weight: bold;
+            }
+
+        .mc-input {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            padding: 0.55rem 0.9rem;
+            border-radius: 8px;
+            outline: none;
+            width: 100%;
+        }
+
+        .canvas-area-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.85rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* 🟢 EXPANDED 4:3 Canvas Container */
+        .canvas-container {
+            position: relative;
+            background: #ffffff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 720px;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            touch-action: none;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            image-rendering: auto;
+        }
+
+        .canvas-disabled {
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
+        .paint-toolbar {
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+            .paint-toolbar.disabled {
+                pointer-events: none;
+                opacity: 0.35 !important;
+            }
+
+        .color-swatch {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+
+            .color-swatch.active {
+                border-color: #000 !important;
+                box-shadow: 0 0 0 3px var(--diamond) !important;
+                transform: scale(1.25);
+            }
+
+        .leader-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.65rem 0.85rem;
+            border-radius: 10px;
+            background: rgba(18, 7, 15, 0.6);
+            margin-bottom: 0.5rem;
+            border: 2px solid rgba(255, 183, 197, 0.15);
+            transition: all 0.2s ease;
+        }
+
+            .leader-card.rank-1 {
+                border-color: var(--diamond) !important;
+                background: linear-gradient(90deg, rgba(77, 237, 226, 0.12), rgba(18, 7, 15, 0.6));
+                box-shadow: 0 0 10px rgba(77, 237, 226, 0.25);
+            }
+
+            .leader-card.is-you {
+                border-color: var(--sakura);
+                background: linear-gradient(90deg, rgba(255, 183, 197, 0.15), rgba(18, 7, 15, 0.6));
+            }
+
+        .player-name-text {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .leader-card.is-painter {
+            border-color: var(--gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .cute-pink-panel {
+            background: linear-gradient(135deg, rgba(224, 115, 146, 0.2), rgba(255, 183, 197, 0.1));
+            border: 2px solid var(--sakura);
+            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            text-align: center;
+            box-shadow: inset 0 2px 6px rgba(255, 183, 197, 0.2);
+        }
+
+        .match-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 8, 13, 0.85);
+            backdrop-filter: blur(16px);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pop-number {
+            font-family: var(--font-pixel);
+            font-size: 6rem;
+            color: var(--sakura);
+            text-shadow: 0 0 30px rgba(255, 183, 197, 0.4);
+        }
+
+        .pulse-tick {
+            animation: popPulse 0.2s ease-out forwards;
+        }
+
+        @keyframes popPulse {
+            0% {
+                transform: scale(1.6);
+                opacity: 0.2;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .mc-btn-sakura {
+            background: linear-gradient(180deg, oklch(0.92 0.1 355) 0%, oklch(0.8 0.14 350) 45%, oklch(0.62 0.16 350) 100%);
+            border: 2px solid oklch(0.3 0.1 350);
+            color: oklch(0.2 0.06 350);
+            box-shadow: inset 0 2px 0 oklch(0.98 0.08 355 / 0.85), inset 0 -3px 0 oklch(0.4 0.14 350 / 0.85), 0 4px 0 oklch(0.25 0.08 350);
+            font-family: var(--font-display);
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: transform 0.08s ease, filter 0.15s ease;
+        }
+
+        .tool-btn {
+            width: 30px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.15s ease;
+        }
+
+            .tool-btn svg {
+                width: 15px;
+                height: 15px;
+                stroke: #ffffff;
+                fill: none;
+                stroke-width: 2;
+            }
+
+            .tool-btn:hover, .tool-btn.active {
+                background: var(--sakura);
+                border-color: var(--sakura);
+            }
+
+                .tool-btn.active svg {
+                    stroke: #140811;
+                }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 158, 187, 0.2);
+            border-radius: 10px;
+        }
+
+        .font-meta {
+            font-family: var(--font-pixel);
+            font-size: 0.6rem;
+            letter-spacing: 0.08em;
+            opacity: 0.7;
+        }
+
+        /* 🟢 DESKTOP BALANCED ROW: Canvas is larger, chat and scoreboard remain compact */
+        .pixelary-main-row {
+            align-items: center;
+            justify-content: center;
+        }
+
+        .side-companion-panel {
+            height: 440px;
+        }
+
+        /* ---------- 📱 MOBILE ORIENTATION SHIELD (PORTRAIT LOCK) ---------- */
+        #rotatePromptOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(14, 6, 12, 0.97);
+            backdrop-filter: blur(16px);
+            z-index: 99999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .rotate-phone-animation {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1.5rem;
+            animation: rotateDevice 2.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes rotateDevice {
+            0%, 40% {
+                transform: rotate(0deg);
+            }
+
+            70%, 100% {
+                transform: rotate(90deg);
+            }
+        }
+
+        @media (max-width: 1024px) and (orientation: portrait) {
+            #rotatePromptOverlay {
+                display: flex !important;
+            }
+        }
+
+        /* 📱 COMPACT SIDEWAYS MOBILE SCALING */
+        @media (max-height: 520px) and (orientation: landscape) {
+            header.w-100 {
+                padding: 0.3rem 0.8rem !important;
+            }
+
+            main.container-fluid {
+                padding: 0.25rem 0.5rem !important;
+            }
+
+            .side-companion-panel {
+                height: calc(100dvh - 60px) !important;
+            }
+
+            .canvas-container {
+                max-width: 100% !important;
+            }
+
+            .canvas-area-wrapper {
+                padding: 0.25rem !important;
+            }
+
+            .paint-toolbar {
+                padding: 0.35rem 0.5rem !important;
+                gap: 0.4rem !important;
+            }
+
+            .color-swatch {
+                width: 17px !important;
+                height: 17px !important;
+            }
+
+            .tool-btn {
+                width: 25px !important;
+                height: 25px !important;
+            }
+
+            .chat-body {
+                padding: 0.4rem !important;
+            }
+
+            .chat-msg {
+                padding: 0.3rem 0.45rem !important;
+                font-size: 0.76rem !important;
+                margin-bottom: 0.25rem !important;
+            }
+
+            .mc-input {
+                padding: 0.35rem 0.5rem !important;
+                font-size: 0.78rem !important;
+            }
+
+            .leader-card {
+                padding: 0.35rem 0.5rem !important;
+                margin-bottom: 0.25rem !important;
+            }
+
+            .player-name-text {
+                font-size: 0.78rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 📱 ROTATE SCREEN SHIELD (Only appears on mobile portrait) -->
+    <div id="rotatePromptOverlay">
+        <svg class="rotate-phone-animation" viewBox="0 0 24 24" fill="none" stroke="var(--sakura)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+            <path d="M12 18h.01" />
+        </svg>
+        <span class="font-pixel text-sakura small d-block mb-2">🌸 LANDSCAPE MODE REQUIRED 🌸</span>
+        <h2 class="fs-4 fw-bold text-white mb-2" style="font-family: var(--font-display);">Please Rotate Your Device</h2>
+        <p class="text-white-50 small mb-0" style="max-width: 320px; font-family: var(--font-sans);">
+            MineTrivia is designed for a horizontal screen. Turn your phone sideways to start drawing in Pixelary!
+        </p>
+    </div>
+
+    <canvas id="vfx-canvas"></canvas>
+
+    <img src="assets/sakura-1.jpg" alt="" class="hero-bg" onerror="this.style.display='none'">
+    <div class="hero-overlay"></div>
+    <div class="sakura-fx" id="queueLeavesContainer"></div>
+
+    <div id="waitingOverlay" class="match-overlay">
+        <h1 class="fw-bold text-white mb-3 font-pixel" style="font-size: 1.5rem;">Waiting for Artists...</h1>
+        <div id="waitingTimerTxt" class="font-pixel py-2 rounded-3 text-center" style="font-size: 1.8rem; color: var(--redstone); background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); min-width: 100px;">10s</div>
+    </div>
+    <div id="countdownOverlay" class="match-overlay d-none">
+        <div id="countdownNumberTxt" class="pop-number">5</div>
+    </div>
+
+    <!-- 🌸 SAKURA VICTORY MODAL OVERLAY -->
+    <div id="gameOverOverlay" class="match-overlay d-none">
+        <div class="mc-panel p-4 text-center" style="max-width: 440px; width: 90%; height: auto !important;">
+            <h1 class="font-pixel text-uppercase mb-3" style="color: var(--sakura); font-size: 1.5rem; text-shadow: 0 0 15px rgba(255, 183, 197, 0.5);">🌸 MATCH OVER 🌸</h1>
+            <div class="cute-pink-panel mx-auto mb-4" style="width: 100%;">
+                <span id="winnerTitleLabel" class="font-meta d-block text-uppercase text-white-50 mb-1">👑 Final Champion 👑</span>
+                <span id="finalWinnerName" class="font-pixel" style="color: var(--sakura); font-size: 1rem; text-shadow: 0 0 8px rgba(255, 183, 197, 0.6);">---</span>
+            </div>
+            <div class="border-bottom border-light border-opacity-10 pb-2 mb-2 text-start">
+                <span class="font-meta text-white-50 text-uppercase">Final Standings</span>
+            </div>
+            <div id="finalScoresStack" class="overflow-y-auto custom-scrollbar mb-4 pe-1" style="max-height: 200px; min-height: 80px;"></div>
+            <button onclick="location.href='/lobby.html'" class="mc-btn-sakura w-100 font-pixel" style="font-size: 0.8rem;">RETURN TO LOBBY</button>
+        </div>
+    </div>
+
+    <header class="w-100 p-3 px-4 flex-shrink-0">
+        <h2 id="hudRoundTitle" class="fs-5 fw-bold text-white mb-0 header-center-title" style="font-family: var(--font-display);">Round --</h2>
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <h1 class="font-pixel mb-0" style="color: var(--bright-rose); font-size: 1.2rem; letter-spacing: 0.05em;">Pixelary</h1>
+            <div><button onclick="leaveArena()" class="mc-btn-gray">Leave Arena</button></div>
+        </div>
+    </header>
+
+    <main class="container-fluid flex-grow-1 p-3 p-lg-4 overflow-hidden d-flex flex-column justify-content-center">
+        <div class="row g-2 g-lg-4 pixelary-main-row">
+
+            <!-- LEFT COLUMN: CHAT (COMPACT COMPANION PANEL) -->
+            <section class="col-3 col-lg-3 col-xl-3 d-flex flex-column gap-2 side-companion-panel">
+                <div class="mc-panel flex-grow-1" style="min-height: 0;">
+                    <div id="chatWindowBox" class="chat-body custom-scrollbar"></div>
+                </div>
+                <form id="guessFormContainer" onsubmit="submitPlayerGuess(event)" class="mc-panel p-2 d-flex flex-row gap-2 flex-shrink-0" style="height: auto; z-index: 100; position: relative;">
+                    <input type="text" id="chatInputField" class="mc-input" placeholder="Type your guess..." autocomplete="off">
+                    <button type="submit" id="chatSendBtn" class="mc-btn-send">SEND</button>
+                </form>
+            </section>
+
+            <!-- CENTER COLUMN: LARGER UNCOMPRESSED HERO CANVAS -->
+            <section class="col-6 col-lg-6 col-xl-6 d-flex flex-column align-items-center justify-content-center" style="min-height: 0;">
+                <div class="mc-panel w-100" style="max-width: 780px;">
+                    <div class="p-2 p-lg-3 bg-black bg-opacity-10 border-bottom border-light border-opacity-10 d-flex justify-content-center align-items-center flex-shrink-0" style="position: relative; height: 50px;">
+                        <div id="hudTargetItemLabel" class="fw-bold text-uppercase font-pixel" style="color: var(--sakura); font-size: 1.05rem; display: none;">???</div>
+                        <div class="px-3 py-1 rounded-3 bg-black bg-opacity-30 position-absolute end-0 me-3">
+                            <span id="hudMatchClock" class="text-warning fw-bold font-pixel">2:00</span>
+                        </div>
+                    </div>
+
+                    <div class="canvas-area-wrapper">
+                        <div class="canvas-container"><canvas id="paintCanvas" class="canvas-disabled"></canvas></div>
+                    </div>
+
+                    <div class="paint-toolbar disabled flex-shrink-0" id="studioPaintControls">
+                        <div class="d-flex gap-1 gap-sm-2 align-items-center">
+                            <button class="tool-btn" onclick="emitUndoStroke()" title="Undo"><svg viewBox="0 0 24 24"><path d="M3 7v6h6" /><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" /></svg></button>
+                            <button class="tool-btn" onclick="clearCanvasCompletely(true)" title="Clear Canvas"><svg viewBox="0 0 24 24"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg></button>
+                            <button class="tool-btn" id="eraserBtn" onclick="toggleEraser()" title="Eraser"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21H7Z" /><path d="M22 21H7" /><path d="m5 11 9 9" /></svg></button>
+                        </div>
+
+                        <!-- UNIFIED COLOR PALETTE ENGINE -->
+                        <div class="d-flex flex-column align-items-center gap-1">
+                            <div class="d-flex flex-wrap gap-1 justify-content-center" id="standardColorRow">
+                                <div class="color-swatch active" style="background: #140811;" onclick="pickStudioColor('#140811', this)"></div>
+                                <div class="color-swatch" style="background: #ffffff;" onclick="pickStudioColor('#ffffff', this)"></div>
+                                <div class="color-swatch" style="background: #ff4081;" onclick="pickStudioColor('#ff4081', this)"></div>
+                                <div class="color-swatch" style="background: #4dede2;" onclick="pickStudioColor('#4dede2', this)"></div>
+                                <div class="color-swatch" style="background: #ffc107;" onclick="pickStudioColor('#ffc107', this)"></div>
+                                <div class="color-swatch" style="background: #8b4513;" onclick="pickStudioColor('#8b4513', this)"></div>
+                                <div class="color-swatch" style="background: #2e7d32;" onclick="pickStudioColor('#2e7d32', this)"></div>
+                                <div class="color-swatch" style="background: #e63946;" onclick="pickStudioColor('#e63946', this)"></div>
+                                <div class="position-relative" title="Pick Custom Color">
+                                    <input type="color" id="customColorPicker" oninput="handleColorPickerInput(this.value)" style="opacity: 0; position: absolute; inset: 0; cursor: pointer;">
+                                    <div id="customColorDisplay" class="color-swatch" style="background: linear-gradient(45deg, red, blue, green, yellow);"></div>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-1 align-items-center mt-1" id="memorySlotsRow">
+                                <div class="color-swatch custom-slot" style="width: 18px; height: 18px;" onclick="clickCustomSlot(0, this)" title="Click to use, or pick rainbow color first to overwrite"></div>
+                                <div class="color-swatch custom-slot" style="width: 18px; height: 18px;" onclick="clickCustomSlot(1, this)" title="Click to use, or pick rainbow color first to overwrite"></div>
+                                <div class="color-swatch custom-slot" style="width: 18px; height: 18px;" onclick="clickCustomSlot(2, this)" title="Click to use, or pick rainbow color first to overwrite"></div>
+                                <div class="color-swatch custom-slot" style="width: 18px; height: 18px;" onclick="clickCustomSlot(3, this)" title="Click to use, or pick rainbow color first to overwrite"></div>
+                                <div class="color-swatch custom-slot" style="width: 18px; height: 18px;" onclick="clickCustomSlot(4, this)" title="Click to use, or pick rainbow color first to overwrite"></div>
+                            </div>
+                        </div>
+
+                        <input type="range" id="brushSizeInput" min="2" max="30" value="6" class="form-range" style="width: 50px;" title="Brush Size">
+                    </div>
+                </div>
+
+                <div id="roundIntermissionBlock" class="d-none z-3 text-center position-absolute top-50 start-50 translate-middle" style="width: max-content;">
+                    <div id="intermissionTimerLabel" class="font-pixel text-white mb-1" style="font-size: 0.65rem; text-shadow: 0 2px 4px rgba(0,0,0,0.9);">Next round in 5s</div>
+                    <div class="cute-pink-panel">
+                        <span class="font-meta d-block text-uppercase text-white-50 mb-1" style="font-size: 0.5rem; opacity: 0.6;">The word was</span>
+                        <span id="revealedItemName" class="font-pixel" style="color: var(--sakura); font-size: 0.95rem; text-shadow: 0 0 8px rgba(255,158,187,0.45);">---</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: SCOREBOARD (COMPACT COMPANION PANEL) -->
+            <section class="col-3 col-lg-3 col-xl-3 d-flex flex-column side-companion-panel">
+                <div class="mc-panel p-3 h-100 d-flex flex-column" style="min-height: 0;">
+                    <h3 class="font-pixel text-white-50 mb-2 mb-lg-3 flex-shrink-0" style="font-size: 0.65rem; letter-spacing: 0.1em;">SCOREBOARD</h3>
+                    <div id="leaderboardStackBox" class="flex-grow-1 overflow-y-auto custom-scrollbar"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket, canvas, ctx;
+        let isMyTurnToDraw = false;
+        let isDrawing = false;
+        let brushColor = "#140811";
+        let brushSize = 6;
+        let isEraserActive = false;
+        let isCustomPickerArmed = false;
+        let localCanvasHistory = [];
+        let clientIdentityName = "";
+        let currentPainterName = "";
+        let customSlots = ["#ff5e5e", "#4dede2", "#ffca1a", "#9b59b6", "#ffffff"];
+        let currentStrokeId = 0;
+
+        window.onload = function () {
+            initSakuraBackground();
+            initPaintCanvasEngine();
+            initSocketEngine();
+            document.getElementById('brushSizeInput').addEventListener('input', (e) => { brushSize = parseInt(e.target.value); });
+            initCustomSlotsUI();
+        };
+
+        function leaveArena() {
+            if (socket) socket.emit('player_leave_match');
+            window.location.href = '/lobby.html';
+        }
+
+        function setPainterControlsActive(active) {
+            isMyTurnToDraw = active;
+            const toolbar = document.getElementById('studioPaintControls');
+            const canvasEl = document.getElementById('paintCanvas');
+            const form = document.getElementById('guessFormContainer');
+
+            if (toolbar) toolbar.classList.toggle('disabled', !active);
+            if (canvasEl) canvasEl.classList.toggle('canvas-disabled', !active);
+
+            if (form) {
+                if (active) form.classList.add('d-none');
+                else form.classList.remove('d-none');
+            }
+        }
+
+        function initSocketEngine() {
+            socket = io();
+            socket.emit('join_match');
+            fetch('/api/user/profile').then(res => res.json()).then(data => { if (data.username) clientIdentityName = data.username; });
+
+            socket.on('game_waiting_tick', (data) => {
+                document.getElementById('waitingOverlay').classList.remove('d-none');
+                document.getElementById('waitingTimerTxt').textContent = `${data.time ?? data}s`;
+            });
+
+            socket.on('game_countdown_tick', (data) => {
+                document.getElementById('waitingOverlay').classList.add('d-none');
+                document.getElementById('countdownOverlay').classList.remove('d-none');
+                const countDisplay = document.getElementById('countdownNumberTxt');
+                countDisplay.textContent = data.time === 'START' ? "START!" : data.time;
+                countDisplay.classList.remove('pulse-tick');
+                void countDisplay.offsetWidth;
+                countDisplay.classList.add('pulse-tick');
+            });
+
+            socket.on('pixelary_role_init', (data) => {
+                currentPainterName = data.painterName;
+                setPainterControlsActive(data.isPainter);
+                const wordLabel = document.getElementById('hudTargetItemLabel');
+                if (data.isPainter) {
+                    wordLabel.textContent = data.secretWord;
+                    wordLabel.style.display = 'block';
+                } else {
+                    wordLabel.style.display = 'none';
+                }
+                if (data.canvasHistory) redrawCanvasFromHistory(data.canvasHistory);
+            });
+
+            socket.on('round_init', (data) => {
+                currentPainterName = data.currentPainter;
+                document.getElementById('waitingOverlay').classList.add('d-none');
+                document.getElementById('countdownOverlay').classList.add('d-none');
+                document.getElementById('roundIntermissionBlock').classList.add('d-none');
+                document.getElementById('hudRoundTitle').textContent = `Round ${data.round} of ${data.maxRounds}`;
+
+                isMyTurnToDraw = data.isPainter;
+                const wordLabel = document.getElementById('hudTargetItemLabel');
+                if (isMyTurnToDraw) {
+                    wordLabel.textContent = data.secretWord;
+                    wordLabel.style.display = 'block';
+                } else {
+                    wordLabel.style.display = 'none';
+                }
+
+                setPainterControlsActive(isMyTurnToDraw);
+                clearCanvasCompletely(false);
+            });
+
+            socket.on('clock_tick', (data) => {
+                const sec = data.matchClock ?? data;
+                document.getElementById('hudMatchClock').textContent = `${Math.floor(sec / 60)}:${sec % 60 < 10 ? '0' : ''}${sec % 60}`;
+            });
+
+            socket.on('round_intermission', (data) => {
+                document.getElementById('revealedItemName').textContent = data.correctWord;
+                document.getElementById('roundIntermissionBlock').classList.remove('d-none');
+                document.getElementById('intermissionTimerLabel').innerText = `Next round in ${data.intermissionDuration}s`;
+                setPainterControlsActive(false);
+            });
+
+            socket.on('intermission_tick', (data) => {
+                const timerLabel = document.getElementById('intermissionTimerLabel');
+                if (timerLabel) timerLabel.innerText = `Next round in ${data.time}s`;
+            });
+
+            socket.on('leaderboard_update', (data) => {
+                renderScoreboard(data.leaderboard);
+                if (data.maxRounds && data.currentRound) {
+                    document.getElementById('hudRoundTitle').textContent = `Round ${data.currentRound} of ${data.maxRounds}`;
+                }
+            });
+
+            socket.on('chat_message', (data) => appendChatMessage(data.sender, data.text, data.type));
+
+            socket.on('draw_stroke', (stroke) => {
+                if (!isMyTurnToDraw) {
+                    renderRemoteStroke(stroke);
+                    localCanvasHistory.push(stroke);
+                }
+            });
+
+            socket.on('clear_canvas', () => clearCanvasCompletely(false));
+            socket.on('canvas_redraw_all', (data) => redrawCanvasFromHistory(data.history));
+            socket.on('redirect_to_lobby', (data) => { alert(data.reason); window.location.href = '/lobby.html'; });
+
+            socket.on('game_over', (data) => {
+                const finalStandings = data.leaderboard || data.finalLeaderboard || [];
+                const ranked = [...finalStandings].sort((a, b) => b.score - a.score);
+                if (ranked.length === 0) return;
+
+                const topScore = ranked[0].score;
+                const topWinners = ranked.filter(p => p.score === topScore);
+
+                const winnerLabel = document.getElementById('winnerTitleLabel');
+                const winnerNameEl = document.getElementById('finalWinnerName');
+
+                if (topWinners.length > 1) {
+                    winnerLabel.innerText = "✨ Multi-Champion Tie! ✨";
+                    winnerNameEl.innerText = topWinners.map(w => w.name === clientIdentityName ? "You" : w.name).join(", ");
+                } else {
+                    winnerLabel.innerText = "👑 Final Champion 👑";
+                    winnerNameEl.innerText = topWinners[0].name === clientIdentityName ? "You" : topWinners[0].name;
+                }
+
+                const scoresStack = document.getElementById('finalScoresStack');
+                scoresStack.innerHTML = "";
+
+                ranked.forEach((p, idx) => {
+                    let displayRank = idx + 1;
+                    if (idx > 0 && p.score === ranked[idx - 1].score) {
+                        displayRank = ranked.findIndex(item => item.score === p.score) + 1;
+                    }
+
+                    const isYou = (p.name === clientIdentityName);
+                    const isHighest = (p.score === topScore && p.score > 0);
+
+                    const row = document.createElement('div');
+                    row.className = `leader-card ${isHighest ? 'rank-1' : ''} ${isYou ? 'is-you' : ''}`;
+
+                    let displayName = isYou ? "You" : p.name;
+                    let nameColorStyle = isHighest ? 'color: var(--diamond) !important;' : isYou ? 'color: var(--sakura) !important;' : '';
+
+                    row.innerHTML = `
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="font-pixel" style="font-size: 0.65rem; opacity: 0.5;">#${displayRank}</span>
+                                    <span class="player-name-text" style="${nameColorStyle}">${displayName}</span>
+                                </div>
+                                <span class="font-pixel" style="font-size: 0.75rem; color: ${isHighest ? 'var(--diamond)' : 'var(--sakura)'};">${p.score}p</span>
+                            `;
+                    scoresStack.appendChild(row);
+                });
+
+                document.getElementById('gameOverOverlay').classList.remove('d-none');
+            });
+        }
+
+        function initPaintCanvasEngine() {
+            canvas = document.getElementById('paintCanvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = 800; canvas.height = 600;
+
+            function handleStart(e) {
+                if (!isMyTurnToDraw) return;
+                isDrawing = true;
+                currentStrokeId = Date.now();
+                const pos = getCoords(e);
+                const startSegment = { strokeId: currentStrokeId, type: 'start', x: pos.x / 800, y: pos.y / 600, color: isEraserActive ? "#ffffff" : brushColor, width: brushSize };
+                ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
+                ctx.strokeStyle = startSegment.color; ctx.lineWidth = startSegment.width; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+                localCanvasHistory.push(startSegment);
+                socket.emit('draw_stroke', startSegment);
+            }
+
+            function handleMove(e) {
+                if (!isDrawing || !isMyTurnToDraw) return;
+                if (e.cancelable) e.preventDefault();
+                const pos = getCoords(e);
+                const segment = { strokeId: currentStrokeId, type: 'draw', x: pos.x / 800, y: pos.y / 600, color: isEraserActive ? "#ffffff" : brushColor, width: brushSize };
+                ctx.lineTo(pos.x, pos.y); ctx.stroke();
+                localCanvasHistory.push(segment);
+                socket.emit('draw_stroke', segment);
+            }
+
+            canvas.addEventListener('mousedown', handleStart);
+            canvas.addEventListener('mousemove', handleMove);
+            window.addEventListener('mouseup', () => isDrawing = false);
+            canvas.addEventListener('touchstart', (e) => handleStart(e.touches[0]), { passive: false });
+            canvas.addEventListener('touchmove', (e) => handleMove(e.touches[0]), { passive: false });
+            canvas.addEventListener('touchend', () => isDrawing = false);
+        }
+
+        function renderRemoteStroke(s) {
+            if (s.type === 'start') {
+                ctx.beginPath(); ctx.moveTo((s.x || 0) * 800, (s.y || 0) * 600);
+                ctx.strokeStyle = s.color; ctx.lineWidth = s.width; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            } else if (s.type === 'draw') {
+                ctx.lineTo((s.x || 0) * 800, (s.y || 0) * 600); ctx.stroke();
+            }
+        }
+
+        function redrawCanvasFromHistory(history) {
+            localCanvasHistory = history || [];
+            ctx.clearRect(0, 0, 800, 600);
+            ctx.beginPath();
+            localCanvasHistory.forEach(s => renderRemoteStroke(s));
+        }
+
+        function getCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = 800 / rect.width;
+            const scaleY = 600 / rect.height;
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+        }
+
+        /* --- UNIFIED COLOR PALETTE ENGINE --- */
+        function clearAllActiveSwatches() {
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+            isEraserActive = false;
+            document.getElementById('eraserBtn').classList.remove('active');
+        }
+
+        function pickStudioColor(color, el) {
+            clearAllActiveSwatches();
+            brushColor = color;
+            isCustomPickerArmed = false;
+            if (el) el.classList.add('active');
+        }
+
+        function handleColorPickerInput(color) {
+            clearAllActiveSwatches();
+            brushColor = color;
+            isCustomPickerArmed = true;
+            const display = document.getElementById('customColorDisplay');
+            display.style.background = color;
+            display.classList.add('active');
+        }
+
+        function initCustomSlotsUI() {
+            const slotEls = document.querySelectorAll('.custom-slot');
+            slotEls.forEach((el, idx) => { el.style.background = customSlots[idx]; });
+        }
+
+        function clickCustomSlot(idx, el) {
+            if (isCustomPickerArmed) {
+                customSlots[idx] = brushColor;
+                el.style.background = brushColor;
+                isCustomPickerArmed = false;
+            }
+            clearAllActiveSwatches();
+            brushColor = customSlots[idx];
+            el.classList.add('active');
+        }
+
+        function toggleEraser() {
+            isEraserActive = !isEraserActive;
+            const btn = document.getElementById('eraserBtn');
+            if (isEraserActive) {
+                clearAllActiveSwatches();
+                isCustomPickerArmed = false;
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
+        function clearCanvasCompletely(emit) {
+            localCanvasHistory = [];
+            ctx.clearRect(0, 0, 800, 600);
+            if (emit && socket && isMyTurnToDraw) socket.emit('clear_canvas');
+        }
+
+        function emitUndoStroke() {
+            if (!isMyTurnToDraw) return;
+            if (localCanvasHistory && localCanvasHistory.length > 0) {
+                const lastId = localCanvasHistory[localCanvasHistory.length - 1].strokeId;
+                while (localCanvasHistory.length > 0 && localCanvasHistory[localCanvasHistory.length - 1].strokeId === lastId) {
+                    localCanvasHistory.pop();
+                }
+                ctx.clearRect(0, 0, 800, 600);
+                localCanvasHistory.forEach(s => renderRemoteStroke(s));
+                socket.emit('undo_stroke');
+            }
+        }
+
+        function renderScoreboard(players) {
+            const container = document.getElementById('leaderboardStackBox');
+            if (!container || !players) return;
+            container.innerHTML = '';
+            const playerList = Array.isArray(players) ? players : Object.values(players);
+            playerList.sort((a, b) => b.score - a.score);
+            const highestScore = playerList.length > 0 ? playerList[0].score : -1;
+
+            playerList.forEach((p, idx) => {
+                const isPainter = (p.name === currentPainterName);
+                const isYou = (p.name === clientIdentityName);
+                const isHighest = (p.score === highestScore && p.score > 0);
+
+                const div = document.createElement('div');
+                div.className = `leader-card ${isHighest ? 'rank-1' : ''} ${isPainter ? 'is-painter' : ''} ${isYou ? 'is-you' : ''}`;
+
+                let nameColorStyle = isHighest ? 'color: var(--diamond) !important;' : isYou ? 'color: var(--sakura) !important;' : '';
+
+                let statusBadge = "";
+                if (p.hasLeft || p.hasAbandoned) {
+                    statusBadge = `<span class="font-pixel text-danger" style="font-size: 0.55rem;">LEFT</span>`;
+                } else if (p.isDisconnected) {
+                    statusBadge = `<span class="font-pixel text-white-50" style="font-size: 0.55rem;">DISCONNECTED</span>`;
+                } else if (isPainter) {
+                    statusBadge = `<span class="font-pixel text-warning" style="font-size: 0.55rem;">PAINTER</span>`;
+                }
+
+                div.innerHTML = `
+                            <div class="d-flex flex-column">
+                                <span class="player-name-text" style="${nameColorStyle}">${isYou ? 'You' : p.name}</span>
+                                ${statusBadge}
+                            </div>
+                            <span class="font-pixel" style="font-size: 0.75rem; color: ${isHighest ? 'var(--diamond)' : 'var(--sakura)'};">${p.score}p</span>`;
+                container.appendChild(div);
+            });
+        }
+
+        function appendChatMessage(sender, text, type) {
+            const box = document.getElementById('chatWindowBox');
+            if (!box) return;
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-msg ${type === 'success' ? 'success' : type || ''}`;
+            msgDiv.innerHTML = `<span style="opacity: 0.45; margin-right: 6px; font-family: var(--font-pixel); font-size: 0.65rem;">[${sender === clientIdentityName ? 'You' : sender}]:</span> <span>${text}</span>`;
+            box.appendChild(msgDiv);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function submitPlayerGuess(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInputField');
+            if (input && input.value.trim()) {
+                socket.emit('submit_guess', input.value.trim());
+                input.value = '';
+            }
+        }
+
+        function initSakuraBackground() {
+            const container = document.getElementById('queueLeavesContainer');
+            if (!container) return;
+            for (let i = 0; i < 12; i++) {
+                const petal = document.createElement('span');
+                petal.className = 'sakura-petal';
+                petal.style.left = (Math.random() * 100) + 'vw';
+                petal.style.animationDuration = (5 + Math.random() * 10) + 's';
+                petal.style.setProperty('--drift', (Math.random() * 40 - 20) + 'px');
+                petal.style.setProperty('--rot-start', (Math.random() * 360) + 'deg');
+                container.appendChild(petal);
+            }
+        }
+    </script>
+    <script src="butterfly.js"></script>
+</body>
+</html>

@@ -1,0 +1,2701 @@
+{
+  "arrow": [
+    {
+      "recipe_data/FLINT.png": {
+        "alt": "FLINT",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/FEATHER.png": {
+        "alt": "FEATHER",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "harness": [
+    {
+      "recipe_data/LEATHER.png": {
+        "alt": "LEATHER",
+        "slots": [
+          0,
+          1,
+          2
+        ]
+      },
+      "recipe_data/GLASS.png": {
+        "alt": "GLASS",
+        "slots": [
+          3,
+          5
+        ]
+      },
+      "recipe_data/WHITE_WOOL.png": {
+        "alt": "WHITE_WOOL",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "bow": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          1,
+          3,
+          7
+        ]
+      },
+      "recipe_data/STRING.png": {
+        "alt": "STRING",
+        "slots": [
+          2,
+          5,
+          8
+        ]
+      }
+    }
+  ],
+  "brush": [
+    {
+      "recipe_data/FEATHER.png": {
+        "alt": "FEATHER",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/COPPER_INGOT.png": {
+        "alt": "COPPER_INGOT",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "bundle": [
+    {
+      "recipe_data/STRING.png": {
+        "alt": "STRING",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/LEATHER.png": {
+        "alt": "LEATHER",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "clock": [
+    {
+      "recipe_data/GOLD_INGOT.png": {
+        "alt": "GOLD_INGOT",
+        "slots": [
+          1,
+          3,
+          5,
+          7
+        ]
+      },
+      "recipe_data/REDSTONE.png": {
+        "alt": "REDSTONE",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "compass": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          1,
+          3,
+          5,
+          7
+        ]
+      },
+      "recipe_data/REDSTONE.png": {
+        "alt": "REDSTONE",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "axe": [
+    {
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          0,
+          1,
+          3
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          4,
+          7
+        ]
+      }
+    }
+  ],
+  "boots": [
+    {
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          3,
+          5,
+          6,
+          8
+        ]
+      }
+    }
+  ],
+  "chestplate": [
+    {
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "helmet": [
+    {
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5
+        ]
+      }
+    }
+  ],
+  "hoe": [
+    {
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          0,
+          1
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          4,
+          7
+        ]
+      }
+    }
+  ],
+  "leggings": [
+    {
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          8
+        ]
+      }
+    }
+  ],
+  "pickaxe": [
+    {
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          0,
+          1,
+          2
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          4,
+          7
+        ]
+      }
+    }
+  ],
+  "shovel": [
+    {
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          4,
+          7
+        ]
+      }
+    }
+  ],
+  "sword": [
+    {
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          1,
+          4
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "crossbow": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          0,
+          2,
+          7
+        ]
+      },
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/STRING.png": {
+        "alt": "STRING",
+        "slots": [
+          3,
+          5
+        ]
+      },
+      "recipe_data/TRIPWIRE_HOOK.png": {
+        "alt": "TRIPWIRE_HOOK",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "spear": [
+    {
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          2
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          4,
+          6
+        ]
+      }
+    }
+  ],
+  "fishing rod": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          2,
+          4,
+          6
+        ]
+      },
+      "recipe_data/STRING.png": {
+        "alt": "STRING",
+        "slots": [
+          5,
+          8
+        ]
+      }
+    }
+  ],
+  "flint and steel": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          3
+        ]
+      },
+      "recipe_data/FLINT.png": {
+        "alt": "FLINT",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "lead": [
+    {
+      "recipe_data/STRING.png": {
+        "alt": "STRING",
+        "slots": [
+          0,
+          1,
+          3,
+          4,
+          8
+        ]
+      }
+    }
+  ],
+  "mace": [
+    {
+      "recipe_data/HEAVY_CORE.png": {
+        "alt": "HEAVY_CORE",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/BREEZE_ROD.png": {
+        "alt": "BREEZE_ROD",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "name tag": [
+    {
+      "recipe_data/GOLD_NUGGET.png": {
+        "alt": "GOLD_NUGGET",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/PAPER.png": {
+        "alt": "PAPER",
+        "slots": [
+          3
+        ]
+      }
+    }
+  ],
+  "recovery compass": [
+    {
+      "recipe_data/ECHO_SHARD.png": {
+        "alt": "ECHO_SHARD",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/COMPASS.png": {
+        "alt": "COMPASS",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "saddle": [
+    {
+      "recipe_data/LEATHER.png": {
+        "alt": "LEATHER",
+        "slots": [
+          1,
+          3,
+          5
+        ]
+      },
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "shears": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          1,
+          3
+        ]
+      }
+    }
+  ],
+  "shield": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          7
+        ]
+      },
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          1
+        ]
+      }
+    }
+  ],
+  "spyglass": [
+    {
+      "recipe_data/AMETHYST_SHARD.png": {
+        "alt": "AMETHYST_SHARD",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/COPPER_INGOT.png": {
+        "alt": "COPPER_INGOT",
+        "slots": [
+          4,
+          7
+        ]
+      }
+    }
+  ],
+  "turtle shell": [
+    {
+      "recipe_data/TURTLE_SCUTE.png": {
+        "alt": "TURTLE_SCUTE",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5
+        ]
+      }
+    }
+  ],
+  "wolf armor": [
+    {
+      "recipe_data/ARMADILLO_SCUTE.png": {
+        "alt": "ARMADILLO_SCUTE",
+        "slots": [
+          0,
+          3,
+          4,
+          5,
+          6,
+          8
+        ]
+      }
+    }
+  ],
+  "planks": [
+    {
+      "recipe_data/OAK_LOG.png": {
+        "alt": "OAK_LOG",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "slab": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "stairs": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          3,
+          4,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "wood": [
+    {
+      "recipe_data/OAK_LOG.png": {
+        "alt": "OAK_LOG",
+        "slots": [
+          0,
+          1,
+          3,
+          4
+        ]
+      }
+    }
+  ],
+  "andesite": [
+    {
+      "recipe_data/DIORITE.png": {
+        "alt": "DIORITE",
+        "slots": [
+          0
+        ]
+      },
+      "recipe_data/COBBLESTONE.png": {
+        "alt": "COBBLESTONE",
+        "slots": [
+          1
+        ]
+      }
+    }
+  ],
+  "concrete powder": [
+    {
+      "recipe_data/WHITE_DYE.png": {
+        "alt": "WHITE_DYE",
+        "slots": [
+          0
+        ]
+      },
+      "recipe_data/SAND.png": {
+        "alt": "SAND",
+        "slots": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "recipe_data/GRAVEL.png": {
+        "alt": "GRAVEL",
+        "slots": [
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "stained glass": [
+    {
+      "recipe_data/GLASS.png": {
+        "alt": "GLASS",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/WHITE_DYE.png": {
+        "alt": "WHITE_DYE",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "bookshelf": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          1,
+          2,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/BOOK.png": {
+        "alt": "BOOK",
+        "slots": [
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "bricks": [
+    {
+      "recipe_data/BRICK.png": {
+        "alt": "BRICK",
+        "slots": [
+          0,
+          1,
+          3,
+          4
+        ]
+      }
+    }
+  ],
+  "clay": [
+    {
+      "recipe_data/CLAY_BALL.png": {
+        "alt": "CLAY_BALL",
+        "slots": [
+          0,
+          1,
+          3,
+          4
+        ]
+      }
+    }
+  ],
+  "coarse dirt": [
+    {
+      "recipe_data/DIRT.png": {
+        "alt": "DIRT",
+        "slots": [
+          0,
+          4
+        ]
+      },
+      "recipe_data/GRAVEL.png": {
+        "alt": "GRAVEL",
+        "slots": [
+          1,
+          3
+        ]
+      }
+    }
+  ],
+  "copper grate": [
+    {
+      "recipe_data/COPPER_BLOCK.png": {
+        "alt": "COPPER_BLOCK",
+        "slots": [
+          1,
+          3,
+          5,
+          7
+        ]
+      }
+    }
+  ],
+  "diorite": [
+    {
+      "recipe_data/COBBLESTONE.png": {
+        "alt": "COBBLESTONE",
+        "slots": [
+          0,
+          4
+        ]
+      },
+      "recipe_data/QUARTZ.png": {
+        "alt": "QUARTZ",
+        "slots": [
+          1,
+          3
+        ]
+      }
+    }
+  ],
+  "dried ghast": [
+    {
+      "recipe_data/GHAST_TEAR.png": {
+        "alt": "GHAST_TEAR",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/SOUL_SAND.png": {
+        "alt": "SOUL_SAND",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "glowstone": [
+    {
+      "recipe_data/GLOWSTONE_DUST.png": {
+        "alt": "GLOWSTONE_DUST",
+        "slots": [
+          0,
+          1,
+          3,
+          4
+        ]
+      }
+    }
+  ],
+  "granite": [
+    {
+      "recipe_data/DIORITE.png": {
+        "alt": "DIORITE",
+        "slots": [
+          0
+        ]
+      },
+      "recipe_data/QUARTZ.png": {
+        "alt": "QUARTZ",
+        "slots": [
+          1
+        ]
+      }
+    }
+  ],
+  "hay bale": [
+    {
+      "recipe_data/WHEAT.png": {
+        "alt": "WHEAT",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "magma block": [
+    {
+      "recipe_data/MAGMA_CREAM.png": {
+        "alt": "MAGMA_CREAM",
+        "slots": [
+          0,
+          1,
+          3,
+          4
+        ]
+      }
+    }
+  ],
+  "jack o lantern": [
+    {
+      "recipe_data/CARVED_PUMPKIN.png": {
+        "alt": "CARVED_PUMPKIN",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/TORCH.png": {
+        "alt": "TORCH",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "packed mud": [
+    {
+      "recipe_data/MUD.png": {
+        "alt": "MUD",
+        "slots": [
+          0
+        ]
+      },
+      "recipe_data/WHEAT.png": {
+        "alt": "WHEAT",
+        "slots": [
+          1
+        ]
+      }
+    }
+  ],
+  "sea lantern": [
+    {
+      "recipe_data/PRISMARINE_SHARD.png": {
+        "alt": "PRISMARINE_SHARD",
+        "slots": [
+          0,
+          2,
+          6,
+          8
+        ]
+      },
+      "recipe_data/PRISMARINE_CRYSTALS.png": {
+        "alt": "PRISMARINE_CRYSTALS",
+        "slots": [
+          1,
+          3,
+          4,
+          5,
+          7
+        ]
+      }
+    }
+  ],
+  "snow block": [
+    {
+      "recipe_data/SNOWBALL.png": {
+        "alt": "SNOWBALL",
+        "slots": [
+          0,
+          1,
+          3,
+          4
+        ]
+      }
+    }
+  ],
+  "tinted glass": [
+    {
+      "recipe_data/AMETHYST_SHARD.png": {
+        "alt": "AMETHYST_SHARD",
+        "slots": [
+          1,
+          3,
+          5,
+          7
+        ]
+      },
+      "recipe_data/GLASS.png": {
+        "alt": "GLASS",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "wool": [
+    {
+      "recipe_data/STRING.png": {
+        "alt": "STRING",
+        "slots": [
+          0,
+          1,
+          3,
+          4
+        ]
+      }
+    }
+  ],
+  "boat": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "fence": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          5,
+          6,
+          8
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          4,
+          7
+        ]
+      }
+    }
+  ],
+  "shelf": [
+    {
+      "recipe_data/STRIPPED_OAK_LOG.png": {
+        "alt": "STRIPPED_OAK_LOG",
+        "slots": [
+          0,
+          1,
+          2,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "sign": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "anvil": [
+    {
+      "recipe_data/IRON_BLOCK.png": {
+        "alt": "IRON_BLOCK",
+        "slots": [
+          0,
+          1,
+          2
+        ]
+      },
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          4,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "armor stand": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          0,
+          1,
+          2,
+          4,
+          6,
+          8
+        ]
+      },
+      "recipe_data/SMOOTH_STONE_SLAB.png": {
+        "alt": "SMOOTH_STONE_SLAB",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "barrel": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          2,
+          3,
+          5,
+          6,
+          8
+        ]
+      },
+      "recipe_data/OAK_SLAB.png": {
+        "alt": "OAK_SLAB",
+        "slots": [
+          1,
+          7
+        ]
+      }
+    }
+  ],
+  "beacon": [
+    {
+      "recipe_data/GLASS.png": {
+        "alt": "GLASS",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5
+        ]
+      },
+      "recipe_data/NETHER_STAR.png": {
+        "alt": "NETHER_STAR",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/OBSIDIAN.png": {
+        "alt": "OBSIDIAN",
+        "slots": [
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "banner": [
+    {
+      "recipe_data/WHITE_WOOL.png": {
+        "alt": "WHITE_WOOL",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "bed": [
+    {
+      "recipe_data/WHITE_WOOL.png": {
+        "alt": "WHITE_WOOL",
+        "slots": [
+          0,
+          1,
+          2
+        ]
+      },
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "carpet": [
+    {
+      "recipe_data/WHITE_WOOL.png": {
+        "alt": "WHITE_WOOL",
+        "slots": [
+          3,
+          4
+        ]
+      }
+    }
+  ],
+  "blast furnace": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5
+        ]
+      },
+      "recipe_data/FURNACE.png": {
+        "alt": "FURNACE",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/SMOOTH_STONE.png": {
+        "alt": "SMOOTH_STONE",
+        "slots": [
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "blaze powder": [
+    {
+      "recipe_data/BLAZE_ROD.png": {
+        "alt": "BLAZE_ROD",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "book": [
+    {
+      "recipe_data/PAPER.png": {
+        "alt": "PAPER",
+        "slots": [
+          1,
+          2,
+          4
+        ]
+      },
+      "recipe_data/LEATHER.png": {
+        "alt": "LEATHER",
+        "slots": [
+          5
+        ]
+      }
+    }
+  ],
+  "bowl": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          5,
+          7
+        ]
+      }
+    }
+  ],
+  "bread": [
+    {
+      "recipe_data/WHEAT.png": {
+        "alt": "WHEAT",
+        "slots": [
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "brewing stand": [
+    {
+      "recipe_data/BLAZE_ROD.png": {
+        "alt": "BLAZE_ROD",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/COBBLESTONE.png": {
+        "alt": "COBBLESTONE",
+        "slots": [
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "wall": [
+    {
+      "recipe_data/COBBLESTONE.png": {
+        "alt": "COBBLESTONE",
+        "slots": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "bucket": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          3,
+          5,
+          7
+        ]
+      }
+    }
+  ],
+  "cake": [
+    {
+      "recipe_data/MILK_BUCKET.png": {
+        "alt": "MILK_BUCKET",
+        "slots": [
+          0,
+          1,
+          2
+        ]
+      },
+      "recipe_data/SUGAR.png": {
+        "alt": "SUGAR",
+        "slots": [
+          3,
+          5
+        ]
+      },
+      "recipe_data/EGG.png": {
+        "alt": "EGG",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/WHEAT.png": {
+        "alt": "WHEAT",
+        "slots": [
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "campfire": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          1,
+          3,
+          5
+        ]
+      },
+      "recipe_data/COAL.png": {
+        "alt": "COAL",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/OAK_LOG.png": {
+        "alt": "OAK_LOG",
+        "slots": [
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "candle": [
+    {
+      "recipe_data/STRING.png": {
+        "alt": "STRING",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/HONEYCOMB.png": {
+        "alt": "HONEYCOMB",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "cartography table": [
+    {
+      "recipe_data/PAPER.png": {
+        "alt": "PAPER",
+        "slots": [
+          0,
+          1
+        ]
+      },
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          4,
+          6,
+          7
+        ]
+      }
+    }
+  ],
+  "cauldron": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          0,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "chest": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "composter": [
+    {
+      "recipe_data/OAK_SLAB.png": {
+        "alt": "OAK_SLAB",
+        "slots": [
+          0,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "conduit": [
+    {
+      "recipe_data/NAUTILUS_SHELL.png": {
+        "alt": "NAUTILUS_SHELL",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/HEART_OF_THE_SEA.png": {
+        "alt": "HEART_OF_THE_SEA",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "cookie": [
+    {
+      "recipe_data/WHEAT.png": {
+        "alt": "WHEAT",
+        "slots": [
+          3,
+          5
+        ]
+      },
+      "recipe_data/COCOA_BEANS.png": {
+        "alt": "COCOA_BEANS",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "chain": [
+    {
+      "recipe_data/IRON_NUGGET.png": {
+        "alt": "IRON_NUGGET",
+        "slots": [
+          1,
+          7
+        ]
+      },
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "nugget": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "lantern": [
+    {
+      "recipe_data/IRON_NUGGET.png": {
+        "alt": "IRON_NUGGET",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/TORCH.png": {
+        "alt": "TORCH",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "crafting table": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          1,
+          3,
+          4
+        ]
+      }
+    }
+  ],
+  "creaking heart": [
+    {
+      "recipe_data/PALE_OAK_LOG.png": {
+        "alt": "PALE_OAK_LOG",
+        "slots": [
+          1,
+          7
+        ]
+      },
+      "recipe_data/RESIN_BLOCK.png": {
+        "alt": "RESIN_BLOCK",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "decorated pot": [
+    {
+      "recipe_data/BRICK.png": {
+        "alt": "BRICK",
+        "slots": [
+          1,
+          3,
+          5,
+          7
+        ]
+      }
+    }
+  ],
+  "enchanting table": [
+    {
+      "recipe_data/BOOK.png": {
+        "alt": "BOOK",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          3,
+          5
+        ]
+      },
+      "recipe_data/OBSIDIAN.png": {
+        "alt": "OBSIDIAN",
+        "slots": [
+          4,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "end crystal": [
+    {
+      "recipe_data/GLASS.png": {
+        "alt": "GLASS",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          8
+        ]
+      },
+      "recipe_data/ENDER_EYE.png": {
+        "alt": "ENDER_EYE",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/GHAST_TEAR.png": {
+        "alt": "GHAST_TEAR",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "end rod": [
+    {
+      "recipe_data/BLAZE_ROD.png": {
+        "alt": "BLAZE_ROD",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/POPPED_CHORUS_FRUIT.png": {
+        "alt": "POPPED_CHORUS_FRUIT",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "ender chest": [
+    {
+      "recipe_data/OBSIDIAN.png": {
+        "alt": "OBSIDIAN",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/ENDER_EYE.png": {
+        "alt": "ENDER_EYE",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "fire charge": [
+    {
+      "recipe_data/GUNPOWDER.png": {
+        "alt": "GUNPOWDER",
+        "slots": [
+          0
+        ]
+      },
+      "recipe_data/BLAZE_POWDER.png": {
+        "alt": "BLAZE_POWDER",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/COAL.png": {
+        "alt": "COAL",
+        "slots": [
+          2
+        ]
+      }
+    }
+  ],
+  "firework rocket": [
+    {
+      "recipe_data/GUNPOWDER.png": {
+        "alt": "GUNPOWDER",
+        "slots": [
+          3
+        ]
+      },
+      "recipe_data/PAPER.png": {
+        "alt": "PAPER",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "fletching table": [
+    {
+      "recipe_data/FLINT.png": {
+        "alt": "FLINT",
+        "slots": [
+          0,
+          1
+        ]
+      },
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          4,
+          6,
+          7
+        ]
+      }
+    }
+  ],
+  "flower pot": [
+    {
+      "recipe_data/BRICK.png": {
+        "alt": "BRICK",
+        "slots": [
+          3,
+          5,
+          7
+        ]
+      }
+    }
+  ],
+  "furna": [
+    {
+      "recipe_data/COBBLESTONE.png": {
+        "alt": "COBBLESTONE",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    }
+  ],
+  "glass bottle": [
+    {
+      "recipe_data/GLASS.png": {
+        "alt": "GLASS",
+        "slots": [
+          3,
+          5,
+          7
+        ]
+      }
+    }
+  ],
+  "glass pane": [
+    {
+      "recipe_data/GLASS.png": {
+        "alt": "GLASS",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "golden apple": [
+    {
+      "recipe_data/GOLD_INGOT.png": {
+        "alt": "GOLD_INGOT",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/APPLE.png": {
+        "alt": "APPLE",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "golden carrot": [
+    {
+      "recipe_data/GOLD_NUGGET.png": {
+        "alt": "GOLD_NUGGET",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/CARROT.png": {
+        "alt": "CARROT",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "golden dandelion": [
+    {
+      "recipe_data/GOLD_NUGGET.png": {
+        "alt": "GOLD_NUGGET",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/DANDELION.png": {
+        "alt": "DANDELION",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "grindstone": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          0,
+          2
+        ]
+      },
+      "recipe_data/STONE_SLAB.png": {
+        "alt": "STONE_SLAB",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          5
+        ]
+      }
+    }
+  ],
+  "bars": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "item frame": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/LEATHER.png": {
+        "alt": "LEATHER",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "jukebox": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/DIAMOND.png": {
+        "alt": "DIAMOND",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "ladder": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8
+        ]
+      }
+    }
+  ],
+  "lodestone": [
+    {
+      "recipe_data/CHISELED_STONE_BRICKS.png": {
+        "alt": "CHISELED_STONE_BRICKS",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "loom": [
+    {
+      "recipe_data/STRING.png": {
+        "alt": "STRING",
+        "slots": [
+          0,
+          1
+        ]
+      },
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          4
+        ]
+      }
+    }
+  ],
+  "magma cream": [
+    {
+      "recipe_data/BLAZE_POWDER.png": {
+        "alt": "BLAZE_POWDER",
+        "slots": [
+          0
+        ]
+      },
+      "recipe_data/SLIME_BALL.png": {
+        "alt": "SLIME_BALL",
+        "slots": [
+          1
+        ]
+      }
+    }
+  ],
+  "minecart": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          0,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "mushroom stew": [
+    {
+      "recipe_data/BROWN_MUSHROOM.png": {
+        "alt": "BROWN_MUSHROOM",
+        "slots": [
+          0
+        ]
+      },
+      "recipe_data/RED_MUSHROOM.png": {
+        "alt": "RED_MUSHROOM",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/BOWL.png": {
+        "alt": "BOWL",
+        "slots": [
+          2
+        ]
+      }
+    }
+  ],
+  "painting": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/WHITE_WOOL.png": {
+        "alt": "WHITE_WOOL",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "paper": [
+    {
+      "recipe_data/SUGAR_CANE.png": {
+        "alt": "SUGAR_CANE",
+        "slots": [
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "pumpkin pie": [
+    {
+      "recipe_data/PUMPKIN.png": {
+        "alt": "PUMPKIN",
+        "slots": [
+          0
+        ]
+      },
+      "recipe_data/SUGAR.png": {
+        "alt": "SUGAR",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/EGG.png": {
+        "alt": "EGG",
+        "slots": [
+          2
+        ]
+      }
+    }
+  ],
+  "rabbit stew": [
+    {
+      "recipe_data/BAKED_POTATO.png": {
+        "alt": "BAKED_POTATO",
+        "slots": [
+          0
+        ]
+      },
+      "recipe_data/COOKED_RABBIT.png": {
+        "alt": "COOKED_RABBIT",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/BOWL.png": {
+        "alt": "BOWL",
+        "slots": [
+          2
+        ]
+      },
+      "recipe_data/CARROT.png": {
+        "alt": "CARROT",
+        "slots": [
+          3
+        ]
+      },
+      "recipe_data/RED_MUSHROOM.png": {
+        "alt": "RED_MUSHROOM",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "rail": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          0,
+          2,
+          3,
+          5,
+          6,
+          8
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "respawn anchor": [
+    {
+      "recipe_data/CRYING_OBSIDIAN.png": {
+        "alt": "CRYING_OBSIDIAN",
+        "slots": [
+          0,
+          1,
+          2,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/GLOWSTONE.png": {
+        "alt": "GLOWSTONE",
+        "slots": [
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "scaffolding": [
+    {
+      "recipe_data/BAMBOO.png": {
+        "alt": "BAMBOO",
+        "slots": [
+          0,
+          2,
+          3,
+          5,
+          6,
+          8
+        ]
+      },
+      "recipe_data/STRING.png": {
+        "alt": "STRING",
+        "slots": [
+          1
+        ]
+      }
+    }
+  ],
+  "shulker box": [
+    {
+      "recipe_data/SHULKER_SHELL.png": {
+        "alt": "SHULKER_SHELL",
+        "slots": [
+          1,
+          7
+        ]
+      },
+      "recipe_data/CHEST.png": {
+        "alt": "CHEST",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "smithing table": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          0,
+          1
+        ]
+      },
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          4,
+          6,
+          7
+        ]
+      }
+    }
+  ],
+  "smoker": [
+    {
+      "recipe_data/OAK_LOG.png": {
+        "alt": "OAK_LOG",
+        "slots": [
+          1,
+          3,
+          5,
+          7
+        ]
+      },
+      "recipe_data/FURNACE.png": {
+        "alt": "FURNACE",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "stick": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          3,
+          6
+        ]
+      }
+    },
+    {
+      "recipe_data/BAMBOO.png": {
+        "alt": "BAMBOO",
+        "slots": [
+          3,
+          6
+        ]
+      }
+    }
+  ],
+  "stonecutter": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/STONE.png": {
+        "alt": "STONE",
+        "slots": [
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "sugar": [
+    {
+      "recipe_data/SUGAR_CANE.png": {
+        "alt": "SUGAR_CANE",
+        "slots": [
+          4
+        ]
+      }
+    },
+    {
+      "recipe_data/HONEY_BOTTLE.png": {
+        "alt": "HONEY_BOTTLE",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "torch": [
+    {
+      "recipe_data/COAL.png": {
+        "alt": "COAL",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "wind charge": [
+    {
+      "recipe_data/BREEZE_ROD.png": {
+        "alt": "BREEZE_ROD",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "button": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "door": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          1,
+          3,
+          4,
+          6,
+          7
+        ]
+      }
+    }
+  ],
+  "fence gate": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          0,
+          2,
+          3,
+          5
+        ]
+      },
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          1,
+          4
+        ]
+      }
+    }
+  ],
+  "trapdoor": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    }
+  ],
+  "crafter": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5
+        ]
+      },
+      "recipe_data/CRAFTING_TABLE.png": {
+        "alt": "CRAFTING_TABLE",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/REDSTONE.png": {
+        "alt": "REDSTONE",
+        "slots": [
+          6,
+          8
+        ]
+      },
+      "recipe_data/DROPPER.png": {
+        "alt": "DROPPER",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "dispenser": [
+    {
+      "recipe_data/COBBLESTONE.png": {
+        "alt": "COBBLESTONE",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          8
+        ]
+      },
+      "recipe_data/BOW.png": {
+        "alt": "BOW",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/REDSTONE.png": {
+        "alt": "REDSTONE",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "dropper": [
+    {
+      "recipe_data/COBBLESTONE.png": {
+        "alt": "COBBLESTONE",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          8
+        ]
+      },
+      "recipe_data/REDSTONE.png": {
+        "alt": "REDSTONE",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "hopper": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          0,
+          2,
+          3,
+          5,
+          7
+        ]
+      },
+      "recipe_data/CHEST.png": {
+        "alt": "CHEST",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "lecture": [
+    {
+      "recipe_data/OAK_SLAB.png": {
+        "alt": "OAK_SLAB",
+        "slots": [
+          0,
+          1,
+          2,
+          7
+        ]
+      },
+      "recipe_data/BOOKSHELF.png": {
+        "alt": "BOOKSHELF",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "lever": [
+    {
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/COBBLESTONE.png": {
+        "alt": "COBBLESTONE",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "lightning rod": [
+    {
+      "recipe_data/COPPER_INGOT.png": {
+        "alt": "COPPER_INGOT",
+        "slots": [
+          1,
+          4,
+          7
+        ]
+      }
+    }
+  ],
+  "note block": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/REDSTONE.png": {
+        "alt": "REDSTONE",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "observer": [
+    {
+      "recipe_data/COBBLESTONE.png": {
+        "alt": "COBBLESTONE",
+        "slots": [
+          0,
+          1,
+          2,
+          6,
+          7,
+          8
+        ]
+      },
+      "recipe_data/REDSTONE.png": {
+        "alt": "REDSTONE",
+        "slots": [
+          3,
+          4
+        ]
+      },
+      "recipe_data/QUARTZ.png": {
+        "alt": "QUARTZ",
+        "slots": [
+          5
+        ]
+      }
+    }
+  ],
+  "piston": [
+    {
+      "recipe_data/COBBLESTONE.png": {
+        "alt": "COBBLESTONE",
+        "slots": [
+          3,
+          5,
+          6,
+          8
+        ]
+      },
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/REDSTONE.png": {
+        "alt": "REDSTONE",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "redstone lamp": [
+    {
+      "recipe_data/REDSTONE.png": {
+        "alt": "REDSTONE",
+        "slots": [
+          1,
+          3,
+          5,
+          7
+        ]
+      },
+      "recipe_data/GLOWSTONE.png": {
+        "alt": "GLOWSTONE",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "target": [
+    {
+      "recipe_data/REDSTONE.png": {
+        "alt": "REDSTONE",
+        "slots": [
+          1,
+          3,
+          5,
+          7
+        ]
+      },
+      "recipe_data/HAY_BLOCK.png": {
+        "alt": "HAY_BLOCK",
+        "slots": [
+          4
+        ]
+      }
+    }
+  ],
+  "tnt": [
+    {
+      "recipe_data/GUNPOWDER.png": {
+        "alt": "GUNPOWDER",
+        "slots": [
+          0,
+          2,
+          4,
+          6,
+          8
+        ]
+      },
+      "recipe_data/SAND.png": {
+        "alt": "SAND",
+        "slots": [
+          1,
+          3,
+          5,
+          7
+        ]
+      }
+    }
+  ],
+  "tripwire hook": [
+    {
+      "recipe_data/IRON_INGOT.png": {
+        "alt": "IRON_INGOT",
+        "slots": [
+          1
+        ]
+      },
+      "recipe_data/STICK.png": {
+        "alt": "STICK",
+        "slots": [
+          4
+        ]
+      },
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          7
+        ]
+      }
+    }
+  ],
+  "pressure plate": [
+    {
+      "recipe_data/OAK_PLANKS.png": {
+        "alt": "OAK_PLANKS",
+        "slots": [
+          6,
+          7
+        ]
+      }
+    }
+  ]
+}

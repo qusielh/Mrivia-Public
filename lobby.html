@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mrivia - Game Lobby</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Silkscreen&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 JS Bundle for Dropdown Menus -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --font-pixel: "Silkscreen", system-ui, sans-serif;
+            --font-display: "Fredoka", "Quicksand", system-ui, sans-serif;
+            --font-sans: "Quicksand", system-ui, sans-serif;
+            --background: oklch(0.2 0.05 340);
+            --foreground: oklch(0.98 0.01 90);
+            --card: oklch(0.24 0.05 340 / 0.75);
+            --sakura: oklch(0.82 0.14 355);
+            --warning-gold: #ffca1a;
+            --diamond: #4dede2;
+            --redstone: #ff5e5e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            min-height: 100dvh;
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Full Screen Background Image */
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -3;
+        }
+
+        .hero-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(20, 12, 18, 0.2), rgba(20, 12, 18, 0.75));
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-display);
+        }
+
+        .font-pixel {
+            font-family: var(--font-pixel);
+            letter-spacing: 0.04em;
+        }
+
+        .text-sakura {
+            color: var(--sakura);
+        }
+
+        .mc-panel {
+            position: relative;
+            background: linear-gradient(180deg, oklch(0.24 0.05 340 / 0.75), oklch(0.18 0.04 340 / 0.82));
+            border: 2px solid oklch(0.5 0.08 350 / 0.95);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            padding: 2.25rem;
+            overflow: visible;
+        }
+
+        /* Minecraft Thematic Buttons */
+        .mc-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.4rem;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.04em;
+            border-radius: 6px;
+            transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
+            cursor: pointer;
+            user-select: none;
+            text-decoration: none;
+            width: 100%;
+            border: 2px solid #000000;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+        }
+
+            .mc-btn:hover {
+                filter: brightness(1.1) saturate(1.05);
+                transform: translateY(-1px);
+                color: currentColor;
+            }
+
+            .mc-btn:active {
+                transform: translateY(3px);
+            }
+
+            .mc-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none !important;
+                filter: grayscale(0.6);
+            }
+
+        .mode-selection-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .sakura-leaf-container {
+            width: 60px;
+            height: 60px;
+            transition: transform 0.3s;
+            filter: drop-shadow(0 0 8px rgba(255, 183, 197, 0.6));
+        }
+
+        .leaf-svg {
+            fill: #ffb7c5;
+        }
+
+        .sakura-leaf-container.left {
+            animation: swayLeft 6s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        .sakura-leaf-container.right {
+            animation: swayRight 6s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        @keyframes swayLeft {
+            0%, 100% {
+                transform: rotate(-15deg) scale(1);
+            }
+
+            50% {
+                transform: rotate(-20deg) scale(1.05) translateY(-5px);
+            }
+        }
+
+        @keyframes swayRight {
+            0%, 100% {
+                transform: rotate(15deg) scale(1);
+            }
+
+            50% {
+                transform: rotate(20deg) scale(1.05) translateY(-5px);
+            }
+        }
+
+        .game-grid {
+            display: flex;
+            gap: 15px;
+        }
+
+        .game-mode-btn {
+            width: 70px;
+            height: 70px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #fff;
+        }
+
+            .game-mode-btn svg {
+                width: 28px;
+                height: 28px;
+                stroke: #fff;
+                fill: none;
+                stroke-width: 2;
+                margin-bottom: 5px;
+            }
+
+            .game-mode-btn span {
+                font-size: 6.5px;
+                color: #fff;
+                text-transform: uppercase;
+                font-family: 'Press Start 2P', cursive;
+            }
+
+            .game-mode-btn.active {
+                border-color: #ffb7c5;
+                background: #2a2a2a;
+            }
+
+        .desc-box {
+            margin-top: 20px;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #333;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .desc-text {
+            font-size: 10px;
+            color: #888;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .mc-btn.diamond {
+            background: linear-gradient(180deg, #6bf5ed 0%, #4dede2 45%, #23cbc0 100%);
+            border-color: #17837c;
+            color: #112d2a;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+            box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.6), inset 0 -3px 0 rgba(0, 0, 0, 0.35), 0 4px 0 #136a65;
+        }
+
+        .mc-btn.stone {
+            background: linear-gradient(180deg, #a3a3a5 0%, #8b8b8d 45%, #6a6a6c 100%);
+            border-color: #404041;
+            color: #ffffff;
+            box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.35), 0 4px 0 #313132;
+        }
+
+        .mc-btn.lapis {
+            background: linear-gradient(180deg, #6381ff 0%, #4b6bfb 45%, #2a49d1 100%);
+            border-color: #162a8c;
+            color: #ffffff;
+            box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.4), 0 4px 0 #122271;
+        }
+
+        .mc-btn.gold {
+            background: linear-gradient(180deg, #fede4b 0%, #ffca1a 45%, #d9a304 100%);
+            border-color: #795b00;
+            color: #382a00;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.6), inset 0 -3px 0 rgba(0, 0, 0, 0.3), 0 4px 0 #5c4500;
+        }
+
+        .mc-btn.sakura {
+            background: linear-gradient(180deg, #ffc2d4 0%, #ff8fab 45%, #f46086 100%);
+            border-color: #851234;
+            color: #2a0410;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+            box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.7), inset 0 -3px 0 rgba(0, 0, 0, 0.25), 0 4px 0 #700c2a;
+        }
+
+        .mc-btn.about-glow {
+            background: linear-gradient(180deg, #ff9ebb 0%, #ff4081 50%, #d81b60 100%);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 14px rgba(255, 64, 129, 0.6), inset 0 2px 0 rgba(255, 255, 255, 0.6), 0 4px 0 #880e4f;
+        }
+
+        .user-pill {
+            background: rgba(0, 0, 0, 0.45);
+            border: 2px solid rgba(255, 183, 197, 0.3);
+            border-radius: 8px;
+            padding: 0.35rem 0.85rem;
+            white-space: nowrap;
+        }
+
+        /* Dropdown Menu Styling */
+        .mc-dropdown-menu {
+            background: rgba(28, 12, 24, 0.95) !important;
+            border: 2px solid var(--sakura) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8) !important;
+            backdrop-filter: blur(16px);
+            padding: 0.5rem;
+            min-width: 170px;
+        }
+
+        .mc-dropdown-item {
+            color: #ffffff !important;
+            font-size: 0.78rem !important;
+            padding: 0.5rem 0.85rem !important;
+            border-radius: 8px;
+            transition: all 0.12s ease;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .mc-dropdown-item:hover {
+                background: rgba(255, 183, 197, 0.15) !important;
+                color: var(--sakura) !important;
+            }
+
+        .mc-input {
+            width: 100%;
+            padding: 0.65rem 1rem;
+            font-family: var(--font-pixel);
+            font-size: 0.8rem;
+            color: var(--foreground);
+            background: oklch(0.14 0.04 340 / 0.85);
+            border: 2px solid oklch(0.4 0.06 340);
+            border-radius: 6px;
+            box-shadow: inset 2px 2px 0 rgba(0,0,0,0.5);
+            outline: none;
+        }
+
+            .mc-input:focus {
+                border-color: var(--sakura);
+            }
+
+        .player-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 0.85rem;
+            border-radius: 6px;
+            background: oklch(0.16 0.04 340 / 0.6);
+            border: 2px solid oklch(0.35 0.06 340 / 0.5);
+            margin-bottom: 0.5rem;
+        }
+
+            .player-row.current-user {
+                border-color: var(--sakura);
+                background: oklch(0.24 0.06 340 / 0.8);
+            }
+
+        .rank-badge {
+            min-width: 32px;
+            height: 24px;
+            padding: 0 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            font-family: var(--font-pixel);
+            letter-spacing: -0.02em;
+        }
+
+        .rank-1 {
+            background-color: #ffd700;
+            color: #000;
+        }
+
+        .rank-2 {
+            background-color: #c0c0c0;
+            color: #000;
+        }
+
+        .rank-3 {
+            background-color: #cd7f32;
+            color: #000;
+        }
+
+        .sakura-fx {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .sakura-petal {
+            position: absolute;
+            top: -20px;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(var(--rot-start)) translateX(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.9;
+            }
+
+            90% {
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: translateY(105vh) rotate(calc(var(--rot-start) + 360deg)) translateX(var(--drift));
+                opacity: 0;
+            }
+        }
+
+        .lobby-note-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 4, 9, 0.85);
+            backdrop-filter: blur(14px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .lobby-notice-card {
+            background: linear-gradient(180deg, rgba(42, 20, 36, 0.97), rgba(26, 11, 22, 0.98));
+            border: 3px solid var(--sakura);
+            border-radius: 24px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(255, 183, 197, 0.25);
+            max-width: 650px;
+            width: 100%;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .lobby-notice-scroll {
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .kid-safety-box {
+            background: linear-gradient(135deg, rgba(255, 170, 0, 0.18), rgba(255, 80, 80, 0.18));
+            border: 2px solid var(--warning-gold);
+            border-radius: 14px;
+            box-shadow: 0 0 16px rgba(255, 202, 26, 0.35);
+            padding: 1.15rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .lobby-notice-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 183, 197, 0.2);
+            border-radius: 14px;
+            padding: 1rem 1.15rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        #rotatePromptOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(14, 6, 12, 0.97);
+            backdrop-filter: blur(16px);
+            z-index: 99999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .rotate-phone-animation {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1.5rem;
+            animation: rotateDevice 2.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes rotateDevice {
+            0%, 40% {
+                transform: rotate(0deg);
+            }
+
+            70%, 100% {
+                transform: rotate(90deg);
+            }
+        }
+
+        @media (max-width: 1024px) and (orientation: portrait) {
+            #rotatePromptOverlay {
+                display: flex !important;
+            }
+        }
+
+        .generic-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 4, 9, 0.88);
+            backdrop-filter: blur(14px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .site-footer-note {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 📱 ROTATE SCREEN SHIELD (Only appears on mobile portrait) -->
+    <div id="rotatePromptOverlay">
+        <svg class="rotate-phone-animation" viewBox="0 0 24 24" fill="none" stroke="var(--sakura)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+            <path d="M12 18h.01" />
+        </svg>
+        <span class="font-pixel text-sakura small d-block mb-2">🌸 LANDSCAPE MODE REQUIRED 🌸</span>
+        <h2 class="fs-4 fw-bold text-white mb-2" style="font-family: var(--font-display);">Please Rotate Your Device</h2>
+        <p class="text-white-50 small mb-0" style="max-width: 320px; font-family: var(--font-sans);">
+            Mrivia is designed for a horizontal screen. Turn your phone sideways to enter the lobby arena!
+        </p>
+    </div>
+
+    <img src="assets/sakura-8.jpg" alt="" class="hero-bg" onerror="this.src='sakura-landing.jpg'">
+    <div class="hero-overlay"></div>
+
+    <div class="sakura-fx" id="lobbyLeavesContainer"></div>
+
+    <!-- 🌸 COMMUNITY GUIDELINES & ANTI-SCAM MODAL -->
+    <div id="lobbyNoticeOverlay" class="lobby-note-overlay d-none">
+        <div class="lobby-notice-card">
+            <div class="text-center mb-3">
+                <span class="font-pixel text-sakura small d-block mb-1">🌸 COMMUNITY GUIDELINES & SAFETY NOTICES 🌸</span>
+                <h2 class="fs-4 fw-bold text-white mb-1" style="font-family: var(--font-display);">Rules & Safety Guidelines</h2>
+                <p class="text-white-50 small mb-0">Please review these notes to keep your experience safe, fun, and secure:</p>
+            </div>
+
+            <div class="lobby-notice-scroll flex-grow-1">
+                <!-- Creator & Anti-Impersonation Warning -->
+                <div class="lobby-notice-block" style="border-color: var(--sakura);">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span style="font-size: 1.1rem;">🌸</span>
+                        <span class="font-pixel text-sakura small fw-bold">Official Website & Anti-Impersonation Notice</span>
+                    </div>
+                    <p class="text-white-75 small mb-2" style="font-size: 0.85rem; line-height: 1.55;">
+                        <b>This is the only official Mrivia website</b> created solely by <b>Creator</b>. Creator does <b>not</b> have public social media accounts, alternative community pages, or external payment links anywhere else on the internet.
+                    </p>
+                    <p class="text-white-75 small mb-0" style="font-size: 0.85rem; line-height: 1.55;">
+                        Never trust anyone claiming to represent Creator or soliciting funds outside of this website. If any official links or campaigns are ever launched, they will be announced right here! You can always reach out directly using the <b>Feedback or Q&A</b> button.
+                    </p>
+                </div>
+
+                <div class="lobby-notice-block">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span style="font-size: 1.1rem;">🛡️</span>
+                        <span class="font-pixel text-sakura small fw-bold">Chat Safety & Reporting</span>
+                    </div>
+                    <p class="text-white-75 small mb-2" style="font-size: 0.85rem; line-height: 1.55;">
+                        Never share sensitive personal info in the chat. If you choose to share your Discord tag or social handle, that responsibility is entirely on you.
+                    </p>
+                    <p class="text-white-75 small mb-0" style="font-size: 0.85rem; line-height: 1.55;">
+                        Never listen to anyone attempting to lie, manipulate, or exploit you. Always report any troll, scammer, or harmful behavior by taking a clean screenshot that clearly shows both their username and the chat!
+                    </p>
+                </div>
+
+                <div class="kid-safety-box">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="fs-5">⚠️</span>
+                        <span class="font-pixel fw-bold" style="color: var(--warning-gold); font-size: 0.78rem; letter-spacing: 0.05em;">
+                            IF YOU ARE A KID, PLEASE READ THIS:
+                        </span>
+                    </div>
+                    <p class="text-white fw-medium small mb-2" style="font-size: 0.85rem; line-height: 1.6;">
+                        I know you just want to play games and have fun, but <b>please do not share any personal info whatsoever</b>. You are completely protected from anything bad people might tell you.
+                    </p>
+                    <p class="text-white fw-medium small mb-0" style="font-size: 0.85rem; line-height: 1.6;">
+                        Do not answer personal questions strangers ask you, and don't let emotional tricks fool you. <b>Your safety matters above everything else</b>—you can always report them and I will ban them as soon as I can.
+                    </p>
+                </div>
+
+                <div class="lobby-notice-block">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span style="font-size: 1.1rem;">⛏️</span>
+                        <span class="font-pixel text-diamond small fw-bold">Gameplay Optimization Notes</span>
+                    </div>
+                    <p class="text-white-75 small mb-2" style="font-size: 0.85rem; line-height: 1.55;">
+                        Word pools have been intentionally optimized so you don't need to stress over material variations. You don't guess <i>"DIAMOND PICKAXE"</i>—simply guess <b>"PICKAXE"</b>! The same applies to <b>SWORD, DOOR, STAIRS, SPEAR</b>, etc... Pixelary allows you to use custom colors and save them in the bottom slots, if you spend a whole round/attempt without submitting anything you will be disconnected (afk), and you can come back anytime by submitting an answer.
+                    </p>
+                    <p class="text-white-75 small mb-0" style="font-size: 0.85rem; line-height: 1.55;">
+                        If you ever spot a missing mob or item, please let me know! I will gladly update them. Feel free to leave feedback—my ultimate goal is to make sure everyone has fun.
+                    </p>
+                </div>
+
+                <p class="text-white-50 text-center small mb-0 mt-2" style="font-size: 0.65rem; letter-spacing: 0.04em;">
+                    NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
+                </p>
+            </div>
+
+            <div class="mt-3 pt-2 border-top border-light border-opacity-10">
+                <button id="closeLobbyNoticeBtn" onclick="dismissLobbyNotice()" class="mc-btn stone font-pixel" style="font-size: 0.85rem;">
+                    Close Notice
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 💬 PLAYER FEEDBACK MODAL -->
+    <div id="feedbackModalOverlay" class="generic-modal-overlay d-none">
+        <div class="mc-panel p-4" style="max-width: 500px; width: 100%;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="font-pixel text-sakura fs-5">💬 Feedback & Suggestions</span>
+                <button onclick="toggleFeedbackModal(false)" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+            </div>
+            <p class="text-white-50 small mb-3">Found a bug? Have a game idea or item suggestion? Your feedback directly helps shape Mrivia!</p>
+
+            <textarea id="feedbackTextarea" class="mc-input mb-3" rows="4" placeholder="Type your suggestion or bug report here..." style="font-family: var(--font-sans);"></textarea>
+
+            <div id="feedbackStatusAlert" class="alert d-none py-2 small font-pixel text-center"></div>
+
+            <div class="d-flex gap-2">
+                <button onclick="toggleFeedbackModal(false)" class="mc-btn stone w-50 font-pixel">Cancel</button>
+                <button onclick="submitFeedback()" class="mc-btn sakura w-50 font-pixel" id="sendFeedbackBtn">Send 🌸</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🚨 PLAYER REPORT MODAL -->
+    <div id="reportModalOverlay" class="generic-modal-overlay d-none">
+        <div class="mc-panel p-4" style="max-width: 520px; width: 100%; border-color: var(--redstone);">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="font-pixel text-danger fs-5">🚨 Report a Player</span>
+                <button onclick="toggleReportModal(false)" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+            </div>
+            <p class="text-white-50 small mb-3">
+                Report toxic, exploiting, or inappropriate players. <b>All fields including a clean screenshot are required.</b> Reports go directly to the admin.
+            </p>
+
+            <div class="mb-2">
+                <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">OFFENDING USERNAME:</label>
+                <input type="text" id="reportTargetUser" class="mc-input" placeholder="Exact username..." style="font-family: var(--font-sans);" autocomplete="off">
+            </div>
+
+            <div class="mb-2">
+                <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">EXPLANATION / CONTEXT:</label>
+                <textarea id="reportContext" class="mc-input" rows="3" placeholder="Explain what happened..." style="font-family: var(--font-sans);"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">PROOF SCREENSHOT (MAX 5MB):</label>
+                <input type="file" id="reportScreenshotInput" accept="image/*" class="form-control form-control-sm bg-dark text-white border-secondary font-sans" onchange="validateReportFile(this)">
+                <span id="fileSizeWarning" class="text-danger small font-pixel d-none mt-1" style="font-size: 0.65rem;">File exceeds 5MB limit!</span>
+            </div>
+
+            <div id="reportStatusAlert" class="alert d-none py-2 small font-pixel text-center"></div>
+
+            <div class="d-flex gap-2">
+                <button onclick="toggleReportModal(false)" class="mc-btn stone w-50 font-pixel">Cancel</button>
+                <button onclick="submitReport()" class="mc-btn redstone w-50 font-pixel" id="sendReportBtn">Submit Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR: ANCHORED, RESPONSIVE, WITH community & CLEAN MENU -->
+    <nav class="navbar navbar-expand-lg pt-4">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <span class="font-pixel text-white fs-4">Mrivia</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 gap-sm-3 flex-wrap justify-content-end">
+                <div class="user-pill d-none d-sm-flex align-items-center gap-2">
+                    <span class="font-pixel text-sakura small">PLAYER:</span>
+                    <span id="navUsername" class="fw-bold text-white small">Loading...</span>
+                </div>
+
+                <!-- 🌸 ALWAYS VISIBLE: ABOUT ME BUTTON -->
+                <a href="About%20me.html" class="mc-btn about-glow py-1 px-3 font-pixel" style="font-size: 0.75rem; width: auto;">🌸 About Me</a>
+
+                <!-- 🌸 ALWAYS VISIBLE: Creator creator area (Creator only) -->
+                <a id="Creatorcreator areaBtn" href="removed-admin.html" class="mc-btn sakura py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🌸 creator area</a>
+
+                <!-- 🍔 ALWAYS VISIBLE: FOR community (Creator & community only) -->
+                <a id="communityBtn" href="letter%20to%20community.html" class="mc-btn gold py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🍔 For community</a>
+
+                <!-- ☰ CLEAN MENU DROPDOWN (Rules & Notices, Feedback, Report, Sign Out) -->
+                <div class="dropdown d-inline-block">
+                    <button class="mc-btn stone py-1 px-3 font-pixel dropdown-toggle" type="button" id="lobbyMenuDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.75rem; width: auto;">
+                        ☰ Menu
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end mc-dropdown-menu" aria-labelledby="lobbyMenuDropdownBtn">
+                        <li>
+                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openLobbyNotice()">
+                                🛡️ Rules & Notices
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="toggleFeedbackModal(true)">
+                                💬 Feedback
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item mc-dropdown-item font-pixel text-danger" onclick="toggleReportModal(true)">
+                                🚨 Report Player
+                            </button>
+                        </li>
+                        <li><hr class="dropdown-divider border-secondary border-opacity-25 my-1"></li>
+                        <li>
+                            <button class="dropdown-item mc-dropdown-item font-pixel text-warning" onclick="signOut()">
+                                🚪 Sign Out
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-auto py-4">
+        <div class="row g-4 align-items-start">
+
+            <div class="col-lg-7">
+                <div class="mc-panel h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <span class="font-pixel text-sakura small d-block mb-1">ARENA SELECTION</span>
+                        <h2 class="fs-2 fw-bold text-white mb-3">Choose Game Mode</h2>
+
+                        <div class="mode-selection-wrapper">
+                            <!-- Left Leaf -->
+                            <div class="sakura-leaf-container left">
+                                <svg class="leaf-svg" viewBox="0 0 100 100">
+                                    <defs>
+                                        <radialGradient id="leafGlow" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+                                            <stop offset="0%" style="stop-color:#ffdde5;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#ffb7c5;stop-opacity:1" />
+                                        </radialGradient>
+                                    </defs>
+                                    <path fill="url(#leafGlow)" d="M50,95 C75,90 95,60 90,20 C80,10 60,15 50,30 C40,15 20,10 10,20 C5,60 25,90 50,95 Z" />
+                                </svg>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="game-grid">
+                                <button class="game-mode-btn active" onclick="selectMode(this, 'classic')">
+                                    <svg viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>
+                                    <span>Classic</span>
+                                </button>
+                                <button class="game-mode-btn" onclick="selectMode(this, 'pixelary')">
+                                    <svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>
+                                    <span>Pixelary</span>
+                                </button>
+                                <button class="game-mode-btn" onclick="selectMode(this, 'recipe')">
+                                    <svg viewBox="0 0 24 24"><path d="m12 3-1.91 5.83a2 2 0 0 1-1.27 1.27L3 12l5.83 1.91a2 2 0 0 1 1.27 1.27L12 21l1.91-5.83a2 2 0 0 1 1.27-1.27L21 12l-5.83-1.91a2 2 0 0 1-1.27-1.27L12 3Z" /><path d="M5 3v4" /><path d="M19 17v4" /><path d="M3 5h4" /><path d="M17 19h4" /></svg>
+                                    <span>Recipe</span>
+                                </button>
+                                <button class="game-mode-btn" onclick="selectMode(this, 'minele')">
+                                    <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M3 9h18" /><path d="M3 15h18" /><path d="M9 3v18" /><path d="M15 3v18" /></svg>
+                                    <span>Minele</span>
+                                </button>
+                            </div>
+
+                            <!-- Right Leaf -->
+                            <div class="sakura-leaf-container right">
+                                <svg class="leaf-svg" viewBox="0 0 100 100">
+                                    <use href="#leafGlow" />
+                                    <path fill="url(#leafGlow)" d="M50,95 C75,90 95,60 90,20 C80,10 60,15 50,30 C40,15 20,10 10,20 C5,60 25,90 50,95 Z" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="desc-box">
+                            <p id="modeDescription" class="desc-text">Select a game mode to begin your journey.</p>
+                        </div>
+
+                        <p class="text-white-75 mb-4">
+                            Jump straight into a public matchmaking queue, sharpen your skills in isolated practice, or open custom room instances and play with friends!
+                        </p>
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-6">
+                                <h4 class="fs-6 text-white-50 mb-2 font-pixel" style="font-size: 0.7rem;">PUBLIC MATCHMAKING</h4>
+                                <button class="mc-btn diamond mb-2" onclick="joinMatchmaking()">
+                                    Matchmaking Queue
+                                </button>
+                                <div class="text-white-50 small ps-1">Compete live against up to 6 real-time players.</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4 class="fs-6 text-white-50 mb-2 font-pixel" style="font-size: 0.7rem;">OFFLINE TRAINING</h4>
+                                <button id="soloPracticeBtn" class="mc-btn stone mb-2" onclick="handleSoloLaunch()" disabled>
+                                    Solo Practice (Coming Soon)
+                                </button>
+                                <div id="soloPracticeDesc" class="text-white-50 small ps-1">Solo mode for this game is coming soon!</div>
+                            </div>
+                        </div>
+
+                        <hr style="border-color: rgba(255,255,255,0.15);" class="my-4">
+
+                        <h4 class="fs-6 text-white-50 mb-3 font-pixel" style="font-size: 0.7rem;">CUSTOM ROOM SESSIONS</h4>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <button class="mc-btn lapis" onclick="generateCustomRoom()">
+                                    Create Custom Room
+                                </button>
+                            </div>
+                            <div class="col-sm-6">
+                                <button class="mc-btn gold" onclick="toggleJoinPrompt()">
+                                    Join a Room
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="joinBox" class="mt-4 p-3 rounded d-none" style="background: rgba(0,0,0,0.35); border: 2px solid oklch(0.4 0.06 340 / 0.5);">
+                            <label class="font-pixel text-sakura d-block mb-2" style="font-size: 0.65rem;">ENTER ACTIVE ROOM CODE:</label>
+                            <div class="d-flex gap-2">
+                                <input type="text" id="roomCodeInput" class="mc-input text-uppercase tracking-wider" placeholder="e.g., SAKURA-71" maxlength="12">
+                                <button class="mc-btn sakura py-1 px-4" style="width: auto; font-size: 0.8rem;" onclick="connectToCustomRoom()">Connect</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="mc-panel h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="fs-4 fw-bold text-white m-0">Global Leaderboard</h3>
+                        <span class="font-pixel text-warning" style="font-size: 0.65rem;">TOP 10 ALL-TIME</span>
+                    </div>
+                    <p class="text-white-50 small mb-4">Speed is everything. Top scorers answer correctly within milliseconds.</p>
+
+                    <div id="leaderboardList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🌸 CLEAN, SUBTLE MOJANG & OFFICIAL CREATOR DISCLAIMER -->
+        <footer class="site-footer-note pb-2">
+            <p class="text-white-50 small mb-1" style="font-size: 0.65rem; letter-spacing: 0.04em;">
+                NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
+            </p>
+            <p class="text-white-50 small mb-0" style="font-size: 0.62rem; opacity: 0.65;">
+                Mrivia is an independent fan project developed solely by Creator. Beware of impersonators—official updates are exclusively posted on this website.
+            </p>
+        </footer>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const descriptions = {
+            'classic': "Classic: Compete against 7 other players to guess the Minecraft item name first!",
+            'pixelary': "Pixelary: Draw the item on screen and guess what other players are sketching.",
+            'recipe': "Recipe Guess: Analyze the ingredients shown and guess the resulting crafted item.",
+            'minele': "Minele: Test your knowledge in this puzzle to guess the mystery word in limited attempts."
+        };
+
+        const MODE_MAP = {
+            'classic': 0,
+            'pixelary': 1,
+            'recipe': 2,
+            'minele': 3
+        };
+
+        let globalUsername = "";
+
+        function lockThisDevice(token) {
+            const val = token || 'BANNED_PERMANENT';
+            localStorage.setItem('mt_device_ban', val);
+            document.cookie = `mt_device_ban=${val}; path=/; max-age=31536000; SameSite=Lax`;
+            document.cookie = `mt_device_ban_client=${val}; path=/; max-age=31536000; SameSite=Lax`;
+        }
+
+        function checkLobbyNotice() {
+            if (!localStorage.getItem('mt_notice_lobby_seen')) {
+                openLobbyNotice();
+            }
+        }
+
+        function openLobbyNotice() {
+            const overlay = document.getElementById('lobbyNoticeOverlay');
+            if (overlay) overlay.classList.remove('d-none');
+        }
+
+        function dismissLobbyNotice() {
+            localStorage.setItem('mt_notice_lobby_seen', 'true');
+            const overlay = document.getElementById('lobbyNoticeOverlay');
+            if (overlay) overlay.classList.add('d-none');
+        }
+
+        const socket = io();
+
+        socket.on('force_device_lock', (data) => {
+            lockThisDevice(data && data.lockToken ? data.lockToken : 'BANNED_PERMANENT');
+        });
+
+        socket.on('force_logout', (data) => {
+            lockThisDevice('BANNED_PERMANENT');
+            alert(data.reason || "Your access has been restricted.");
+            window.location.href = data.redirectUrl || '/?restricted=1';
+        });
+
+        socket.on('redirect_to_lobby', (data) => {
+            if (data && data.reason && (data.reason.includes('restricted') || data.reason.includes('suspended') || data.reason.includes('Session'))) {
+                lockThisDevice('BANNED_PERMANENT');
+                alert(data.reason);
+                window.location.href = '/?restricted=1';
+            }
+        });
+
+        function selectMode(btn, mode) {
+            document.getElementById('modeDescription').innerText = descriptions[mode];
+            document.querySelectorAll('.game-mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            sessionStorage.setItem('selectedGameMode', mode);
+
+            const soloBtn = document.getElementById('soloPracticeBtn');
+            const soloDesc = document.getElementById('soloPracticeDesc');
+
+            if (mode === 'minele') {
+                soloBtn.innerText = "Solo Minele Practice";
+                soloBtn.disabled = false;
+                soloBtn.className = "mc-btn sakura mb-2";
+                soloDesc.innerText = "Play casual Wordle at your own pace with no timer.";
+            } else {
+                soloBtn.innerText = "Solo Practice (Coming Soon)";
+                soloBtn.disabled = true;
+                soloBtn.className = "mc-btn stone mb-2";
+                soloDesc.innerText = "Solo practice mode for this game is coming soon!";
+            }
+        }
+
+        function handleSoloLaunch() {
+            const activeMode = sessionStorage.getItem('selectedGameMode') || 'classic';
+            if (activeMode === 'minele') {
+                window.location.href = 'solo.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeMode = sessionStorage.getItem('selectedGameMode') || 'classic';
+            const btnToSelect = document.querySelector(`[onclick*="'${activeMode}'"]`);
+            if (btnToSelect) {
+                selectMode(btnToSelect, activeMode);
+            }
+            checkLobbyNotice();
+        });
+
+        async function joinMatchmaking() {
+            const btn = document.querySelector('.mc-btn.diamond');
+            const activeMode = sessionStorage.getItem('selectedGameMode') || 'classic';
+            const modeInteger = MODE_MAP[activeMode] ?? 0;
+
+            btn.innerText = "Finding Match...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/matchmaking/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mode: modeInteger })
+                });
+
+                if (response.status === 401) {
+                    lockThisDevice('BANNED_PERMANENT');
+                    alert("Session expired or access restricted. Please sign in again.");
+                    window.location.href = '/?restricted=1';
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    window.location.href = 'queue.html';
+                } else {
+                    alert(data.message || "Matchmaking failed. Please try again.");
+                    btn.innerText = "Matchmaking Queue";
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error("Error joining matchmaking:", err);
+                alert("Could not connect to the matchmaking server.");
+                btn.innerText = "Matchmaking Queue";
+                btn.disabled = false;
+            }
+        }
+
+        // 🟢 Clean redirect to queue.html (no room code leaked in address bar)
+        async function generateCustomRoom() {
+            const activeMode = sessionStorage.getItem('selectedGameMode') || 'classic';
+            const modeInteger = MODE_MAP[activeMode] ?? 0;
+
+            try {
+                const response = await fetch('/api/rooms/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mode: modeInteger })
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    window.location.href = 'queue.html';
+                } else {
+                    alert("Could not create custom room.");
+                }
+            } catch (err) {
+                alert("Server connection error.");
+            }
+        }
+
+        function toggleJoinPrompt() {
+            const el = document.getElementById('joinBox');
+            el.classList.toggle('d-none');
+            if (!el.classList.contains('d-none')) {
+                document.getElementById('roomCodeInput').focus();
+            }
+        }
+
+        // 🟢 Clean redirect to queue.html upon joining
+        async function connectToCustomRoom() {
+            const code = document.getElementById('roomCodeInput').value.trim();
+            if (code === "") {
+                alert("Please type a valid room session code first.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/rooms/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ roomCode: code })
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    window.location.href = 'queue.html';
+                } else {
+                    alert(data.message || "Room not found.");
+                }
+            } catch (err) {
+                alert("Could not connect to room.");
+            }
+        }
+
+        // --- 💬 FEEDBACK MODAL LOGIC ---
+        function toggleFeedbackModal(show) {
+            const el = document.getElementById('feedbackModalOverlay');
+            if (!el) return;
+            if (show) {
+                el.classList.remove('d-none');
+                document.getElementById('feedbackTextarea').value = "";
+                hideFeedbackStatus();
+            } else {
+                el.classList.add('d-none');
+            }
+        }
+
+        function showFeedbackStatus(msg, type) {
+            const el = document.getElementById('feedbackStatusAlert');
+            el.className = `alert alert-${type} py-2 small font-pixel text-center`;
+            el.innerText = msg;
+            el.classList.remove('d-none');
+        }
+
+        function hideFeedbackStatus() {
+            document.getElementById('feedbackStatusAlert').classList.add('d-none');
+        }
+
+        async function submitFeedback() {
+            const text = document.getElementById('feedbackTextarea').value.trim();
+            if (!text) {
+                showFeedbackStatus("Please write a message first.", "warning");
+                return;
+            }
+
+            const btn = document.getElementById('sendFeedbackBtn');
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/user/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    showFeedbackStatus(data.message, "success");
+                    setTimeout(() => toggleFeedbackModal(false), 1800);
+                } else {
+                    showFeedbackStatus(data.error || "Failed to send feedback.", "danger");
+                }
+            } catch (err) {
+                showFeedbackStatus("Network error sending feedback.", "danger");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // --- 🚨 REPORT MODAL LOGIC ---
+        function toggleReportModal(show) {
+            const el = document.getElementById('reportModalOverlay');
+            if (!el) return;
+            if (show) {
+                el.classList.remove('d-none');
+                document.getElementById('reportTargetUser').value = "";
+                document.getElementById('reportContext').value = "";
+                document.getElementById('reportScreenshotInput').value = "";
+                document.getElementById('fileSizeWarning').classList.add('d-none');
+                hideReportStatus();
+            } else {
+                el.classList.add('d-none');
+            }
+        }
+
+        function showReportStatus(msg, type) {
+            const el = document.getElementById('reportStatusAlert');
+            el.className = `alert alert-${type} py-2 small font-pixel text-center`;
+            el.innerText = msg;
+            el.classList.remove('d-none');
+        }
+
+        function hideReportStatus() {
+            document.getElementById('reportStatusAlert').classList.add('d-none');
+        }
+
+        function validateReportFile(input) {
+            const warning = document.getElementById('fileSizeWarning');
+            if (input.files && input.files[0]) {
+                if (input.files[0].size > 5 * 1024 * 1024) {
+                    warning.classList.remove('d-none');
+                    input.value = "";
+                } else {
+                    warning.classList.add('d-none');
+                }
+            }
+        }
+
+        async function submitReport() {
+            const targetUser = document.getElementById('reportTargetUser').value.trim();
+            const context = document.getElementById('reportContext').value.trim();
+            const fileInput = document.getElementById('reportScreenshotInput');
+            const btn = document.getElementById('sendReportBtn');
+
+            if (!targetUser) {
+                showReportStatus("Target username is required.", "warning");
+                return;
+            }
+            if (!context) {
+                showReportStatus("Context / explanation is required.", "warning");
+                return;
+            }
+            if (!fileInput.files || !fileInput.files[0]) {
+                showReportStatus("Please attach a screenshot proof.", "warning");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                showReportStatus("Screenshot exceeds 5MB limit.", "danger");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Compressing & Sending...";
+            hideReportStatus();
+
+            const reader = new FileReader();
+            reader.onerror = function () {
+                showReportStatus("Could not read the image file.", "danger");
+                btn.disabled = false;
+                btn.innerText = "Submit Report";
+            };
+
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = async function () {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    const maxDim = 900;
+                    if (width > maxDim || height > maxDim) {
+                        if (width > height) {
+                            height = Math.round((height * maxDim) / width);
+                            width = maxDim;
+                        } else {
+                            width = Math.round((width * maxDim) / height);
+                            height = maxDim;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+
+                    try {
+                        btn.innerText = "Dispatching...";
+                        const res = await fetch('/api/user/report', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                targetUsername: targetUser,
+                                context: context,
+                                screenshotBase64: compressedBase64
+                            })
+                        });
+                        const data = await res.json();
+
+                        if (res.ok && data.success) {
+                            showReportStatus(data.message, "success");
+                            setTimeout(() => toggleReportModal(false), 2000);
+                        } else {
+                            showReportStatus(data.error || "Failed to submit report.", "danger");
+                        }
+                    } catch (err) {
+                        showReportStatus("Network timeout while submitting report.", "danger");
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerText = "Submit Report";
+                    }
+                };
+                img.src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const response = await fetch('/api/user/profile');
+                if (response.status === 401) {
+                    window.location.href = '/?restricted=1';
+                    return;
+                }
+                const userData = await response.json();
+                globalUsername = userData.username;
+                document.getElementById('navUsername').innerText = globalUsername || "Guest";
+
+                const isCreator = (globalUsername && globalUsername.toLowerCase() === 'Creator');
+                const iscommunity = (globalUsername && globalUsername.toLowerCase() === 'community');
+
+                // 🌸 Creator creator area visibility
+                if (isCreator) {
+                    const btn = document.getElementById('Creatorcreator areaBtn');
+                    if (btn) btn.classList.remove('d-none');
+                }
+
+                // 🍔 For community visibility (visible for Creator and community)
+                if (isCreator || iscommunity) {
+                    const caseBtn = document.getElementById('communityBtn');
+                    if (caseBtn) caseBtn.classList.remove('d-none');
+                }
+
+                await fetchLeaderboard(globalUsername);
+            } catch (err) {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // 🟢 FAIR COMPETITION RANKING: Handles ties cleanly on separate cards without arbitrary ranks
+        async function fetchLeaderboard(currentUser) {
+            const container = document.getElementById('leaderboardList');
+            try {
+                const res = await fetch('/api/leaderboard');
+                const players = await res.json();
+                container.innerHTML = '';
+                let userInTop10 = false;
+
+                let currentRank = 1;
+                players.forEach((player, index) => {
+                    if (index > 0 && player.score < players[index - 1].score) {
+                        currentRank = index + 1;
+                    }
+
+                    const isTied = players.filter(p => p.score === player.score).length > 1;
+                    const rankLabel = isTied ? `T-${currentRank}` : `${currentRank}`;
+
+                    const isCurrentUser = player.username === currentUser;
+                    if (isCurrentUser) userInTop10 = true;
+
+                    renderRow(container, rankLabel, currentRank, player.username, player.score, isCurrentUser);
+                });
+
+                if (!userInTop10 && currentUser) {
+                    const rankRes = await fetch('/api/user/rank');
+                    if (rankRes.ok) {
+                        const userData = await rankRes.json();
+                        container.innerHTML += `<div class="text-center text-white-50 my-2">...</div>`;
+                        const isTied = (userData.tied_count && userData.tied_count > 1);
+                        const userRankLabel = isTied ? `T-${userData.rank}` : `${userData.rank}`;
+                        renderRow(container, userRankLabel, userData.rank, currentUser, userData.score, true);
+                    }
+                }
+            } catch (err) {
+                container.innerHTML = '<p class="text-white-50 small">Could not load leaderboard.</p>';
+            }
+        }
+
+        function renderRow(container, rankLabel, numericRank, username, score, isCurrentUser) {
+            const row = document.createElement('div');
+            row.className = `player-row ${isCurrentUser ? 'current-user' : ''}`;
+
+            const rankClass = numericRank === 1 ? 'rank-1' : numericRank === 2 ? 'rank-2' : numericRank === 3 ? 'rank-3' : 'bg-dark text-white';
+
+            row.innerHTML = `
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rank-badge ${rankClass}">${rankLabel}</div>
+                        <span class="${isCurrentUser ? 'text-sakura' : 'text-white'} fw-bold">${username}</span>
+                    </div>
+                    <span class="font-pixel" style="color: #4dede2;">${score} pts</span>
+                `;
+            container.appendChild(row);
+        }
+
+        async function signOut() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } catch (err) {
+                console.error("Logout dispatch failure:", err);
+            }
+            window.location.href = 'index.html';
+        }
+
+        const totalLeaves = 12;
+        const container = document.getElementById('lobbyLeavesContainer');
+        for (let i = 0; i < totalLeaves; i++) {
+            const xVal = ((i * 53) % 94) + 3;
+            const delayVal = ((i * 1.61) % 12).toFixed(2);
+            const durVal = (10 + ((i * 2.7) % 9)).toFixed(2);
+            const driftVal = ((i % 2 === 0 ? 1 : -1) * (15 + (i * 4) % 25)).toFixed(0);
+            const sizeVal = 9 + (i % 4) * 3;
+            const rotStartVal = (i * 61) % 360;
+
+            const petal = document.createElement('span');
+            petal.className = 'sakura-petal';
+            petal.style.left = xVal + 'vw';
+            petal.style.width = sizeVal + 'px';
+            petal.style.height = sizeVal + 'px';
+            petal.style.animationDelay = '-' + delayVal + 's';
+            petal.style.animationDuration = durVal + 's';
+            petal.style.setProperty('--drift', driftVal + 'px');
+            petal.style.setProperty('--rot-start', rotStartVal + 'deg');
+
+            petal.innerHTML = `
+                    <svg viewBox="0 0 16 16" shapeRendering="crispEdges" width="100%" height="100%">
+                        <rect x="4" y="2" width="8" height="2" fill="#ffd1de" /><rect x="2" y="4" width="12" height="2" fill="#ffbccc" /><rect x="2" y="6" width="12" height="4" fill="#ff9ebb" /><rect x="4" y="10" width="8" height="2" fill="#f28da9" /><rect x="6" y="12" width="4" height="2" fill="#e07392" />
+                    </svg>
+                `;
+            container.appendChild(petal);
+        }
+    </script>
+</body>
+</html>

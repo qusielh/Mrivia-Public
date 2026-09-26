@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mrivia - Decode the Overworld</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Silkscreen&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --font-pixel: "Silkscreen", system-ui, sans-serif;
+            --font-display: "Fredoka", "Quicksand", system-ui, sans-serif;
+            --font-sans: "Quicksand", system-ui, sans-serif;
+            --background: oklch(0.2 0.05 340);
+            --foreground: oklch(0.98 0.01 90);
+            --card: oklch(0.24 0.05 340 / 0.72);
+            --border: oklch(0.38 0.06 340);
+            --sakura: oklch(0.82 0.14 355);
+            --warning-pixel: #ffe9b0;
+            --diamond: #4dede2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            min-height: 100dvh;
+            width: 100vw;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Full Screen Background Image Setup */
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -3;
+        }
+
+        .hero-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(20, 12, 18, 0.2), rgba(20, 12, 18, 0.75));
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-display);
+        }
+
+        .font-pixel {
+            font-family: var(--font-pixel);
+            letter-spacing: 0.04em;
+        }
+
+        .text-sakura {
+            color: var(--sakura);
+        }
+
+        /* ---------- Buttons ---------- */
+        .mc-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.4rem;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.04em;
+            border-radius: 6px;
+            transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
+            cursor: pointer;
+            user-select: none;
+            text-decoration: none;
+            width: 100%;
+        }
+
+            .mc-btn:hover {
+                filter: brightness(1.08) saturate(1.05);
+                transform: translateY(-1px);
+            }
+
+            .mc-btn:active {
+                transform: translateY(3px);
+            }
+
+            .mc-btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none !important;
+                filter: grayscale(0.5);
+            }
+
+            .mc-btn.sakura {
+                background: linear-gradient(180deg, oklch(0.92 0.1 355) 0%, oklch(0.8 0.14 350) 45%, oklch(0.62 0.16 350) 100%);
+                border: 2px solid oklch(0.3 0.1 350);
+                color: oklch(0.2 0.06 350);
+                box-shadow: inset 0 2px 0 oklch(0.98 0.08 355 / 0.85), inset 0 -3px 0 oklch(0.4 0.14 350 / 0.85), 0 4px 0 oklch(0.25 0.08 350);
+            }
+
+            .mc-btn.stone {
+                background: linear-gradient(180deg, oklch(0.72 0.02 340) 0%, oklch(0.52 0.02 340) 45%, oklch(0.36 0.02 340) 100%);
+                border: 2px solid oklch(0.18 0.02 340);
+                color: oklch(0.98 0.01 90);
+                box-shadow: inset 0 2px 0 oklch(0.86 0.02 340 / 0.7), inset 0 -3px 0 oklch(0.25 0.02 340 / 0.85), 0 4px 0 oklch(0.12 0.02 340);
+            }
+
+        /* Panel Base */
+        .mc-panel {
+            position: relative;
+            background: linear-gradient(180deg, oklch(0.24 0.05 340 / 0.75), oklch(0.18 0.04 340 / 0.82));
+            border: 2px solid oklch(0.5 0.08 350 / 0.95);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            padding: 2.25rem;
+            overflow: visible;
+        }
+
+        .flower-node {
+            position: absolute;
+            fill: #ffb7c5;
+            z-index: 20;
+            pointer-events: none;
+            transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.3);
+            }
+        }
+
+        .flower-sm {
+            width: 16px;
+            height: 16px;
+        }
+
+        .flower-md {
+            width: 24px;
+            height: 24px;
+        }
+
+        .flower-lg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .mc-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            color: var(--foreground);
+            background: oklch(0.14 0.04 340 / 0.85);
+            border: 2px solid oklch(0.4 0.06 340);
+            border-radius: 6px;
+            box-shadow: inset 2px 2px 0 rgba(0,0,0,0.5);
+            outline: none;
+            margin-bottom: 1rem;
+        }
+
+            .mc-input::placeholder {
+                color: oklch(0.65 0.04 340 / 0.6);
+            }
+
+            .mc-input:focus {
+                border-color: var(--sakura);
+            }
+
+        .feat-box {
+            padding: 0.65rem 0.75rem;
+            border-radius: 6px;
+            background: oklch(0.2 0.04 340 / 0.65);
+            border: 2px solid oklch(0.35 0.06 340 / 0.7);
+            height: 100%;
+        }
+
+        /* Falling Sakura Leaves System */
+        .sakura-fx {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .sakura-petal {
+            position: absolute;
+            top: -20px;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(var(--rot-start)) translateX(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.9;
+            }
+
+            90% {
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: translateY(105vh) rotate(calc(var(--rot-start) + 360deg)) translateX(var(--drift));
+                opacity: 0;
+            }
+        }
+
+        /* ---------- ONE-TIME NOTICE MODAL OVERLAY ---------- */
+        .note-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(12, 5, 10, 0.88);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .notice-card {
+            background: linear-gradient(180deg, rgba(42, 20, 36, 0.98), rgba(26, 11, 22, 0.99));
+            border: 3px solid var(--sakura);
+            border-radius: 24px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 183, 197, 0.3);
+            max-width: 540px;
+            width: 100%;
+            padding: 2.2rem;
+            position: relative;
+        }
+
+        .notice-icon-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 183, 197, 0.15);
+            border: 1px solid var(--sakura);
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+        }
+
+        .notice-point {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 183, 197, 0.2);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            margin-bottom: 0.65rem;
+            text-align: left;
+        }
+
+        /* ---------- 📱 MOBILE ORIENTATION SHIELD (PORTRAIT LOCK) ---------- */
+        #rotatePromptOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(14, 6, 12, 0.97);
+            backdrop-filter: blur(16px);
+            z-index: 99999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .rotate-phone-animation {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1.5rem;
+            animation: rotateDevice 2.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes rotateDevice {
+            0%, 40% {
+                transform: rotate(0deg);
+            }
+
+            70%, 100% {
+                transform: rotate(90deg);
+            }
+        }
+
+        @media (max-width: 1024px) and (orientation: portrait) {
+            #rotatePromptOverlay {
+                display: flex !important;
+            }
+        }
+
+        /* 📱 COMPACT SIDEWAYS MOBILE OPTIMIZATIONS */
+        @media (max-height: 520px) and (orientation: landscape) {
+            .notice-card {
+                padding: 1rem 1.4rem !important;
+                max-width: 620px !important;
+            }
+
+            .notice-icon-box {
+                width: 32px !important;
+                height: 32px !important;
+                margin-bottom: 0.3rem !important;
+            }
+
+            .notice-points-row {
+                display: flex !important;
+                gap: 10px !important;
+            }
+
+            .notice-point {
+                flex: 1 !important;
+                padding: 0.6rem 0.8rem !important;
+                margin-bottom: 0 !important;
+            }
+
+                .notice-point p {
+                    font-size: 0.75rem !important;
+                    line-height: 1.35 !important;
+                }
+
+            .notice-card h2 {
+                font-size: 1.05rem !important;
+                margin-bottom: 0.2rem !important;
+            }
+
+            .notice-card p.lead-notice {
+                font-size: 0.75rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            .mc-panel {
+                padding: 1.2rem !important;
+            }
+
+            .display-3 {
+                font-size: 2.2rem !important;
+            }
+
+            .mc-input {
+                padding: 0.5rem 0.8rem !important;
+                margin-bottom: 0.6rem !important;
+            }
+
+            .mc-btn {
+                padding: 0.5rem 1rem !important;
+            }
+        }
+
+        /* ========================================================= */
+        /* 🌸 CINEMATIC INTRO OVERLAY SYSTEM (From effect.html) */
+        /* ========================================================= */
+        #intro-screen-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: #0d060e;
+            color: #ffffff;
+            font-family: 'Fredoka', 'Quicksand', sans-serif !important;
+            overflow: hidden;
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            z-index: 10000;
+            cursor: pointer;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+            #intro-screen-overlay.fade-out {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+
+        .bg-gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, #2a1129 0%, #130714 65%, #070208 100%);
+            z-index: 1;
+        }
+
+        .portal-aura {
+            position: absolute;
+            width: 700px;
+            height: 350px;
+            background: radial-gradient(ellipse at center, rgba(243, 163, 195, 0.22) 0%, rgba(180, 80, 140, 0.08) 50%, transparent 75%);
+            pointer-events: none;
+            z-index: 2;
+            filter: blur(30px);
+            animation: auraPulse 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes auraPulse {
+            0% {
+                opacity: 0.6;
+                transform: scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+        }
+
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .title-card-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+            z-index: 10;
+        }
+
+        .crest-top, .crest-bottom {
+            filter: drop-shadow(0 0 10px rgba(243, 163, 195, 0.9)) drop-shadow(0 0 22px rgba(243, 163, 195, 0.45));
+            opacity: 0;
+            transform: scale(0.96);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .crest-path {
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .crest-detail {
+            opacity: 0;
+            transition: opacity 0.5s ease 0.4s;
+        }
+
+        .zone-text {
+            font-family: 'Fredoka', sans-serif !important;
+            font-size: 7.4rem;
+            font-weight: 600 !important;
+            letter-spacing: -0.01em;
+            margin: 8px 0;
+            line-height: 1;
+            color: #ffffff;
+            text-shadow: 0 0 25px rgba(243, 163, 195, 0.7), 0 0 50px rgba(243, 163, 195, 0.35);
+            position: relative;
+            display: inline-block;
+        }
+
+        .char-hidden {
+            opacity: 0;
+            filter: blur(16px);
+            transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), filter 0.7s ease;
+            display: inline-block;
+        }
+
+        .i-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .i-char {
+            display: inline-block;
+            opacity: 0;
+            filter: blur(16px);
+            transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), filter 0.7s ease;
+        }
+
+        .title-card-container.active .crest-top,
+        .title-card-container.active .crest-bottom {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .title-card-container.active .crest-path {
+            stroke-dashoffset: 0;
+        }
+
+        .title-card-container.active .crest-detail {
+            opacity: 1;
+        }
+
+        .title-card-container.active .char-hidden,
+        .title-card-container.active .i-char {
+            opacity: 1;
+            filter: blur(0px);
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .skip-hint-text {
+            position: absolute;
+            bottom: 24px;
+            font-family: var(--font-pixel);
+            font-size: 0.65rem;
+            color: rgba(255, 183, 197, 0.6);
+            letter-spacing: 0.1em;
+            pointer-events: none;
+            z-index: 25;
+            animation: pulseHint 2s infinite alternate;
+        }
+
+        @keyframes pulseHint {
+            0% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 0.8;
+            }
+        }
+
+        /* TOP HEADER INTRO TOGGLE BUTTON */
+        .intro-toggle-btn {
+            background: rgba(36, 16, 30, 0.85);
+            border: 2px solid var(--sakura);
+            color: #ffffff;
+            font-family: var(--font-pixel);
+            font-size: 0.65rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+            .intro-toggle-btn:hover {
+                background: rgba(255, 183, 197, 0.2);
+                border-color: #ffffff;
+                transform: translateY(-1px);
+                color: #ffffff;
+            }
+
+        /* Legal / Official Disclaimer Footer */
+        .site-footer-note {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 📱 ROTATE SCREEN SHIELD (Only appears on mobile portrait) -->
+    <div id="rotatePromptOverlay">
+        <svg class="rotate-phone-animation" viewBox="0 0 24 24" fill="none" stroke="var(--sakura)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+            <path d="M12 18h.01" />
+        </svg>
+        <span class="font-pixel text-sakura small d-block mb-2">🌸 LANDSCAPE MODE REQUIRED 🌸</span>
+        <h2 class="fs-4 fw-bold text-white mb-2" style="font-family: var(--font-display);">Please Rotate Your Device</h2>
+        <p class="text-white-50 small mb-0" style="max-width: 320px; font-family: var(--font-sans);">
+            Mrivia is designed for a horizontal screen. Turn your phone sideways to unlock the full arena experience!
+        </p>
+    </div>
+
+    <!-- 🌸 CINEMATIC INTRO SCREEN -->
+    <div id="intro-screen-overlay" onclick="skipIntroDirectly()">
+        <div class="bg-gradient-overlay"></div>
+        <div class="portal-aura"></div>
+        <canvas id="bg-canvas"></canvas>
+        <canvas id="particle-canvas"></canvas>
+
+        <div id="card-wrapper" class="title-card-container">
+            <!-- TOP CREST -->
+            <svg class="crest-top" width="500" height="42" viewBox="0 0 500 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="crest-path" d="M 250,34 C 200,34 160,10 100,10 C 50,10 20,24 5,24" stroke="#f3a3c3" stroke-width="2" stroke-linecap="round" />
+                <path class="crest-path" d="M 250,34 C 300,34 340,10 400,10 C 450,10 480,24 495,24" stroke="#f3a3c3" stroke-width="2" stroke-linecap="round" />
+                <path class="crest-path" d="M 250,22 C 210,22 175,6 125,6 C 85,6 55,16 30,16" stroke="#f3a3c3" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.65" />
+                <path class="crest-path" d="M 250,22 C 290,22 325,6 375,6 C 415,6 445,16 470,16" stroke="#f3a3c3" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.65" />
+                <g class="crest-detail">
+                    <path d="M 250,12 L 256,22 L 250,32 L 244,22 Z" fill="#f3a3c3" />
+                    <circle cx="250" cy="5" r="3" fill="#ffffff" />
+                    <circle cx="100" cy="10" r="2.5" fill="#f3a3c3" />
+                    <circle cx="400" cy="10" r="2.5" fill="#f3a3c3" />
+                </g>
+            </svg>
+
+            <h1 class="zone-text">
+                <span class="char-hidden">M</span><span class="char-hidden">r</span><span class="i-container"><span class="i-char">i</span></span><span class="char-hidden">v</span><span class="char-hidden">i</span><span class="char-hidden">a</span>
+            </h1>
+
+            <!-- BOTTOM CREST -->
+            <svg class="crest-bottom" width="520" height="50" viewBox="0 0 520 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="crest-path" d="M 260,8 C 210,8 170,36 100,36 C 50,36 20,20 5,20" stroke="#f3a3c3" stroke-width="2" stroke-linecap="round" />
+                <path class="crest-path" d="M 260,8 C 310,8 350,36 420,36 C 470,36 500,20 515,20" stroke="#f3a3c3" stroke-width="2" stroke-linecap="round" />
+                <path class="crest-path" d="M 260,20 C 220,20 185,44 125,44 C 80,44 45,28 25,28" stroke="#f3a3c3" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.65" />
+                <path class="crest-path" d="M 260,20 C 300,20 335,44 395,44 C 440,44 475,28 495,28" stroke="#f3a3c3" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.65" />
+                <g class="crest-detail">
+                    <circle cx="260" cy="20" r="8" stroke="#f3a3c3" stroke-width="2" fill="none" />
+                    <circle cx="260" cy="20" r="3.5" fill="#f3a3c3" />
+                    <line x1="260" y1="28" x2="260" y2="40" stroke="#f3a3c3" stroke-width="1.5" />
+                    <circle cx="260" cy="44" r="2" fill="#f3a3c3" />
+                    <circle cx="100" cy="36" r="2.5" fill="#f3a3c3" />
+                    <circle cx="420" cy="36" r="2.5" fill="#f3a3c3" />
+                </g>
+            </svg>
+        </div>
+
+        <div class="skip-hint-text">CLICK ANYWHERE TO SKIP INTRO</div>
+    </div>
+
+    <img src="assets/sakura-3.jpg" alt="" class="hero-bg">
+    <div class="hero-overlay"></div>
+
+    <div class="sakura-fx" id="leavesContainer"></div>
+
+    <!-- 🌸 ONE-TIME SECURITY & PRIVACY NOTICE MODAL -->
+    <div id="indexNoticeOverlay" class="note-overlay d-none">
+        <div class="notice-card text-center">
+            <div class="notice-icon-box">
+                <span class="fs-5">🛡️</span>
+            </div>
+            <span class="font-pixel text-sakura small d-block mb-1" style="font-size: 0.65rem;">SAFETY & PRIVACY FIRST</span>
+            <h2 class="fs-5 fw-bold text-white mb-1" style="font-family: var(--font-display);">Quick Note Before You Begin</h2>
+            <p class="text-white-50 small mb-3 lead-notice">Please take a few seconds to review these rules to keep your account safe:</p>
+
+            <div class="notice-points-row">
+                <!-- Point 1: Password Safety -->
+                <div class="notice-point">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span>🔑</span>
+                        <span class="font-pixel text-white small" style="font-size: 0.72rem;">Unique Password</span>
+                    </div>
+                    <p class="text-white-75 small mb-0" style="font-size: 0.82rem; line-height: 1.45;">
+                        Please do <b>not</b> reuse passwords that you use for personal accounts (email, banking). Pick something unique for Mrivia!
+                    </p>
+                </div>
+
+                <!-- Point 2: Identity Protection -->
+                <div class="notice-point">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span>👤</span>
+                        <span class="font-pixel text-white small" style="font-size: 0.72rem;">Protect Your Identity</span>
+                    </div>
+                    <p class="text-white-75 small mb-0" style="font-size: 0.82rem; line-height: 1.45;">
+                        Never use sensitive info or your real full name as a username. A gamertag or nickname is totally fine—just never your full identity!
+                    </p>
+                </div>
+
+                <!-- Point 3: Official Site & Anti-Scam Notice -->
+                <div class="notice-point">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span>🌸</span>
+                        <span class="font-pixel text-sakura small" style="font-size: 0.72rem;">Official Mrivia Site</span>
+                    </div>
+                    <p class="text-white-75 small mb-0" style="font-size: 0.82rem; line-height: 1.45;">
+                        This is the only official website made by Creator. Creator does not have public social media or alternative community pages anywhere else. Official news is posted right here!
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <button id="closeIndexNoticeBtn" onclick="dismissIndexNotice()" class="mc-btn stone font-pixel" style="font-size: 0.8rem;" disabled>
+                    Read Notice (<span id="noticeTimerCount">5</span>s)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container min-vh-100 d-flex flex-column justify-content-between py-3 py-sm-4">
+
+        <header class="row">
+            <div class="col-12 d-flex align-items-center gap-3">
+                <!-- 🎬 INTRO ON/OFF TOGGLE BUTTON -->
+                <button id="toggleIntroBtn" onclick="toggleIntroPreference()" class="intro-toggle-btn" title="Toggle Intro Cinematic On/Off">
+                    🎬 <span id="introToggleLabel">Intro: ON</span>
+                </button>
+                <span class="font-pixel text-white fs-5">Mrivia</span>
+            </div>
+        </header>
+
+        <main class="row my-auto align-items-center py-3 py-lg-5 g-4">
+
+            <div class="col-lg-6 text-start">
+                <h1 class="display-3 fw-bold mb-3 text-white">
+                    Decode the<br>
+                    <span class="text-sakura">Overworld</span>
+                </h1>
+                <p class="text-white-75 fs-5 mb-4 mb-lg-5" style="max-width: 520px;">
+                    A place for Minecraft players to test their knowledge, challenge friends, and have fun
+                </p>
+
+                <div class="row g-3" style="max-width: 480px;">
+                    <div class="col-4">
+                        <div class="feat-box">
+                            <div class="font-pixel text-sakura" style="font-size: 0.6rem;">REAL-TIME</div>
+                            <div class="small text-white-50 mt-1 fw-medium">Up to 6 players</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="feat-box">
+                            <div class="font-pixel text-sakura" style="font-size: 0.6rem;">Mini Games</div>
+                            <div class="small text-white-50 mt-1 fw-medium">4 Modes</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="feat-box">
+                            <div class="font-pixel text-sakura" style="font-size: 0.6rem;">NO EMAIL</div>
+                            <div class="small text-white-50 mt-1 fw-medium">Just name + key</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 offset-lg-1">
+                <div class="mc-panel" id="cardContainer">
+
+                    <!-- Top Flower -->
+                    <div class="flower-node flower-sm" style="top: -7.9px; left: 20%; --rot: 20deg;">
+                        <svg viewBox="0 0 100 100"><path d="M50 10c10 0 20 10 20 20s-10 20-20 20-20-10-20-20 10-20 20-20zM90 50c0 10-10 20-20 20s-20-10-20-20 10-20 20-20 20 10 20 20zM50 90c-10 0-20-10-20-20s10-20 20-20 20 10 20 20-10 20-20 20zM10 50c0-10 10-20 20-20s20 10 20 20-10 20-20 20-20-10-20-20z" /></svg>
+                    </div>
+
+                    <!-- Side Flower -->
+                    <div class="flower-node flower-md" style="top: 40%; left: 100%; --rot: -45deg;">
+                        <svg viewBox="0 0 100 100"><path d="M50 10c10 0 20 10 20 20s-10 20-20 20-20-10-20-20 10-20 20-20zM90 50c0 10-10 20-20 20s-20-10-20-20 10-20 20-20 20 10 20 20zM50 90c-10 0-20-10-20-20s10-20 20-20 20 10 20 20-10 20-20 20zM10 50c0-10 10-20 20-20s20 10 20 20-10 20-20 20-20-10-20-20z" /></svg>
+                    </div>
+
+                    <!-- Bottom Flower -->
+                    <div class="flower-node flower-lg" style="top: 100%; left: 58%; --rot: 70deg;">
+                        <svg viewBox="0 0 100 100"><path d="M50 10c10 0 20 10 20 20s-10 20-20 20-20-10-20-20 10-20 20-20zM90 50c0 10-10 20-20 20s-20-10-20-20 10-20 20-20 20 10 20 20zM50 90c-10 0-20-10-20-20s10-20 20-20 20 10 20 20-10 20-20 20zM10 50c0-10 10-20 20-20s20 10 20 20-10 20-20 20-20-10-20-20z" /></svg>
+                    </div>
+
+                    <div id="layerLogin">
+                        <h2 class="fs-4 fw-bold mb-1">Sign in or create account</h2>
+                        <p class="text-white-50 small mb-3">Enter a username and your password/key (or leave blank to get a generated key).</p>
+
+                        <div id="formFeedbackMessage" class="alert alert-danger d-none py-2 small font-monospace" style="background: rgba(255, 94, 94, 0.1); color: #ff5e5e; border-color: rgba(255, 94, 94, 0.25);"></div>
+
+                        <form id="submissionForm" onsubmit="processAuth(event)">
+                            <input type="text" id="userInput" class="mc-input" placeholder="Username" maxlength="20">
+                            <input type="password" id="keyField" class="mc-input font-monospace" placeholder="Password OR Key (skip to generate)">
+                            <button type="submit" id="continueAuthBtn" class="mc-btn sakura">Continue</button>
+                        </form>
+                    </div>
+
+                    <div id="layerKey" class="d-none">
+                        <h2 class="fs-4 fw-bold mb-1 text-sakura">Save your secret key</h2>
+                        <p class="text-white-50 small mb-3">This is your only login credential. Store it somewhere safe — if you lose it, the account is gone.</p>
+
+                        <div class="mc-input text-break font-monospace text-warning text-center mb-3" id="seedDisplay" style="font-size: 0.8rem; background: rgba(0,0,0,0.55); border-color: oklch(0.5 0.08 350 / 0.5);">
+                            GENERATING_SECURE_TOKEN...
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <button type="button" class="mc-btn stone btn-sm" onclick="copySeed()">Copy Key</button>
+                                <p class="text-success small mb-0 mt-1" id="copied" style="font-size: 0.7rem;"></p>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="mc-btn sakura btn-sm" onclick="goToLobby()">I've Saved It →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+
+        <!-- 🌸 CLEAN, SUBTLE MOJANG & OFFICIAL CREATOR DISCLAIMER -->
+        <footer class="site-footer-note pb-3">
+            <p class="text-white-50 small mb-1" style="font-size: 0.65rem; letter-spacing: 0.04em;">
+                NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
+            </p>
+            <p class="text-white-50 small mb-0" style="font-size: 0.62rem; opacity: 0.65;">
+                Mrivia is an independent fan project developed solely by Creator. Beware of impersonators—official updates are exclusively posted on this website.
+            </p>
+        </footer>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        /* ======================================================== */
+        /* 🌸 CINEMATIC BUTTERFLY INTRO ENGINE                      */
+        /* ======================================================== */
+        const introOverlay = document.getElementById('intro-screen-overlay');
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas ? bgCanvas.getContext('2d') : null;
+        const mainCanvas = document.getElementById('particle-canvas');
+        const mainCtx = mainCanvas ? mainCanvas.getContext('2d') : null;
+        const cardWrapper = document.getElementById('card-wrapper');
+
+        let bgParticles = [];
+        let sparkles = [];
+        let butterflies = [];
+        let animState = 'APPROACH';
+        let coreRadius = 14;
+        let introLoopId = null;
+        let bgLoopId = null;
+        let introAutoFadeTimer = null;
+        let isIntroRunning = false;
+
+        function isPortraitMode() {
+            return window.matchMedia("(max-width: 1024px) and (orientation: portrait)").matches;
+        }
+
+        function checkIntroPreference() {
+            return localStorage.getItem('mrivia_intro_disabled') === 'true';
+        }
+
+        function updateIntroToggleBtnUI() {
+            const label = document.getElementById('introToggleLabel');
+            if (!label) return;
+            const isDisabled = checkIntroPreference();
+            label.innerText = isDisabled ? "Intro: OFF" : "Intro: ON";
+        }
+
+        function toggleIntroPreference() {
+            const currentlyDisabled = checkIntroPreference();
+            if (currentlyDisabled) {
+                localStorage.removeItem('mrivia_intro_disabled');
+            } else {
+                localStorage.setItem('mrivia_intro_disabled', 'true');
+            }
+            updateIntroToggleBtnUI();
+        }
+
+        function skipIntroDirectly() {
+            if (!introOverlay || !isIntroRunning) return;
+            isIntroRunning = false;
+            if (introAutoFadeTimer) clearTimeout(introAutoFadeTimer);
+
+            introOverlay.classList.add('fade-out');
+
+            setTimeout(() => {
+                introOverlay.style.display = 'none';
+                if (introLoopId) cancelAnimationFrame(introLoopId);
+                if (bgLoopId) cancelAnimationFrame(bgLoopId);
+                checkIndexNotice();
+            }, 800);
+        }
+
+        function resizeIntroCanvases() {
+            if (!bgCanvas || !mainCanvas) return;
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+            mainCanvas.width = window.innerWidth;
+            mainCanvas.height = window.innerHeight;
+        }
+
+        class AmbientDot {
+            constructor() { this.reset(true); }
+            reset(isInitial = false) {
+                this.x = Math.random() * (bgCanvas ? bgCanvas.width : 500);
+                this.y = isInitial ? Math.random() * (bgCanvas ? bgCanvas.height : 500) : (bgCanvas ? bgCanvas.height : 500) + Math.random() * 10;
+                this.size = Math.random() * 2.2 + 1;
+                this.speedY = -(Math.random() * 0.5 + 0.2);
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.y += this.speedY;
+                if (this.y < -10) this.reset(false);
+            }
+            draw() {
+                if (!bgCtx) return;
+                bgCtx.fillStyle = `rgba(243, 163, 195, ${this.opacity})`;
+                bgCtx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        }
+
+        class PerfectTangentButterfly {
+            constructor(corner) {
+                this.size = 7.5;
+                this.wingAngle = Math.random() * Math.PI;
+                this.wingSpeed = 0.35;
+                this.corner = corner;
+
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                const cx = w / 2;
+                const cy = h / 2;
+
+                if (corner === 'top-right') {
+                    this.x = w + 60;
+                    this.y = -60;
+                } else {
+                    this.x = -60;
+                    this.y = h + 60;
+                }
+
+                this.outerRadius = 180;
+                const dx = this.x - cx;
+                const dy = this.y - cy;
+                const d = Math.sqrt(dx * dx + dy * dy);
+                const phi = Math.atan2(dy, dx);
+                const alpha = Math.acos(Math.min(Math.max(this.outerRadius / d, -1), 1));
+                this.tangentAngle = phi + alpha;
+
+                this.tx = cx + Math.cos(this.tangentAngle) * this.outerRadius;
+                this.ty = cy + Math.sin(this.tangentAngle) * this.outerRadius;
+
+                const lineDx = this.tx - this.x;
+                const lineDy = this.ty - this.y;
+                const lineLen = Math.sqrt(lineDx * lineDx + lineDy * lineDy);
+                this.dirX = lineDx / lineLen;
+                this.dirY = lineDy / lineLen;
+                this.speed = 4.8;
+                this.inOrbit = false;
+                this.orbitFrames = 0;
+                this.radius = this.outerRadius;
+                this.angle = this.tangentAngle;
+                this.prevX = this.x;
+                this.prevY = this.y;
+            }
+
+            update(centerX, centerY) {
+                this.prevX = this.x;
+                this.prevY = this.y;
+                this.wingAngle += this.wingSpeed;
+
+                if (!this.inOrbit) {
+                    this.x += this.dirX * this.speed;
+                    this.y += this.dirY * this.speed;
+
+                    const distToTangent = Math.hypot(this.tx - this.x, this.ty - this.y);
+                    if (distToTangent <= this.speed) {
+                        this.x = this.tx;
+                        this.y = this.ty;
+                        this.inOrbit = true;
+                        this.radius = this.outerRadius;
+                        this.angle = this.tangentAngle;
+                    }
+                } else {
+                    this.orbitFrames++;
+                    const frameAccel = 1 + (this.orbitFrames * 0.007);
+                    const progress = 1 - (this.radius / this.outerRadius);
+                    const baseSpeed = this.speed * frameAccel;
+                    const angularSpeed = (baseSpeed / this.outerRadius) + Math.pow(progress, 2.2) * 0.16;
+                    const shrinkSpeed = (0.5 * frameAccel) + Math.pow(progress, 2.0) * 2.8;
+
+                    this.angle += angularSpeed;
+                    this.radius = Math.max(0, this.radius - shrinkSpeed);
+
+                    this.x = centerX + Math.cos(this.angle) * this.radius;
+                    this.y = centerY + Math.sin(this.angle) * this.radius;
+
+                    if (this.radius <= 9 && animState === 'APPROACH') {
+                        animState = 'IMPLODING_CORE';
+                        coreRadius = 14;
+                    }
+                }
+            }
+
+            draw() {
+                if (!mainCtx) return;
+                mainCtx.save();
+                mainCtx.translate(this.x, this.y);
+
+                const dx = this.x - this.prevX;
+                const dy = this.y - this.prevY;
+                const angle = Math.atan2(dy, dx) + Math.PI / 2;
+                mainCtx.rotate(angle);
+
+                mainCtx.shadowBlur = 14;
+                mainCtx.shadowColor = "rgba(243, 163, 195, 0.95)";
+                mainCtx.fillStyle = "#ffffff";
+
+                const flap = Math.abs(Math.sin(this.wingAngle));
+
+                mainCtx.beginPath();
+                mainCtx.ellipse(-this.size * 0.5 * flap, 0, this.size * 0.6 * flap, this.size * 0.9, Math.PI / 6, 0, Math.PI * 2);
+                mainCtx.fill();
+
+                mainCtx.beginPath();
+                mainCtx.ellipse(this.size * 0.5 * flap, 0, this.size * 0.6 * flap, this.size * 0.9, -Math.PI / 6, 0, Math.PI * 2);
+                mainCtx.fill();
+
+                mainCtx.fillStyle = "#f3a3c3";
+                mainCtx.beginPath();
+                mainCtx.arc(0, 0, this.size * 0.2, 0, Math.PI * 2);
+                mainCtx.fill();
+
+                mainCtx.restore();
+            }
+        }
+
+        class SparkleParticle {
+            constructor(originX, originY) {
+                this.x = originX;
+                this.y = originY;
+                this.size = Math.random() * 2.8 + 1.2;
+                const angle = Math.random() * Math.PI * 2;
+                this.speed = Math.random() * 28 + 10;
+                this.vx = Math.cos(angle) * this.speed;
+                this.vy = Math.sin(angle) * this.speed;
+                this.drag = 0.94;
+                this.life = 0;
+                this.maxLife = Math.random() * 55 + 65;
+                this.color = Math.random() > 0.35 ? '#ffffff' : '#f3a3c3';
+            }
+
+            update() {
+                this.life++;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vx *= this.drag;
+                this.vy *= this.drag;
+                this.opacity = Math.max(0, 1 - (this.life / this.maxLife));
+            }
+
+            draw() {
+                if (!mainCtx || this.opacity <= 0) return;
+                mainCtx.globalAlpha = this.opacity;
+                mainCtx.fillStyle = this.color;
+                mainCtx.beginPath();
+                mainCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                mainCtx.fill();
+            }
+        }
+
+        function triggerExplosion(x, y) {
+            sparkles = [];
+            for (let i = 0; i < 220; i++) {
+                sparkles.push(new SparkleParticle(x, y));
+            }
+        }
+
+        function drawImplodingCore(centerX, centerY) {
+            coreRadius -= 4.6;
+
+            if (coreRadius > 0.5) {
+                if (!mainCtx) return;
+                mainCtx.save();
+                mainCtx.translate(centerX, centerY);
+                mainCtx.shadowBlur = 16;
+                mainCtx.shadowColor = "#ffffff";
+                mainCtx.fillStyle = "#ffffff";
+                mainCtx.beginPath();
+                mainCtx.arc(0, 0, coreRadius, 0, Math.PI * 2);
+                mainCtx.fill();
+                mainCtx.restore();
+            } else {
+                animState = 'EXPLODED';
+                triggerExplosion(centerX, centerY);
+                if (cardWrapper) cardWrapper.classList.add('active');
+
+                introAutoFadeTimer = setTimeout(() => {
+                    skipIntroDirectly();
+                }, 5000);
+            }
+        }
+
+        function renderIntroBg() {
+            if (!bgCtx || !isIntroRunning) return;
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            bgParticles.forEach(p => { p.update(); p.draw(); });
+            bgLoopId = requestAnimationFrame(renderIntroBg);
+        }
+
+        function mainIntroAnimationLoop() {
+            if (!mainCtx || !isIntroRunning) return;
+            mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+            const screenCenterX = window.innerWidth / 2;
+            const screenCenterY = window.innerHeight / 2;
+
+            if (animState === 'APPROACH') {
+                butterflies.forEach(b => b.update(screenCenterX, screenCenterY));
+                if (animState === 'APPROACH') {
+                    butterflies.forEach(b => b.draw());
+                }
+            }
+
+            if (animState === 'IMPLODING_CORE') {
+                drawImplodingCore(screenCenterX, screenCenterY);
+            }
+
+            if (sparkles.length > 0) {
+                mainCtx.save();
+                mainCtx.globalCompositeOperation = 'lighter';
+                let activeCount = 0;
+                for (let s of sparkles) {
+                    s.update();
+                    s.draw();
+                    if (s.life < s.maxLife) activeCount++;
+                }
+                if (activeCount === 0) sparkles = [];
+                mainCtx.restore();
+            }
+
+            introLoopId = requestAnimationFrame(mainIntroAnimationLoop);
+        }
+
+        function launchIntroCinematic() {
+            if (checkIntroPreference() || isPortraitMode()) {
+                if (introOverlay) introOverlay.style.display = 'none';
+                isIntroRunning = false;
+                checkIndexNotice();
+                return;
+            }
+
+            isIntroRunning = true;
+            resizeIntroCanvases();
+            window.addEventListener('resize', resizeIntroCanvases);
+
+            bgParticles = [];
+            for (let i = 0; i < 70; i++) bgParticles.push(new AmbientDot());
+            renderIntroBg();
+
+            butterflies = [
+                new PerfectTangentButterfly('top-right'),
+                new PerfectTangentButterfly('bottom-left')
+            ];
+            mainIntroAnimationLoop();
+        }
+
+        /* ======================================================== */
+        /* SAKURA PETALS SYSTEM & LOGIN AUTH LOGIC                  */
+        /* ======================================================== */
+        const totalLeaves = 12;
+        const container = document.getElementById('leavesContainer');
+        for (let i = 0; i < totalLeaves; i++) {
+            const xVal = ((i * 53) % 94) + 3;
+            const delayVal = ((i * 1.61) % 12).toFixed(2);
+            const durVal = (10 + ((i * 2.7) % 9)).toFixed(2);
+            const driftVal = ((i % 2 === 0 ? 1 : -1) * (15 + (i * 4) % 25)).toFixed(0);
+            const sizeVal = 9 + (i % 4) * 3;
+            const rotStartVal = (i * 61) % 360;
+
+            const petal = document.createElement('span');
+            petal.className = 'sakura-petal';
+            petal.style.left = xVal + 'vw';
+            petal.style.width = sizeVal + 'px';
+            petal.style.height = sizeVal + 'px';
+            petal.style.animationDelay = '-' + delayVal + 's';
+            petal.style.animationDuration = durVal + 's';
+            petal.style.setProperty('--drift', driftVal + 'px');
+            petal.style.setProperty('--rot-start', rotStartVal + 'deg');
+
+            petal.innerHTML = `
+                        <svg viewBox="0 0 16 16" shapeRendering="crispEdges" width="100%" height="100%">
+                            <rect x="4" y="2" width="8" height="2" fill="#ffd1de" />
+                            <rect x="2" y="4" width="12" height="2" fill="#ffbccc" />
+                            <rect x="2" y="6" width="12" height="4" fill="#ff9ebb" />
+                            <rect x="4" y="10" width="8" height="2" fill="#f28da9" />
+                            <rect x="6" y="12" width="4" height="2" fill="#e07392" />
+                        </svg>
+                    `;
+            container.appendChild(petal);
+        }
+
+        const BACKEND_URL = "/api/auth";
+
+        function lockThisDevice(token) {
+            const val = token || 'BANNED_PERMANENT';
+            localStorage.setItem('mt_device_ban', val);
+            document.cookie = `mt_device_ban=${val}; path=/; max-age=31536000; SameSite=Lax`;
+            document.cookie = `mt_device_ban_client=${val}; path=/; max-age=31536000; SameSite=Lax`;
+            displayAlert("This device has been restricted from creating or accessing accounts.");
+            const btn = document.getElementById('continueAuthBtn');
+            if (btn) btn.disabled = true;
+        }
+
+        function unlockThisDevice() {
+            localStorage.removeItem('mt_device_ban');
+            document.cookie = "mt_device_ban=; path=/; max-age=0; SameSite=Lax";
+            document.cookie = "mt_device_ban_client=; path=/; max-age=0; SameSite=Lax";
+            const btn = document.getElementById('continueAuthBtn');
+            if (btn) btn.disabled = false;
+            const alertEl = document.getElementById('formFeedbackMessage');
+            if (alertEl) alertEl.classList.add('d-none');
+        }
+
+        function getActiveDeviceLock() {
+            return localStorage.getItem('mt_device_ban') || "";
+        }
+
+        function checkIndexNotice() {
+            if (!localStorage.getItem('mt_notice_index_seen')) {
+                const overlay = document.getElementById('indexNoticeOverlay');
+                if (!overlay) return;
+                overlay.classList.remove('d-none');
+
+                let secondsLeft = 5;
+                const btn = document.getElementById('closeIndexNoticeBtn');
+                const timerSpan = document.getElementById('noticeTimerCount');
+
+                const countdown = setInterval(() => {
+                    secondsLeft -= 1;
+                    if (timerSpan) timerSpan.innerText = secondsLeft;
+
+                    if (secondsLeft <= 0) {
+                        clearInterval(countdown);
+                        btn.disabled = false;
+                        btn.innerHTML = "Got it, Let's Play! 🌸";
+                        btn.classList.remove('stone');
+                        btn.classList.add('sakura');
+                    }
+                }, 1000);
+            }
+        }
+
+        function dismissIndexNotice() {
+            localStorage.setItem('mt_notice_index_seen', 'true');
+            const overlay = document.getElementById('indexNoticeOverlay');
+            if (overlay) overlay.classList.add('d-none');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateIntroToggleBtnUI();
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('restricted')) {
+                lockThisDevice(params.get('restricted'));
+                if (introOverlay) introOverlay.style.display = 'none';
+            } else {
+                launchIntroCinematic();
+            }
+        });
+
+        try {
+            const socket = io();
+            socket.on('force_device_lock', (data) => {
+                lockThisDevice(data && data.lockToken ? data.lockToken : 'BANNED_PERMANENT');
+            });
+            socket.on('force_logout', (data) => {
+                lockThisDevice(data && data.lockToken ? data.lockToken : 'BANNED_PERMANENT');
+            });
+        } catch (e) { }
+
+        function displayAlert(message) {
+            const el = document.getElementById('formFeedbackMessage');
+            el.innerText = message;
+            el.classList.remove('d-none');
+        }
+
+        async function processAuth(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('userInput').value.trim();
+            const credentialInput = document.getElementById('keyField').value.trim();
+
+            if (!username) {
+                displayAlert("Username field is required.");
+                return;
+            }
+
+            const deviceLock = getActiveDeviceLock();
+
+            try {
+                if (credentialInput !== "") {
+                    const response = await fetch(`${BACKEND_URL}/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-device-lock': deviceLock
+                        },
+                        body: JSON.stringify({ username, secretKey: credentialInput })
+                    });
+                    const data = await response.json();
+
+                    if (response.status === 403) {
+                        lockThisDevice(data.banId || 'BANNED_PERMANENT');
+                        return;
+                    }
+
+                    if (response.status === 200 && data.success) {
+                        unlockThisDevice();
+                        goToLobby();
+                        return;
+                    }
+
+                    const checkRes = await fetch(`${BACKEND_URL}/check-or-register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-device-lock': deviceLock
+                        },
+                        body: JSON.stringify({ username, customPassword: credentialInput })
+                    });
+                    const checkData = await checkRes.json();
+
+                    if (checkRes.status === 403) {
+                        lockThisDevice(checkData.banId || 'BANNED_PERMANENT');
+                        return;
+                    }
+
+                    if (checkRes.status !== 200) {
+                        displayAlert(checkData.error || "Incorrect password or secret key.");
+                        return;
+                    }
+
+                    if (checkData.exists) {
+                        displayAlert("Incorrect password or secret key for this account.");
+                    } else {
+                        unlockThisDevice();
+                        goToLobby();
+                    }
+                } else {
+                    const response = await fetch(`${BACKEND_URL}/check-or-register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-device-lock': deviceLock
+                        },
+                        body: JSON.stringify({ username })
+                    });
+                    const data = await response.json();
+
+                    if (response.status === 403) {
+                        lockThisDevice(data.banId || 'BANNED_PERMANENT');
+                        return;
+                    }
+
+                    if (response.status !== 200) {
+                        displayAlert(data.error || "Server issue encountered.");
+                        return;
+                    }
+
+                    if (data.exists) {
+                        displayAlert("Username exists! Please provide your password or key to sign in.");
+                    } else {
+                        unlockThisDevice();
+                        document.getElementById('seedDisplay').innerText = data.secretKey;
+                        document.getElementById('layerLogin').classList.add('d-none');
+                        document.getElementById('layerKey').classList.remove('d-none');
+                    }
+                }
+            } catch (err) {
+                displayAlert("Could not reach backend database instance. Is server.js active?");
+            }
+        }
+
+        function copySeed() {
+            const token = document.getElementById('seedDisplay').innerText;
+            navigator.clipboard.writeText(token);
+            document.getElementById('copied').innerText = "Secret key copied to clipboard!";
+        }
+
+        function goToLobby() {
+            window.location.href = 'lobby.html';
+        }
+    </script>
+</body>
+</html>
