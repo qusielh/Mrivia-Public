@@ -139,11 +139,12 @@ const db = {
         setupSockets(io, db);
 
         const PORT = process.env.PORT || 5000;
-        server.listen(PORT, () => {
-            console.log(`🚀 Mrivia Auth & Socket Server active at: http://localhost:${PORT}`);
+        server.listen(PORT, '0.0.0.0', () => {
+            console.log(`🚀 Mrivia Auth & Socket Server active at: http://0.0.0.0:${PORT}`);
         });
 
     } catch (err) {
         console.error("🔴 Turso Cloud Database Boot Failure:", err);
     }
 })();
+
