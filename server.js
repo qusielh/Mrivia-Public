@@ -89,7 +89,7 @@ const db = {
     try {
         console.log(`📡 Connecting to Turso Cloud Database: ${TURSO_URL}...`);
 
-        // 🟢 Verified Cloud Tables (Users, Banned Devices, Feedback, Reports)
+        // 🟢 Verified Cloud Tables (Users, Devices, Feedback, Reports, Announcements)
         await db.exec(`
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -123,8 +123,16 @@ const db = {
                 image_data TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
+
+            CREATE TABLE IF NOT EXISTS announcements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                content TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
         `);
-        console.log("🟢 Connected to Turso Cloud DB & Verified Tables (Users, Devices, Feedback, Reports).");
+        console.log("🟢 Connected to Turso Cloud DB & Verified Tables (Users, Devices, Feedback, Reports, Announcements).");
 
         // 🌸 Initialize community & supporters ledger in Turso
         await initcommunityDatabase(db);
@@ -140,11 +148,10 @@ const db = {
 
         const PORT = process.env.PORT || 5000;
         server.listen(PORT, '0.0.0.0', () => {
-            console.log(`🚀 Mrivia Auth & Socket Server active at: http://0.0.0.0:${PORT}`);
+            console.log(`🚀 Mrivia Auth & Socket Server active at: http://localhost:${PORT}`);
         });
 
     } catch (err) {
         console.error("🔴 Turso Cloud Database Boot Failure:", err);
     }
 })();
-
