@@ -296,7 +296,7 @@
             box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8) !important;
             backdrop-filter: blur(16px);
             padding: 0.5rem;
-            min-width: 170px;
+            min-width: 175px;
         }
 
         .mc-dropdown-item {
@@ -493,6 +493,54 @@
             }
         }
 
+        /* 📬 INBOX TITLE CARD STYLES */
+        .inbox-card-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 183, 197, 0.25);
+            border-radius: 12px;
+            padding: 0.85rem 1.1rem;
+            margin-bottom: 0.65rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-align: left;
+            display: block;
+            width: 100%;
+        }
+
+            .inbox-card-btn:hover {
+                border-color: var(--sakura);
+                background: rgba(255, 183, 197, 0.15);
+                transform: translateX(3px);
+            }
+
+        .page-ctrl-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 183, 197, 0.3);
+            color: #ffffff;
+            font-family: var(--font-pixel);
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.12s ease;
+        }
+
+            .page-ctrl-btn:hover:not(:disabled) {
+                background: var(--sakura);
+                color: #140811;
+            }
+
+            .page-ctrl-btn.active {
+                background: var(--sakura);
+                color: #140811;
+                font-weight: bold;
+            }
+
+            .page-ctrl-btn:disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+            }
+
         #rotatePromptOverlay {
             display: none;
             position: fixed;
@@ -583,7 +631,6 @@
             </div>
 
             <div class="lobby-notice-scroll flex-grow-1">
-                <!-- Creator & Anti-Impersonation Warning -->
                 <div class="lobby-notice-block" style="border-color: var(--sakura);">
                     <div class="d-flex align-items-center gap-2 mb-1">
                         <span style="font-size: 1.1rem;">🌸</span>
@@ -664,6 +711,52 @@
                 <button id="closeLobbyNoticeBtn" onclick="dismissLobbyNotice()" class="mc-btn stone font-pixel" style="font-size: 0.85rem;">
                     Close Notice
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📬 INBOX ANNOUNCEMENTS TITLES MODAL (PAGINATED) -->
+    <div id="inboxModalOverlay" class="generic-modal-overlay d-none">
+        <div class="mc-panel p-4" style="max-width: 580px; width: 100%; max-height: 86vh; display: flex; flex-direction: column;">
+            <div class="d-flex justify-content-between align-items-center mb-2 border-bottom border-light border-opacity-10 pb-2 flex-shrink-0">
+                <span class="font-pixel text-sakura fs-5">📬 Official Announcements</span>
+                <button onclick="closeInboxModal()" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+            </div>
+
+            <p class="text-white-50 small mb-3 flex-shrink-0" style="font-size: 0.78rem;">
+                Stay updated with patch notes, new word pools, and news directly from Creator! Tap any announcement to read.
+            </p>
+
+            <div id="inboxListContainer" class="flex-grow-1 overflow-y-auto pe-1" style="min-height: 200px;">
+                <span class="text-white-50 small font-pixel">Loading news...</span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center pt-2 mt-2 border-top border-light border-opacity-10 flex-shrink-0" id="inboxPaginationControls">
+                <button id="inboxPrevBtn" onclick="changeInboxPage(-1)" class="page-ctrl-btn">‹ Prev</button>
+                <div id="inboxPageNumButtons" class="d-flex gap-1"></div>
+                <button id="inboxNextBtn" onclick="changeInboxPage(1)" class="page-ctrl-btn">Next ›</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📖 INBOX FULL MESSAGE VIEWER MODAL (ON-DEMAND LAZY LOADED) -->
+    <div id="inboxMessageViewerModal" class="generic-modal-overlay d-none">
+        <div class="mc-panel p-4" style="max-width: 540px; width: 100%; border-color: var(--diamond);">
+            <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-light border-opacity-10 pb-2">
+                <div>
+                    <span class="badge bg-danger font-pixel mb-1" style="font-size: 0.55rem;">FROM Creator</span>
+                    <h3 class="fs-5 fw-bold text-white mb-0 font-pixel" id="viewerAnnounceTitle">---</h3>
+                </div>
+                <span class="text-white-50 small" id="viewerAnnounceDate" style="font-size: 0.68rem;">--</span>
+            </div>
+
+            <div class="p-3 mb-4 rounded-3 text-white-75" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255, 183, 197, 0.2); font-size: 0.92rem; line-height: 1.65; max-height: 250px; overflow-y: auto; word-break: break-word;" id="viewerAnnounceBody">
+                Loading announcement from realm...
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button onclick="backToInboxList()" class="mc-btn stone font-pixel btn-sm" style="font-size: 0.72rem;">← Back to Inbox</button>
+                <button onclick="closeInboxViewerModal()" class="mc-btn-gray font-pixel" style="font-size: 0.75rem;">Close</button>
             </div>
         </div>
     </div>
@@ -776,7 +869,7 @@
                 <!-- 🍔 ALWAYS VISIBLE: FOR community (Creator & community only) -->
                 <a id="communityBtn" href="letter%20to%20community.html" class="mc-btn gold py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🍔 For community</a>
 
-                <!-- ☰ CLEAN MENU DROPDOWN (Rules, Change Password, Feedback, Report, Sign Out) -->
+                <!-- ☰ CLEAN MENU DROPDOWN (Rules, Inbox, Change Password, Feedback, Report, Sign Out) -->
                 <div class="dropdown d-inline-block">
                     <button class="mc-btn stone py-1 px-3 font-pixel dropdown-toggle" type="button" id="lobbyMenuDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.75rem; width: auto;">
                         ☰ Menu
@@ -785,6 +878,11 @@
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openLobbyNotice()">
                                 🛡️ Rules & Notices
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openInboxModal()">
+                                📬 Inbox News
                             </button>
                         </li>
                         <li>
@@ -824,7 +922,6 @@
                         <h2 class="fs-2 fw-bold text-white mb-3">Choose Game Mode</h2>
 
                         <div class="mode-selection-wrapper">
-                            <!-- Left Leaf -->
                             <div class="sakura-leaf-container left">
                                 <svg class="leaf-svg" viewBox="0 0 100 100">
                                     <defs>
@@ -837,7 +934,6 @@
                                 </svg>
                             </div>
 
-                            <!-- Buttons -->
                             <div class="game-grid">
                                 <button class="game-mode-btn active" onclick="selectMode(this, 'classic')">
                                     <svg viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>
@@ -857,7 +953,6 @@
                                 </button>
                             </div>
 
-                            <!-- Right Leaf -->
                             <div class="sakura-leaf-container right">
                                 <svg class="leaf-svg" viewBox="0 0 100 100">
                                     <use href="#leafGlow" />
@@ -931,7 +1026,6 @@
             </div>
         </div>
 
-        <!-- 🌸 CLEAN, SUBTLE MOJANG & OFFICIAL CREATOR DISCLAIMER -->
         <footer class="site-footer-note pb-2">
             <p class="text-white-50 small mb-1" style="font-size: 0.65rem; letter-spacing: 0.04em;">
                 NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
@@ -959,6 +1053,131 @@
         };
 
         let globalUsername = "";
+
+        // --- 📬 INBOX CLIENT STATE ---
+        let allInboxTitles = [];
+        let currentInboxPage = 1;
+        const inboxPerPage = 4;
+
+        function openInboxModal() {
+            document.getElementById('inboxModalOverlay').classList.remove('d-none');
+            fetchInboxTitles();
+        }
+
+        function closeInboxModal() {
+            document.getElementById('inboxModalOverlay').classList.add('d-none');
+        }
+
+        // 🟢 LIGHTWEIGHT ON-DEMAND FETCH: Only loads titles on click!
+        async function fetchInboxTitles() {
+            const container = document.getElementById('inboxListContainer');
+            try {
+                const res = await fetch('/api/inbox/titles');
+                allInboxTitles = await res.json();
+                currentInboxPage = 1;
+                renderInboxPage();
+            } catch (e) {
+                container.innerHTML = `<span class="text-white-50 small font-pixel d-block p-3 text-center">Could not load announcements.</span>`;
+            }
+        }
+
+        function renderInboxPage() {
+            const container = document.getElementById('inboxListContainer');
+            container.innerHTML = "";
+
+            if (!allInboxTitles || allInboxTitles.length === 0) {
+                container.innerHTML = `<span class="text-white-50 small font-pixel d-block p-4 text-center">No announcements yet. Check back soon! 🌸</span>`;
+                renderInboxPaginationControls();
+                return;
+            }
+
+            const totalPages = Math.ceil(allInboxTitles.length / inboxPerPage) || 1;
+            if (currentInboxPage > totalPages) currentInboxPage = totalPages;
+
+            const startIdx = (currentInboxPage - 1) * inboxPerPage;
+            const pageItems = allInboxTitles.slice(startIdx, startIdx + inboxPerPage);
+
+            pageItems.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = "inbox-card-btn";
+                btn.onclick = () => openInboxMessageViewer(item.id);
+
+                btn.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-white fw-bold text-truncate pe-2 font-pixel" style="font-size: 0.85rem;">📢 ${item.title}</span>
+                        <span class="text-white-50 small font-sans" style="font-size: 0.65rem;">${new Date(item.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-sakura small font-sans" style="font-size: 0.72rem; opacity: 0.85;">Official Update from Creator</span>
+                        <span class="text-diamond small font-pixel" style="font-size: 0.62rem;">Read →</span>
+                    </div>
+                `;
+                container.appendChild(btn);
+            });
+
+            renderInboxPaginationControls();
+        }
+
+        function renderInboxPaginationControls() {
+            const totalPages = Math.ceil(allInboxTitles.length / inboxPerPage) || 1;
+            document.getElementById('inboxPrevBtn').disabled = (currentInboxPage === 1);
+            document.getElementById('inboxNextBtn').disabled = (currentInboxPage === totalPages);
+
+            const numBox = document.getElementById('inboxPageNumButtons');
+            numBox.innerHTML = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-ctrl-btn ${i === currentInboxPage ? 'active' : ''}`;
+                btn.innerText = i;
+                btn.onclick = () => { currentInboxPage = i; renderInboxPage(); };
+                numBox.appendChild(btn);
+            }
+        }
+
+        function changeInboxPage(delta) {
+            const totalPages = Math.ceil(allInboxTitles.length / inboxPerPage) || 1;
+            const newP = currentInboxPage + delta;
+            if (newP >= 1 && newP <= totalPages) {
+                currentInboxPage = newP;
+                renderInboxPage();
+            }
+        }
+
+        // 🟢 LAZY LOADING VIEWER: Fetches full message body only when player taps title
+        async function openInboxMessageViewer(id) {
+            document.getElementById('inboxModalOverlay').classList.add('d-none');
+            const viewer = document.getElementById('inboxMessageViewerModal');
+            viewer.classList.remove('d-none');
+
+            document.getElementById('viewerAnnounceTitle').innerText = "Loading...";
+            document.getElementById('viewerAnnounceDate').innerText = "--";
+            document.getElementById('viewerAnnounceBody').innerText = "Fetching message from the realm...";
+
+            try {
+                const res = await fetch(`/api/inbox/message/${id}`);
+                const data = await res.json();
+
+                if (res.ok && data.title) {
+                    document.getElementById('viewerAnnounceTitle').innerText = data.title;
+                    document.getElementById('viewerAnnounceDate').innerText = new Date(data.created_at).toLocaleString();
+                    document.getElementById('viewerAnnounceBody').innerText = data.content;
+                } else {
+                    document.getElementById('viewerAnnounceBody').innerText = "Could not load announcement content.";
+                }
+            } catch (err) {
+                document.getElementById('viewerAnnounceBody').innerText = "Network error loading announcement.";
+            }
+        }
+
+        function backToInboxList() {
+            document.getElementById('inboxMessageViewerModal').classList.add('d-none');
+            document.getElementById('inboxModalOverlay').classList.remove('d-none');
+        }
+
+        function closeInboxViewerModal() {
+            document.getElementById('inboxMessageViewerModal').classList.add('d-none');
+        }
 
         // --- 🔑 PLAYER IN-LOBBY CHANGE PASSWORD MODAL LOGIC ---
         function openChangePasswordModal() {
@@ -1143,7 +1362,6 @@
             }
         }
 
-        // 🟢 Clean redirect to queue.html (no room code leaked in address bar)
         async function generateCustomRoom() {
             const activeMode = sessionStorage.getItem('selectedGameMode') || 'classic';
             const modeInteger = MODE_MAP[activeMode] ?? 0;
@@ -1173,7 +1391,6 @@
             }
         }
 
-        // 🟢 Clean redirect to queue.html upon joining
         async function connectToCustomRoom() {
             const code = document.getElementById('roomCodeInput').value.trim();
             if (code === "") {
@@ -1399,13 +1616,11 @@
                 const isCreator = (globalUsername && globalUsername.toLowerCase() === 'Creator');
                 const iscommunity = (globalUsername && globalUsername.toLowerCase() === 'community');
 
-                // 🌸 Creator creator area visibility
                 if (isCreator) {
                     const btn = document.getElementById('Creatorcreator areaBtn');
                     if (btn) btn.classList.remove('d-none');
                 }
 
-                // 🍔 For community visibility (visible for Creator and community)
                 if (isCreator || iscommunity) {
                     const caseBtn = document.getElementById('communityBtn');
                     if (caseBtn) caseBtn.classList.remove('d-none');
@@ -1417,7 +1632,6 @@
             }
         });
 
-        // 🟢 FAIR COMPETITION RANKING: Handles ties cleanly on separate cards without arbitrary ranks
         async function fetchLeaderboard(currentUser) {
             const container = document.getElementById('leaderboardList');
             try {
