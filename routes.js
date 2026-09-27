@@ -309,7 +309,6 @@ function setupRoutes(db, io) {
         const modeId = (mode !== undefined) ? parseInt(mode) : 0;
         const maxPlayers = MODE_LIMITS[modeId] || 6;
 
-        // 🟢 0ms Collision-Proof Generator: Guarantees code is never duplicated
         let roomCode;
         do {
             roomCode = "SAKURA-" + Math.floor(1000 + Math.random() * 9000);
@@ -325,7 +324,6 @@ function setupRoutes(db, io) {
             isCustom: true
         };
 
-        // 🟢 Auto-clean abandoned room if nobody connects within 10 minutes
         setTimeout(() => {
             if (activeRooms[roomCode] && activeRooms[roomCode].players.length === 0) {
                 delete activeRooms[roomCode];
@@ -372,12 +370,10 @@ function setupRoutes(db, io) {
 
         const targetRoom = activeRooms[cleanCode];
 
-        // 🟢 GUARD 1: Prevent joining if match already started
         if (targetRoom.status !== 'waiting') {
             return res.status(403).json({ success: false, message: "This match has already started!" });
         }
 
-        // 🟢 GUARD 2: Prevent joining if room is already full (e.g., 4/4 or 6/6)
         if (targetRoom.players && targetRoom.players.length >= targetRoom.maxPlayers) {
             return res.status(403).json({ success: false, message: "This room is already full!" });
         }
@@ -457,18 +453,28 @@ function setupRoutes(db, io) {
         }
     });
 
+    // 🟢 BULLETPROOF LOGIN: Eliminates Pass-the-Hash vulnerability!
     router.post('/api/auth/login', async (req, res) => {
         try {
             const { username, secretKey } = req.body;
             const cleanUser = username ? username.trim() : "";
             const cleanKey = secretKey ? secretKey.trim() : "";
 
-            const hashedInput = hashPassword(cleanKey);
-
-            const user = await db.get(
-                'SELECT id, username, score, is_suspended, device_ban_id FROM users WHERE username = ? AND (secret_key = ? OR secret_key = ?)',
-                [cleanUser, cleanKey, hashedInput]
-            );
+            let user;
+            if (cleanKey.startsWith('MINE_')) {
+                // Generated random keys match directly
+                user = await db.get(
+                    'SELECT id, username, score, is_suspended, device_ban_id FROM users WHERE username = ? AND secret_key = ?',
+                    [cleanUser, cleanKey]
+                );
+            } else {
+                // Human passwords MUST match the HMAC hash; raw hashes will never log in!
+                const hashedInput = hashPassword(cleanKey);
+                user = await db.get(
+                    'SELECT id, username, score, is_suspended, device_ban_id FROM users WHERE username = ? AND secret_key = ?',
+                    [cleanUser, hashedInput]
+                );
+            }
 
             if (user) {
                 if (user.username !== 'Creator' && user.is_suspended) {
@@ -503,6 +509,52 @@ function setupRoutes(db, io) {
         res.clearCookie('mt_user_id', { path: '/' });
         res.clearCookie('mt_room_id', { path: '/' });
         return res.json({ success: true, message: "Logged out cleanly" });
+    });
+
+    // 🟢 PLAYER IN-LOBBY PASSWORD UPDATE: Players can safely change their password while logged in
+    router.post('/api/user/change-password', requireAuth, async (req, res) => {
+        try {
+            const rawUserId = req.signedCookies.mt_user_id;
+            const userId = rawUserId ? Number(rawUserId) : null;
+            if (!userId || isNaN(userId)) return res.status(401).json({ error: "Unauthorized session" });
+
+            const { newPassword } = req.body;
+            if (!newPassword || newPassword.trim().length < 3) {
+                return res.status(400).json({ error: "Password must be at least 3 characters." });
+            }
+
+            const hashed = hashPassword(newPassword.trim());
+            await db.run('UPDATE users SET secret_key = ? WHERE id = ?', [hashed, userId]);
+
+            console.log(`🔑 [Security] User ID #${userId} updated their password in lobby.`);
+            return res.json({ success: true, message: "Password updated successfully! 🌸" });
+        } catch (err) {
+            console.error("Change password error:", err);
+            return res.status(500).json({ error: "Server error changing password." });
+        }
+    });
+
+    // 🟢 ADMIN MANUAL PASSWORD OVERRIDE (For rescuing players in creator area)
+    router.post('/api/admin/set-user-password', requireCreator, async (req, res) => {
+        try {
+            const { username, newPassword } = req.body;
+            if (!username || !newPassword || newPassword.trim().length < 3) {
+                return res.status(400).json({ error: "Username and password (min 3 chars) required." });
+            }
+
+            const targetName = username.trim();
+            const user = await db.get('SELECT id FROM users WHERE username = ?', [targetName]);
+            if (!user) return res.status(404).json({ error: "User not found." });
+
+            const hashed = hashPassword(newPassword.trim());
+            await db.run('UPDATE users SET secret_key = ? WHERE id = ?', [hashed, user.id]);
+
+            console.log(`🔑 [creator area Admin] Creator manually set new password for "${targetName}".`);
+            return res.json({ success: true, message: `Password for ${targetName} updated! 🌸` });
+        } catch (err) {
+            console.error("Admin set password error:", err);
+            return res.status(500).json({ error: "Failed to update user password." });
+        }
     });
 
     router.get('/api/user/profile', async (req, res) => {
@@ -576,7 +628,6 @@ function setupRoutes(db, io) {
         }
     });
 
-    // 🟢 100% PURE TURSO CLOUD STORAGE REPORT (Zero Disk Files)
     router.post('/api/user/report', async (req, res) => {
         try {
             const rawUserId = req.signedCookies.mt_user_id;
@@ -610,7 +661,6 @@ function setupRoutes(db, io) {
 
             const filename = `rep_${Date.now()}_${crypto.randomBytes(4).toString('hex')}.png`;
 
-            // Stored directly in Turso DB (Zero Local Disk Writes)
             await db.run(
                 'INSERT INTO reports (reporter_username, target_username, context, image_filename, image_size_bytes, image_data) VALUES (?, ?, ?, ?, ?, ?)',
                 [reporterUsername, targetUsername.trim(), context.trim(), filename, imageSizeBytes, screenshotBase64]
