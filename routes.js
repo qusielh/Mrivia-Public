@@ -342,7 +342,7 @@ function setupRoutes(db, io) {
         return res.json({ success: true, roomCode: roomCode });
     });
 
-    // 🟢 JOIN CUSTOM ROOM
+    // 🟢 JOIN CUSTOM ROOM (NOW WITH ROOM CAPACITY AND MATCH IN-PROGRESS GUARDS)
     router.post('/api/rooms/join', async (req, res) => {
         const rawUserId = req.signedCookies.mt_user_id;
         const userId = rawUserId ? Number(rawUserId) : null;
@@ -364,6 +364,18 @@ function setupRoutes(db, io) {
 
         if (!activeRooms[cleanCode]) {
             return res.status(404).json({ success: false, message: "Room code not found or expired." });
+        }
+
+        const targetRoom = activeRooms[cleanCode];
+
+        // 🟢 GUARD 1: Prevent joining if match already started
+        if (targetRoom.status !== 'waiting') {
+            return res.status(403).json({ success: false, message: "This match has already started!" });
+        }
+
+        // 🟢 GUARD 2: Prevent joining if room is already full (e.g., 4/4 or 6/6)
+        if (targetRoom.players && targetRoom.players.length >= targetRoom.maxPlayers) {
+            return res.status(403).json({ success: false, message: "This room is already full!" });
         }
 
         res.cookie('mt_room_id', cleanCode, {
