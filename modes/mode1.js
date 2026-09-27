@@ -204,6 +204,7 @@ module.exports = {
         socket.emit('pixelary_role_init', {
             isPainter: isPainter,
             painterName: room.currentPainter,
+            category: room.currentCategory,
             secretWord: isPainter ? room.currentWord : null,
             canvasHistory: room.canvasHistory || []
         });

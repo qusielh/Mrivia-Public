@@ -183,9 +183,9 @@
             }
 
             .chat-msg.error {
-                color: var(--redstone); /* Bright Red */
+                color: var(--redstone);
             }
-        
+
         .mc-input {
             background: rgba(0, 0, 0, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -584,6 +584,13 @@
             <section class="col-6 col-lg-6 col-xl-6 d-flex flex-column align-items-center justify-content-center" style="min-height: 0;">
                 <div class="mc-panel w-100" style="max-width: 780px;">
                     <div class="p-2 p-lg-3 bg-black bg-opacity-10 border-bottom border-light border-opacity-10 d-flex justify-content-center align-items-center flex-shrink-0" style="position: relative; height: 50px;">
+
+                        <!-- 🟢 TOP-LEFT: CATEGORY MENTION FOR EVERYONE -->
+                        <div class="px-2 px-sm-3 py-1 rounded-3 bg-black bg-opacity-30 position-absolute start-0 ms-2 ms-sm-3 d-flex align-items-center gap-1 border border-light border-opacity-10" style="max-width: 42%;">
+                            <span class="text-white-50 font-pixel d-none d-md-inline" style="font-size: 0.55rem;">CATEGORY:</span>
+                            <span id="hudCategoryLabel" class="font-pixel text-truncate" style="color: var(--diamond); font-size: 0.72rem; letter-spacing: 0.05em;" title="Category">---</span>
+                        </div>
+
                         <div id="hudTargetItemLabel" class="fw-bold text-uppercase font-pixel" style="color: var(--sakura); font-size: 1.05rem; display: none;">???</div>
                         <div class="px-3 py-1 rounded-3 bg-black bg-opacity-30 position-absolute end-0 me-3">
                             <span id="hudMatchClock" class="text-warning fw-bold font-pixel">2:00</span>
@@ -677,6 +684,11 @@
             window.location.href = '/lobby.html';
         }
 
+        function formatCategoryName(rawCategory) {
+            if (!rawCategory) return "GENERAL";
+            return String(rawCategory).replace(/_/g, ' ').toUpperCase();
+        }
+
         function setPainterControlsActive(active) {
             isMyTurnToDraw = active;
             const toolbar = document.getElementById('studioPaintControls');
@@ -715,6 +727,17 @@
             socket.on('pixelary_role_init', (data) => {
                 currentPainterName = data.painterName;
                 setPainterControlsActive(data.isPainter);
+
+                // Update category if supplied
+                if (data.category) {
+                    const catLabel = document.getElementById('hudCategoryLabel');
+                    if (catLabel) {
+                        const formatted = formatCategoryName(data.category);
+                        catLabel.textContent = formatted;
+                        catLabel.title = formatted;
+                    }
+                }
+
                 const wordLabel = document.getElementById('hudTargetItemLabel');
                 if (data.isPainter) {
                     wordLabel.textContent = data.secretWord;
@@ -731,6 +754,14 @@
                 document.getElementById('countdownOverlay').classList.add('d-none');
                 document.getElementById('roundIntermissionBlock').classList.add('d-none');
                 document.getElementById('hudRoundTitle').textContent = `Round ${data.round} of ${data.maxRounds}`;
+
+                // 🟢 SHOW CATEGORY FOR EVERYONE
+                const catLabel = document.getElementById('hudCategoryLabel');
+                if (catLabel && data.category) {
+                    const formatted = formatCategoryName(data.category);
+                    catLabel.textContent = formatted;
+                    catLabel.title = formatted;
+                }
 
                 isMyTurnToDraw = data.isPainter;
                 const wordLabel = document.getElementById('hudTargetItemLabel');
@@ -820,12 +851,12 @@
                     let nameColorStyle = isHighest ? 'color: var(--diamond) !important;' : isYou ? 'color: var(--sakura) !important;' : '';
 
                     row.innerHTML = `
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="font-pixel" style="font-size: 0.65rem; opacity: 0.5;">#${displayRank}</span>
-                                    <span class="player-name-text" style="${nameColorStyle}">${displayName}</span>
-                                </div>
-                                <span class="font-pixel" style="font-size: 0.75rem; color: ${isHighest ? 'var(--diamond)' : 'var(--sakura)'};">${p.score}p</span>
-                            `;
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="font-pixel" style="font-size: 0.65rem; opacity: 0.5;">#${displayRank}</span>
+                                        <span class="player-name-text" style="${nameColorStyle}">${displayName}</span>
+                                    </div>
+                                    <span class="font-pixel" style="font-size: 0.75rem; color: ${isHighest ? 'var(--diamond)' : 'var(--sakura)'};">${p.score}p</span>
+                                `;
                     scoresStack.appendChild(row);
                 });
 
@@ -991,11 +1022,11 @@
                 }
 
                 div.innerHTML = `
-                            <div class="d-flex flex-column">
-                                <span class="player-name-text" style="${nameColorStyle}">${isYou ? 'You' : p.name}</span>
-                                ${statusBadge}
-                            </div>
-                            <span class="font-pixel" style="font-size: 0.75rem; color: ${isHighest ? 'var(--diamond)' : 'var(--sakura)'};">${p.score}p</span>`;
+                                <div class="d-flex flex-column">
+                                    <span class="player-name-text" style="${nameColorStyle}">${isYou ? 'You' : p.name}</span>
+                                    ${statusBadge}
+                                </div>
+                                <span class="font-pixel" style="font-size: 0.75rem; color: ${isHighest ? 'var(--diamond)' : 'var(--sakura)'};">${p.score}p</span>`;
                 container.appendChild(div);
             });
         }
