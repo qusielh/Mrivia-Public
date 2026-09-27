@@ -352,31 +352,6 @@
                 background: oklch(0.24 0.06 340 / 0.8);
             }
 
-        /* 📱 Expands Rules modal reading area on mobile without touching PC */
-        @media (max-height: 540px) {
-            .lobby-note-overlay {
-                padding: 0.5rem !important;
-            }
-            .lobby-notice-card {
-                max-width: 780px !important;
-                max-height: 96vh !important;
-                max-height: 96dvh !important;
-                padding: 0.85rem 1.25rem !important;
-                border-radius: 16px !important;
-            }
-            .lobby-notice-card .text-center.mb-3 {
-                margin-bottom: 0.4rem !important;
-            }
-            .lobby-notice-card h2 {
-                font-size: 1.15rem !important;
-                margin-bottom: 2px !important;
-            }
-            .lobby-notice-block, .kid-safety-box {
-                padding: 0.65rem 0.85rem !important;
-                margin-bottom: 0.5rem !important;
-            }
-        }
-        
         .rank-badge {
             min-width: 32px;
             height: 24px;
@@ -491,6 +466,31 @@
             padding: 1rem 1.15rem;
             margin-bottom: 1rem;
             text-align: left;
+        }
+
+        /* 📱 Expands Rules modal reading area on mobile landscape */
+        @media (max-height: 540px) {
+            .lobby-note-overlay {
+                padding: 0.5rem !important;
+            }
+            .lobby-notice-card {
+                max-width: 780px !important;
+                max-height: 96vh !important;
+                max-height: 96dvh !important;
+                padding: 0.85rem 1.25rem !important;
+                border-radius: 16px !important;
+            }
+            .lobby-notice-card .text-center.mb-3 {
+                margin-bottom: 0.4rem !important;
+            }
+            .lobby-notice-card h2 {
+                font-size: 1.15rem !important;
+                margin-bottom: 2px !important;
+            }
+            .lobby-notice-block, .kid-safety-box {
+                padding: 0.65rem 0.85rem !important;
+                margin-bottom: 0.5rem !important;
+            }
         }
 
         #rotatePromptOverlay {
@@ -668,6 +668,37 @@
         </div>
     </div>
 
+    <!-- 🔑 PLAYER CHANGE PASSWORD MODAL -->
+    <div id="changePasswordModalOverlay" class="generic-modal-overlay d-none">
+        <div class="mc-panel p-4" style="max-width: 440px; width: 100%; border-color: var(--sakura);">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="font-pixel text-sakura fs-5">🔑 Change Password</span>
+                <button onclick="closeChangePasswordModal()" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+            </div>
+            <p class="text-white-50 small mb-3">
+                Set a new password for your account. It updates immediately so you can log in on other devices anytime.
+            </p>
+
+            <form onsubmit="submitPlayerPasswordChange(event)">
+                <div class="mb-2">
+                    <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">NEW PASSWORD (MIN 3 CHARACTERS):</label>
+                    <input type="password" id="lobbyNewPasswordInput" class="mc-input" placeholder="New Password..." autocomplete="new-password">
+                </div>
+                <div class="mb-3">
+                    <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">CONFIRM NEW PASSWORD:</label>
+                    <input type="password" id="lobbyConfirmPasswordInput" class="mc-input mb-0" placeholder="Confirm New Password..." autocomplete="new-password">
+                </div>
+
+                <div id="changePasswordAlert" class="alert d-none py-2 small font-pixel text-center"></div>
+
+                <div class="d-flex gap-2 mt-3">
+                    <button type="button" onclick="closeChangePasswordModal()" class="mc-btn stone w-50 font-pixel btn-sm">Cancel</button>
+                    <button type="submit" id="savePasswordBtn" class="mc-btn sakura w-50 font-pixel btn-sm">Save Password ✨</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- 💬 PLAYER FEEDBACK MODAL -->
     <div id="feedbackModalOverlay" class="generic-modal-overlay d-none">
         <div class="mc-panel p-4" style="max-width: 500px; width: 100%;">
@@ -728,7 +759,7 @@
     <nav class="navbar navbar-expand-lg pt-4">
         <div class="container d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-3">
-                <span class="font-pixel text-white fs-4">Mrivia BETA</span>
+                <span class="font-pixel text-white fs-4">Mrivia</span>
             </div>
             <div class="d-flex align-items-center gap-2 gap-sm-3 flex-wrap justify-content-end">
                 <div class="user-pill d-none d-sm-flex align-items-center gap-2">
@@ -745,7 +776,7 @@
                 <!-- 🍔 ALWAYS VISIBLE: FOR community (Creator & community only) -->
                 <a id="communityBtn" href="letter%20to%20community.html" class="mc-btn gold py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🍔 For community</a>
 
-                <!-- ☰ CLEAN MENU DROPDOWN (Rules, Fullscreen, Feedback, Report, Sign Out) -->
+                <!-- ☰ CLEAN MENU DROPDOWN (Rules, Change Password, Feedback, Report, Sign Out) -->
                 <div class="dropdown d-inline-block">
                     <button class="mc-btn stone py-1 px-3 font-pixel dropdown-toggle" type="button" id="lobbyMenuDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.75rem; width: auto;">
                         ☰ Menu
@@ -757,8 +788,8 @@
                             </button>
                         </li>
                         <li>
-                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="toggleFullscreen()">
-                                ⛶ Fullscreen
+                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openChangePasswordModal()">
+                                🔑 Change Password
                             </button>
                         </li>
                         <li>
@@ -929,19 +960,65 @@
 
         let globalUsername = "";
 
-        // ⛶ FULLSCREEN TOGGLE
-        function toggleFullscreen() {
-            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-                const docEl = document.documentElement;
-                if (docEl.requestFullscreen) docEl.requestFullscreen();
-                else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
-                else if (docEl.mozRequestFullScreen) docEl.mozRequestFullScreen();
-                else if (docEl.msRequestFullscreen) docEl.msRequestFullscreen();
-            } else {
-                if (document.exitFullscreen) document.exitFullscreen();
-                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-                else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-                else if (document.msExitFullscreen) document.msExitFullscreen();
+        // --- 🔑 PLAYER IN-LOBBY CHANGE PASSWORD MODAL LOGIC ---
+        function openChangePasswordModal() {
+            document.getElementById('changePasswordModalOverlay').classList.remove('d-none');
+            document.getElementById('lobbyNewPasswordInput').value = "";
+            document.getElementById('lobbyConfirmPasswordInput').value = "";
+            document.getElementById('changePasswordAlert').classList.add('d-none');
+            setTimeout(() => document.getElementById('lobbyNewPasswordInput').focus(), 100);
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModalOverlay').classList.add('d-none');
+        }
+
+        async function submitPlayerPasswordChange(e) {
+            e.preventDefault();
+            const newPass = document.getElementById('lobbyNewPasswordInput').value.trim();
+            const confirmPass = document.getElementById('lobbyConfirmPasswordInput').value.trim();
+            const alertEl = document.getElementById('changePasswordAlert');
+            const btn = document.getElementById('savePasswordBtn');
+
+            if (!newPass || newPass.length < 3) {
+                alertEl.className = "alert alert-warning py-2 small font-pixel text-center";
+                alertEl.innerText = "Password must be at least 3 characters.";
+                alertEl.classList.remove('d-none');
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                alertEl.className = "alert alert-danger py-2 small font-pixel text-center";
+                alertEl.innerText = "Passwords do not match!";
+                alertEl.classList.remove('d-none');
+                return;
+            }
+
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/user/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newPassword: newPass })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    alertEl.className = "alert alert-success py-2 small font-pixel text-center";
+                    alertEl.innerText = data.message || "Password updated! 🌸";
+                    alertEl.classList.remove('d-none');
+                    setTimeout(() => closeChangePasswordModal(), 1800);
+                } else {
+                    alertEl.className = "alert alert-danger py-2 small font-pixel text-center";
+                    alertEl.innerText = data.error || "Could not update password.";
+                    alertEl.classList.remove('d-none');
+                }
+            } catch (err) {
+                alertEl.className = "alert alert-danger py-2 small font-pixel text-center";
+                alertEl.innerText = "Network error updating password.";
+                alertEl.classList.remove('d-none');
+            } finally {
+                btn.disabled = false;
             }
         }
 
