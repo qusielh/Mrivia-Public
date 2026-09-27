@@ -24,7 +24,7 @@ const {
 function setupRoutes(db, io) {
     const router = express.Router();
 
-    // 🟢 In-memory anti-replay map for solo practice (tracks last word claimed per user)
+    // 🟢 In-memory anti-replay map for solo practice
     const lastSoloWordByUser = {};
 
     function hashPassword(password) {
@@ -70,6 +70,18 @@ function setupRoutes(db, io) {
                         image_size_bytes INTEGER NOT NULL,
                         image_data TEXT,
                         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    );
+                `);
+            } catch (ignore) { }
+
+            try {
+                await db.run(`
+                    CREATE TABLE IF NOT EXISTS announcements (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        title TEXT NOT NULL,
+                        content TEXT NOT NULL,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
                     );
                 `);
             } catch (ignore) { }
@@ -454,7 +466,7 @@ function setupRoutes(db, io) {
         }
     });
 
-    // 🟢 BULLETPROOF LOGIN: Eliminates Pass-the-Hash vulnerability!
+    // 🟢 BULLETPROOF LOGIN: Eliminates Pass-the-Hash vulnerability
     router.post('/api/auth/login', async (req, res) => {
         try {
             const { username, secretKey } = req.body;
@@ -580,7 +592,7 @@ function setupRoutes(db, io) {
         }
     });
 
-    // 🟢 SPEEDRUN-FRIENDLY SCORE UPDATE: Rejects multi-tab duplicate word claims, zero delay on different words, supports grand completion bonus!
+    // 🟢 SPEEDRUN-FRIENDLY SCORE UPDATE
     router.post('/api/score/update', async (req, res) => {
         try {
             const rawUserId = req.signedCookies.mt_user_id;
@@ -596,12 +608,10 @@ function setupRoutes(db, io) {
             const { pointsToAdd, word } = req.body;
             const points = parseInt(pointsToAdd);
 
-            // Safe Cap: Allows regular solves (100-600) and the grand completion bonus (up to 3000), blocks 999,999 hacks
             if (isNaN(points) || points <= 0 || points > 3000) {
                 return res.status(400).json({ error: "Invalid points payload." });
             }
 
-            // Anti-Replay Guard: Blocks claiming points for the exact same word twice across tabs
             if (word && typeof word === 'string') {
                 const cleanWord = word.trim().toUpperCase();
                 if (lastSoloWordByUser[userId] === cleanWord) {
@@ -714,6 +724,95 @@ function setupRoutes(db, io) {
         } catch (err) {
             console.error("Feedback error:", err);
             return res.status(500).json({ error: "Could not save feedback." });
+        }
+    });
+
+    // ==========================================
+    // 📬 ANNOUNCEMENTS & PLAYER INBOX APIS
+    // ==========================================
+
+    // 🟢 Light endpoint: Only returns titles and dates (latest first)
+    router.get('/api/inbox/titles', async (req, res) => {
+        try {
+            const list = await db.all('SELECT id, title, created_at FROM announcements ORDER BY id DESC LIMIT 50');
+            return res.json(list || []);
+        } catch (err) {
+            console.error("Error reading inbox titles:", err);
+            return res.status(500).json([]);
+        }
+    });
+
+    // 🟢 On-Demand endpoint: Fetches full text only when player taps a title
+    router.get('/api/inbox/message/:id', async (req, res) => {
+        try {
+            const id = Number(req.params.id);
+            if (!id || isNaN(id)) return res.status(400).json({ error: "Invalid announcement ID." });
+
+            const msg = await db.get('SELECT id, title, content, created_at FROM announcements WHERE id = ?', [id]);
+            if (!msg) return res.status(404).json({ error: "Announcement not found." });
+
+            return res.json(msg);
+        } catch (err) {
+            console.error("Error fetching announcement body:", err);
+            return res.status(500).json({ error: "Server error loading announcement." });
+        }
+    });
+
+    // 🛡️ Admin endpoints (requireCreator)
+    router.get('/api/admin/inbox/all', requireCreator, async (req, res) => {
+        try {
+            const list = await db.all('SELECT id, title, content, created_at, updated_at FROM announcements ORDER BY id DESC LIMIT 50');
+            return res.json(list || []);
+        } catch (err) {
+            return res.status(500).json([]);
+        }
+    });
+
+    router.post('/api/admin/inbox/create', requireCreator, async (req, res) => {
+        try {
+            const { title, content } = req.body;
+            if (!title || !title.trim() || !content || !content.trim()) {
+                return res.status(400).json({ error: "Title and content are required." });
+            }
+
+            await db.run('INSERT INTO announcements (title, content) VALUES (?, ?)', [title.trim(), content.trim()]);
+            console.log(`📢 [creator area] Created announcement: "${title.trim()}"`);
+            return res.json({ success: true, message: "Announcement published to player inbox! 🌸" });
+        } catch (err) {
+            console.error("Error creating announcement:", err);
+            return res.status(500).json({ error: "Failed to publish announcement." });
+        }
+    });
+
+    router.post('/api/admin/inbox/update', requireCreator, async (req, res) => {
+        try {
+            const { id, title, content } = req.body;
+            const numId = Number(id);
+            if (!numId || isNaN(numId) || !title || !title.trim() || !content || !content.trim()) {
+                return res.status(400).json({ error: "Valid ID, title, and content required." });
+            }
+
+            await db.run('UPDATE announcements SET title = ?, content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [title.trim(), content.trim(), numId]);
+            console.log(`📢 [creator area] Updated announcement ID #${numId}`);
+            return res.json({ success: true, message: "Announcement updated! 🌸" });
+        } catch (err) {
+            console.error("Error updating announcement:", err);
+            return res.status(500).json({ error: "Failed to update announcement." });
+        }
+    });
+
+    router.post('/api/admin/inbox/delete', requireCreator, async (req, res) => {
+        try {
+            const { id } = req.body;
+            const numId = Number(id);
+            if (!numId || isNaN(numId)) return res.status(400).json({ error: "Valid announcement ID required." });
+
+            await db.run('DELETE FROM announcements WHERE id = ?', [numId]);
+            console.log(`📢 [creator area] Deleted announcement ID #${numId}`);
+            return res.json({ success: true, message: "Announcement deleted from inbox." });
+        } catch (err) {
+            console.error("Error deleting announcement:", err);
+            return res.status(500).json({ error: "Failed to delete announcement." });
         }
     });
 
