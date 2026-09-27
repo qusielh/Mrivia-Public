@@ -24,6 +24,9 @@ const {
 function setupRoutes(db, io) {
     const router = express.Router();
 
+    // 🟢 In-memory anti-replay map for solo practice (tracks last word claimed per user)
+    const lastSoloWordByUser = {};
+
     function hashPassword(password) {
         return "PASS_" + crypto.createHmac('sha256', COOKIE_SECRET).update(password.trim()).digest('hex');
     }
@@ -146,12 +149,10 @@ function setupRoutes(db, io) {
         const userId = rawUserId ? Number(rawUserId) : null;
         if (!userId || isNaN(userId)) return res.redirect('/');
 
-        // 1. RAM Fast-Path
         if (userCache[userId]) {
             return next();
         }
 
-        // 2. Turso Fallback
         try {
             const user = await db.get('SELECT username, is_suspended, device_ban_id FROM users WHERE id = ?', [userId]);
             if (!user) {
@@ -288,7 +289,7 @@ function setupRoutes(db, io) {
         return res.json({ success: true, action: action });
     });
 
-    // 🟢 CREATE CUSTOM ROOM (WITH 0MS COLLISION-PROOF DO...WHILE GENERATOR)
+    // 🟢 CREATE CUSTOM ROOM
     router.post('/api/rooms/create', async (req, res) => {
         const rawUserId = req.signedCookies.mt_user_id;
         const userId = rawUserId ? Number(rawUserId) : null;
@@ -344,7 +345,7 @@ function setupRoutes(db, io) {
         return res.json({ success: true, roomCode: roomCode });
     });
 
-    // 🟢 JOIN CUSTOM ROOM (WITH ROOM CAPACITY AND MATCH IN-PROGRESS GUARDS)
+    // 🟢 JOIN CUSTOM ROOM
     router.post('/api/rooms/join', async (req, res) => {
         const rawUserId = req.signedCookies.mt_user_id;
         const userId = rawUserId ? Number(rawUserId) : null;
@@ -462,13 +463,11 @@ function setupRoutes(db, io) {
 
             let user;
             if (cleanKey.startsWith('MINE_')) {
-                // Generated random keys match directly
                 user = await db.get(
                     'SELECT id, username, score, is_suspended, device_ban_id FROM users WHERE username = ? AND secret_key = ?',
                     [cleanUser, cleanKey]
                 );
             } else {
-                // Human passwords MUST match the HMAC hash; raw hashes will never log in!
                 const hashedInput = hashPassword(cleanKey);
                 user = await db.get(
                     'SELECT id, username, score, is_suspended, device_ban_id FROM users WHERE username = ? AND secret_key = ?',
@@ -511,7 +510,7 @@ function setupRoutes(db, io) {
         return res.json({ success: true, message: "Logged out cleanly" });
     });
 
-    // 🟢 PLAYER IN-LOBBY PASSWORD UPDATE: Players can safely change their password while logged in
+    // 🟢 PLAYER IN-LOBBY PASSWORD UPDATE
     router.post('/api/user/change-password', requireAuth, async (req, res) => {
         try {
             const rawUserId = req.signedCookies.mt_user_id;
@@ -534,7 +533,7 @@ function setupRoutes(db, io) {
         }
     });
 
-    // 🟢 ADMIN MANUAL PASSWORD OVERRIDE (For rescuing players in creator area)
+    // 🟢 ADMIN MANUAL PASSWORD OVERRIDE
     router.post('/api/admin/set-user-password', requireCreator, async (req, res) => {
         try {
             const { username, newPassword } = req.body;
@@ -581,6 +580,7 @@ function setupRoutes(db, io) {
         }
     });
 
+    // 🟢 SPEEDRUN-FRIENDLY SCORE UPDATE: Rejects multi-tab duplicate word claims, zero delay on different words, supports grand completion bonus!
     router.post('/api/score/update', async (req, res) => {
         try {
             const rawUserId = req.signedCookies.mt_user_id;
@@ -593,8 +593,24 @@ function setupRoutes(db, io) {
                 return res.status(401).json({ error: "Access restricted." });
             }
 
-            const { pointsToAdd } = req.body;
-            await db.run('UPDATE users SET score = score + ? WHERE id = ? AND is_suspended = 0', [parseInt(pointsToAdd), userId]);
+            const { pointsToAdd, word } = req.body;
+            const points = parseInt(pointsToAdd);
+
+            // Safe Cap: Allows regular solves (100-600) and the grand completion bonus (up to 3000), blocks 999,999 hacks
+            if (isNaN(points) || points <= 0 || points > 3000) {
+                return res.status(400).json({ error: "Invalid points payload." });
+            }
+
+            // Anti-Replay Guard: Blocks claiming points for the exact same word twice across tabs
+            if (word && typeof word === 'string') {
+                const cleanWord = word.trim().toUpperCase();
+                if (lastSoloWordByUser[userId] === cleanWord) {
+                    return res.status(400).json({ error: "Points already claimed for this word." });
+                }
+                lastSoloWordByUser[userId] = cleanWord;
+            }
+
+            await db.run('UPDATE users SET score = score + ? WHERE id = ? AND is_suspended = 0', [points, userId]);
             return res.json({ success: true, message: "Score updated" });
         } catch (error) {
             return res.status(500).json({ error: "Database update error" });
@@ -863,7 +879,6 @@ function setupRoutes(db, io) {
         }
     });
 
-    // 🟢 Streams screenshot directly from Turso database binary buffer (Zero Disk Dependency)
     router.get('/api/admin/report-image/:filename', requireCreator, async (req, res) => {
         const { filename } = req.params;
         const safeName = path.basename(filename);
