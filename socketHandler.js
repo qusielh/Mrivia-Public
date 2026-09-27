@@ -117,6 +117,22 @@ function setupSockets(io, db) {
                     return;
                 }
 
+                const room = activeRooms[roomId];
+
+                // 🟢 GUARD 1: Prevent joining if room is already full (allows reconnecting players through)
+                if (room.status === 'waiting' && !room.players.includes(verifiedUsername) && room.players.length >= room.maxPlayers) {
+                    console.warn(`⚠️ [Socket Warning] join_match rejected: Room [${roomId}] is full (${room.players.length}/${room.maxPlayers}).`);
+                    socket.emit('redirect_to_lobby', { reason: "This room is already full!" });
+                    return;
+                }
+
+                // 🟢 GUARD 2: Prevent joining if match is already in progress (allows reconnecting players through)
+                if (room.status !== 'waiting' && (!room.players || !room.players.includes(verifiedUsername))) {
+                    console.warn(`⚠️ [Socket Warning] join_match rejected: Room [${roomId}] match already in progress.`);
+                    socket.emit('redirect_to_lobby', { reason: "This match has already started!" });
+                    return;
+                }
+
                 if (deletionTimeouts[roomId]) {
                     clearTimeout(deletionTimeouts[roomId]);
                     delete deletionTimeouts[roomId];
@@ -130,8 +146,6 @@ function setupSockets(io, db) {
                 if (!activeRooms[roomId].players.includes(verifiedUsername)) {
                     activeRooms[roomId].players.push(verifiedUsername);
                 }
-
-                const room = activeRooms[roomId];
 
                 if (room.disconnectTimeouts && room.disconnectTimeouts[verifiedUsername]) {
                     clearTimeout(room.disconnectTimeouts[verifiedUsername]);
