@@ -19,9 +19,16 @@
             --foreground: oklch(0.98 0.01 90);
             --sakura: oklch(0.82 0.14 355);
             --bright-rose: #ff4081;
-            --gold: oklch(0.84 0.16 82);
+            --gold: #ffd700;
             --diamond: #4dede2;
+            --emerald: #2ecc71;
             --redstone: oklch(0.62 0.22 28);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -144,10 +151,91 @@
                 background: rgba(77, 237, 226, 0.15);
             }
 
+        .mc-panel {
+            background: linear-gradient(180deg, rgba(42, 20, 36, 0.95), rgba(26, 11, 22, 0.98));
+            border: 3px solid var(--sakura);
+            border-radius: 24px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 183, 197, 0.3);
+            backdrop-filter: blur(16px);
+        }
+
+        .mc-btn {
+            font-family: var(--font-display);
+            font-weight: 600;
+            padding: 0.75rem 1.4rem;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid #000;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+            .mc-btn.sakura {
+                background: linear-gradient(180deg, oklch(0.92 0.1 355) 0%, oklch(0.8 0.14 350) 45%, oklch(0.62 0.16 350) 100%);
+                color: #200818;
+                box-shadow: inset 0 2px 0 rgba(255,255,255,0.7), 0 4px 0 oklch(0.3 0.1 350);
+            }
+
+            .mc-btn.sakura:hover {
+                filter: brightness(1.1);
+                transform: translateY(-1px);
+            }
+
         .font-pixel {
             font-family: var(--font-pixel) !important;
             letter-spacing: 0.05em;
         }
+
+        /* 🌸 INTERACTIVE LENGTH SELECTOR BAR */
+        .length-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            max-width: 380px;
+            margin-bottom: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .len-chip {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.55);
+            font-family: var(--font-pixel);
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+            .len-chip:hover {
+                border-color: var(--diamond);
+                color: #ffffff;
+            }
+
+            /* 💎 SELECTION COLOR: DIAMOND CYAN */
+            .len-chip.active {
+                background: rgba(77, 237, 226, 0.16);
+                border-color: var(--diamond);
+                color: var(--diamond);
+                box-shadow: 0 0 10px rgba(77, 237, 226, 0.35);
+                font-weight: bold;
+            }
+
+            /* 🟢 SOLVED / COMPLETED CATEGORY: EMERALD GREEN */
+            .len-chip.solved {
+                border-color: var(--emerald) !important;
+                color: var(--emerald) !important;
+                background: rgba(46, 204, 113, 0.18) !important;
+                box-shadow: 0 0 10px rgba(46, 204, 113, 0.35) !important;
+                font-weight: bold;
+            }
 
         /* 🌸 SCREENSHOT-PERFECT TOP STATS ROW */
         .hud-stats-bar {
@@ -156,7 +244,7 @@
             align-items: center;
             width: 100%;
             max-width: 380px;
-            margin-bottom: 0.85rem;
+            margin-bottom: 0.75rem;
             padding: 0 4px;
         }
 
@@ -303,6 +391,18 @@
             display: none;
         }
 
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 4, 9, 0.88);
+            backdrop-filter: blur(14px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
         #rotatePromptOverlay {
             display: none;
             position: fixed;
@@ -359,6 +459,23 @@
         </p>
     </div>
 
+    <!-- 👑 GRAND MASTER COMPLETION MODAL (UNLOCKED ONLY WHEN ALL CATEGORIES 3-7 ARE SOLVED) -->
+    <div id="grandCompletionModal" class="modal-overlay d-none">
+        <div class="mc-panel text-center p-4 p-sm-5" style="max-width: 480px; width: 90%; border-color: var(--gold);">
+            <div style="font-size: 2.8rem; margin-bottom: 0.5rem;">👑</div>
+            <span class="font-pixel text-warning small d-block mb-1">REALM ENCYCLOPEDIA COMPLETE</span>
+            <h2 class="fs-3 fw-bold text-white mb-2" style="font-family: var(--font-display);">The Master Archivist</h2>
+            <p class="text-white-75 small mb-3" style="line-height: 1.6; font-size: 0.95rem;">
+                You just decoded every single Minele word across all categories (3 through 7) in the entire realm! That took incredible dedication, patience, and Minecraft mastery.
+            </p>
+            <div class="p-3 mb-4 rounded-3 text-white" style="background: rgba(0,0,0,0.5); border: 1px solid var(--gold);">
+                <span class="font-pixel text-warning small d-block mb-1">GRAND COMPLETION REWARD</span>
+                <span class="font-pixel fs-4 text-diamond">+2,500 BONUS POINTS ✨</span>
+            </div>
+            <button onclick="resetAndRestartJourney()" class="mc-btn sakura w-100 font-pixel">Start a New Journey 🌸</button>
+        </div>
+    </div>
+
     <img src="assets/sakura-13.jpg" class="hero-bg" onerror="this.src='assets/sakura-3.jpg'">
     <div class="hero-overlay"></div>
     <div class="sakura-fx" id="soloLeavesContainer"></div>
@@ -377,6 +494,17 @@
 
     <main class="container my-auto py-3 py-lg-4 d-flex flex-column align-items-center justify-content-center flex-grow-1">
 
+        <!-- 🌸 CUSTOM WORD LENGTH FILTER (Selection: Diamond, Solved: Green) -->
+        <div class="length-filter-bar" id="lengthFilterRow">
+            <span class="font-pixel text-white-50" style="font-size: 0.58rem; margin-right: 4px;">LETTERS:</span>
+            <button class="len-chip active" id="chip-3" onclick="toggleLengthFilter(3)">3</button>
+            <button class="len-chip active" id="chip-4" onclick="toggleLengthFilter(4)">4</button>
+            <button class="len-chip active" id="chip-5" onclick="toggleLengthFilter(5)">5</button>
+            <button class="len-chip active" id="chip-6" onclick="toggleLengthFilter(6)">6</button>
+            <button class="len-chip active" id="chip-7" onclick="toggleLengthFilter(7)">7</button>
+            <button class="len-chip" id="chip-all" onclick="selectAllLengths()">ALL</button>
+        </div>
+
         <!-- 📸 SCREENSHOT-PERFECT TOP STATS ROW -->
         <div class="hud-stats-bar">
             <span id="attemptCounterText" class="font-pixel text-white-50 small" style="font-size: 0.75rem;">ATTEMPT 1 / 5</span>
@@ -384,7 +512,7 @@
         </div>
 
         <!-- 🌸 WORDLE GRID (100% visible, never obstructed) -->
-        <div class="wordle-matrix-container" id="wordleGridBox"></div>
+        <div class="wordle-matrix-container" id="wordleGridBox" onclick="focusSlotBridge()"></div>
 
         <!-- Subtle Under-Grid Action -->
         <div id="underGridActionBox" class="mt-3 text-center" style="width: 100%; max-width: 380px;">
@@ -403,11 +531,15 @@
     </main>
 
     <script>
-        const LOCAL_STORAGE_KEY = 'mt_solo_minele_state';
+        const TAB_SESSION_KEY = 'mt_solo_minele_tab_state';
+        const USED_WORDS_KEY = 'mt_solo_used_words_session';
+        const FILTER_KEY = 'mt_solo_active_lengths';
         const STREAK_KEY = 'mt_solo_solve_streak';
 
         let cachedDictionary = null;
         let currentUserScore = 0;
+        let activeLengths = [3, 4, 5, 6, 7];
+
         let gameState = {
             targetWord: "",
             wordLength: 5,
@@ -424,7 +556,6 @@
             window.location.href = 'lobby.html';
         }
 
-        // Global focus release: clicking any button immediately releases focus to the window
         document.addEventListener('click', (e) => {
             if (e.target && (e.target.tagName === 'BUTTON' || e.target.closest('button'))) {
                 const btn = e.target.tagName === 'BUTTON' ? e.target : e.target.closest('button');
@@ -482,7 +613,6 @@
             return feedback;
         }
 
-        // Non-blocking background score fetch (doesn't delay the grid)
         function fetchUserScore() {
             fetch('/api/user/rank')
                 .then(res => res.json())
@@ -507,9 +637,110 @@
             }
         }
 
-        // 🟢 INSTANT 0MS INITIALIZATION: Renders saved state immediately with zero network delay
+        function getSessionUsedWords() {
+            try {
+                const raw = sessionStorage.getItem(USED_WORDS_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function addSessionUsedWord(word) {
+            const list = getSessionUsedWords();
+            const upper = word.toUpperCase();
+            if (!list.includes(upper)) {
+                list.push(upper);
+                sessionStorage.setItem(USED_WORDS_KEY, JSON.stringify(list));
+            }
+        }
+
+        function loadActiveLengths() {
+            try {
+                const raw = sessionStorage.getItem(FILTER_KEY);
+                if (raw) activeLengths = JSON.parse(raw);
+            } catch (e) {
+                activeLengths = [3, 4, 5, 6, 7];
+            }
+        }
+
+        function saveActiveLengths() {
+            sessionStorage.setItem(FILTER_KEY, JSON.stringify(activeLengths));
+        }
+
+        // 🟢 LENGTH SELECTOR: Diamond Selection & Emerald Green for Solved
+        function toggleLengthFilter(len) {
+            if (activeLengths.includes(len)) {
+                if (activeLengths.length > 1) {
+                    activeLengths = activeLengths.filter(l => l !== len);
+                }
+            } else {
+                activeLengths.push(len);
+                activeLengths.sort((a, b) => a - b);
+            }
+            saveActiveLengths();
+            updateLengthFilterUI();
+
+            if (!activeLengths.includes(gameState.wordLength) && !gameState.isCompleted) {
+                pickNextWordDirect();
+            }
+        }
+
+        function selectAllLengths() {
+            activeLengths = [3, 4, 5, 6, 7];
+            saveActiveLengths();
+            updateLengthFilterUI();
+            if (!activeLengths.includes(gameState.wordLength) && !gameState.isCompleted) {
+                pickNextWordDirect();
+            }
+        }
+
+        // 🟢 UPDATES CHIP COLORS: Solved = Emerald Green, Active = Diamond Cyan
+        function updateLengthFilterUI() {
+            if (!cachedDictionary) return;
+            const usedList = getSessionUsedWords();
+
+            [3, 4, 5, 6, 7].forEach(len => {
+                const chip = document.getElementById(`chip-${len}`);
+                if (!chip) return;
+
+                const catWords = cachedDictionary[`${len}_characters`] || [];
+                const unplayed = catWords.filter(w => !usedList.includes(w.trim().toUpperCase()));
+
+                // Active selection: Diamond Cyan
+                chip.classList.toggle('active', activeLengths.includes(len));
+
+                // 🟢 SOLVED / COMPLETED: EMERALD GREEN
+                if (catWords.length > 0 && unplayed.length === 0) {
+                    chip.classList.add('solved');
+                    chip.innerText = `${len} ✓`;
+                    chip.title = `${len}-letter category 100% solved!`;
+                } else {
+                    chip.classList.remove('solved');
+                    chip.innerText = `${len}`;
+                    chip.title = `${unplayed.length} words remaining`;
+                }
+            });
+
+            const allChip = document.getElementById('chip-all');
+            if (allChip) {
+                allChip.classList.toggle('active', activeLengths.length === 5);
+            }
+        }
+
+        function getTotalDictionaryWordCount(dict) {
+            let total = 0;
+            [3, 4, 5, 6, 7].forEach(l => {
+                const arr = dict[`${l}_characters`];
+                if (Array.isArray(arr)) total += arr.length;
+            });
+            return total;
+        }
+
+        // 🟢 INSTANT 0MS INITIALIZATION
         function initGame() {
-            const savedRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
+            loadActiveLengths();
+            const savedRaw = sessionStorage.getItem(TAB_SESSION_KEY);
             let hasActiveState = false;
 
             if (savedRaw) {
@@ -520,7 +751,7 @@
                         hasActiveState = true;
                     }
                 } catch (e) {
-                    localStorage.removeItem(LOCAL_STORAGE_KEY);
+                    sessionStorage.removeItem(TAB_SESSION_KEY);
                 }
             }
 
@@ -528,17 +759,57 @@
 
             loadDictionary().then(dict => {
                 if (!dict) return;
+                updateLengthFilterUI();
                 if (!hasActiveState || !gameState.targetWord) {
                     pickNewWord(dict);
                 }
             });
         }
 
+        // 🟢 WORD PICKER MATCHING USER LENGTH SELECTION
         function pickNewWord(dict) {
-            const categories = Object.keys(dict).filter(k => Array.isArray(dict[k]) && dict[k].length > 0);
-            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-            const wordList = dict[randomCategory];
-            const rawTarget = wordList[Math.floor(Math.random() * wordList.length)];
+            const usedList = getSessionUsedWords();
+            const totalWords = getTotalDictionaryWordCount(dict);
+
+            // 👑 TRUE GRAND MASTER: All categories (3 through 7) must be 100% solved!
+            if (totalWords > 0 && usedList.length >= totalWords) {
+                showGrandCompletionModal();
+                return;
+            }
+
+            const chosenCategories = activeLengths.map(l => `${l}_characters`).filter(cat => Array.isArray(dict[cat]));
+
+            // Categories in the user's active filter that still have unplayed words
+            const availableCategories = chosenCategories.filter(cat => {
+                const words = dict[cat];
+                return words.some(w => !usedList.includes(w.trim().toUpperCase()));
+            });
+
+            if (availableCategories.length === 0) {
+                // If this specific filter is cleared, but other categories still remain in the realm:
+                showToast("Selected length cleared! Pick another letter length above.");
+                // Auto-expand selection to include any remaining unplayed categories
+                const remainingCategoryKeys = [3, 4, 5, 6, 7]
+                    .map(l => `${l}_characters`)
+                    .filter(cat => {
+                        const words = dict[cat] || [];
+                        return words.some(w => !usedList.includes(w.trim().toUpperCase()));
+                    });
+
+                if (remainingCategoryKeys.length > 0) {
+                    activeLengths = remainingCategoryKeys.map(k => parseInt(k));
+                    saveActiveLengths();
+                    updateLengthFilterUI();
+                    pickNewWord(dict);
+                } else {
+                    showGrandCompletionModal();
+                }
+                return;
+            }
+
+            const randomCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+            const unplayedWords = dict[randomCategory].filter(w => !usedList.includes(w.trim().toUpperCase()));
+            const rawTarget = unplayedWords[Math.floor(Math.random() * unplayedWords.length)];
 
             const target = rawTarget.trim().toUpperCase();
             const len = target.length;
@@ -560,13 +831,14 @@
             buildGrid();
             updateAttemptCounter();
             hideResultBanner();
+            updateLengthFilterUI();
         }
 
         function saveGameState() {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(gameState));
+            sessionStorage.setItem(TAB_SESSION_KEY, JSON.stringify(gameState));
         }
 
-        // 🟢 BUILDS GRID WITH TRANSPARENT INPUT BRIDGE (SUMMONS MOBILE KEYBOARD)
+        // 🟢 BUILDS GRID WITH TOUCH BRIDGE (SUMMONS MOBILE KEYBOARD)
         function buildGrid() {
             const grid = document.getElementById('wordleGridBox');
             if (!grid) return;
@@ -599,7 +871,7 @@
             }
         }
 
-        // 🟢 EVENT BUBBLING STOPPED: Keystrokes will never accidentally trigger next word on solve
+        // 🟢 EVENT BUBBLING STOPPED: Keystrokes will never accidentally skip the victory banner
         function setupBridgeListener(bridge) {
             bridge.addEventListener('input', () => {
                 if (gameState.isCompleted) {
@@ -614,7 +886,7 @@
             });
 
             bridge.addEventListener('keydown', (e) => {
-                e.stopPropagation(); // Stops bubbling to window so the same Enter stroke never skips the banner!
+                e.stopPropagation();
                 if (e.key === "Enter" || e.keyCode === 13) {
                     e.preventDefault();
                     if (gameState.isCompleted) {
@@ -674,7 +946,7 @@
             const toast = document.getElementById('toastNotice');
             toast.innerText = msg;
             toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 1800);
+            setTimeout(() => { toast.style.display = 'none'; }, 2200);
         }
 
         async function submitGuess() {
@@ -719,21 +991,35 @@
 
             const bridge = document.getElementById('slotInputBridge');
 
-            // 🟢 SOLVED CONDITION: Shows banner and keeps it on screen smoothly
+            // 🟢 SOLVED (WIN): Word is removed only on solve!
             if (guess === gameState.targetWord) {
                 gameState.isCompleted = true;
                 gameState.isWon = true;
+
+                addSessionUsedWord(gameState.targetWord);
+                updateLengthFilterUI();
 
                 let currentStreak = parseInt(localStorage.getItem(STREAK_KEY) || "0") + 1;
                 let bonusEarned = (currentStreak % 5 === 0) ? 500 : 0;
 
                 saveGameState();
                 showResultBanner(true, true, bonusEarned);
-                syncPointsToDatabase(currentStreak, bonusEarned);
+
+                // 👑 Check if ALL categories 3, 4, 5, 6, 7 are 100% finished!
+                const usedList = getSessionUsedWords();
+                const totalWords = getTotalDictionaryWordCount(dict);
+
+                if (totalWords > 0 && usedList.length >= totalWords) {
+                    setTimeout(() => showGrandCompletionModal(), 1800);
+                    syncPointsToDatabase(currentStreak, bonusEarned + 2500, gameState.targetWord);
+                } else {
+                    syncPointsToDatabase(currentStreak, bonusEarned, gameState.targetWord);
+                }
+
                 return;
             }
 
-            // LOSS CONDITION: Runs out of attempts, shows banner and keeps it on screen
+            // LOSS CONDITION: WORD STAYS IN POOL
             gameState.currentRow++;
             gameState.currentInput = "";
             if (bridge) bridge.value = "";
@@ -751,7 +1037,7 @@
             }
         }
 
-        async function syncPointsToDatabase(currentStreak, bonusEarned) {
+        async function syncPointsToDatabase(currentStreak, bonusEarned, solvedWord) {
             if (gameState.pointsAwarded) return;
             localStorage.setItem(STREAK_KEY, String(currentStreak));
 
@@ -761,7 +1047,10 @@
                 const res = await fetch('/api/score/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ pointsToAdd: pointsToGive })
+                    body: JSON.stringify({ 
+                        pointsToAdd: pointsToGive,
+                        word: solvedWord 
+                    })
                 });
                 if (res.ok) {
                     gameState.pointsAwarded = true;
@@ -804,6 +1093,27 @@
             if (underAction) underAction.style.display = 'block';
         }
 
+        function showGrandCompletionModal() {
+            const modal = document.getElementById('grandCompletionModal');
+            if (modal) modal.classList.remove('d-none');
+        }
+
+        function resetAndRestartJourney() {
+            sessionStorage.removeItem(USED_WORDS_KEY);
+            sessionStorage.removeItem(TAB_SESSION_KEY);
+            const modal = document.getElementById('grandCompletionModal');
+            if (modal) modal.classList.add('d-none');
+            hideResultBanner();
+            loadDictionary().then(dict => {
+                if (dict) {
+                    activeLengths = [3, 4, 5, 6, 7];
+                    saveActiveLengths();
+                    updateLengthFilterUI();
+                    pickNewWord(dict);
+                }
+            });
+        }
+
         function pickNextWordDirect() {
             if (document.activeElement && typeof document.activeElement.blur === 'function') {
                 document.activeElement.blur();
@@ -813,17 +1123,15 @@
             const bridge = document.getElementById('slotInputBridge');
             if (bridge) bridge.value = "";
 
-            localStorage.removeItem(LOCAL_STORAGE_KEY);
+            sessionStorage.removeItem(TAB_SESSION_KEY);
             hideResultBanner();
             loadDictionary().then(dict => {
                 if (dict) pickNewWord(dict);
             });
         }
 
-        // Physical desktop keyboard listener
         window.addEventListener('keydown', (e) => {
             const bridge = document.getElementById('slotInputBridge');
-            // If the transparent bridge input handled it, don't double process
             if (document.activeElement === bridge) return;
 
             if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
@@ -831,7 +1139,6 @@
                 window.focus();
             }
 
-            // If game is completed, Enter advances to next word
             if (gameState.isCompleted) {
                 if (e.key === 'Enter') pickNextWordDirect();
                 return;
@@ -855,7 +1162,6 @@
             }
         });
 
-        // Initialize as soon as DOM is parsed
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initGame);
         } else {
