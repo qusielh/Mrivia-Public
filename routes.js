@@ -288,7 +288,7 @@ function setupRoutes(db, io) {
         return res.json({ success: true, action: action });
     });
 
-    // 🟢 CREATE CUSTOM ROOM
+    // 🟢 CREATE CUSTOM ROOM (WITH 0MS COLLISION-PROOF DO...WHILE GENERATOR)
     router.post('/api/rooms/create', async (req, res) => {
         const rawUserId = req.signedCookies.mt_user_id;
         const userId = rawUserId ? Number(rawUserId) : null;
@@ -309,7 +309,11 @@ function setupRoutes(db, io) {
         const modeId = (mode !== undefined) ? parseInt(mode) : 0;
         const maxPlayers = MODE_LIMITS[modeId] || 6;
 
-        const roomCode = "SAKURA-" + Math.floor(1000 + Math.random() * 9000);
+        // 🟢 0ms Collision-Proof Generator: Guarantees code is never duplicated
+        let roomCode;
+        do {
+            roomCode = "SAKURA-" + Math.floor(1000 + Math.random() * 9000);
+        } while (activeRooms[roomCode]);
 
         activeRooms[roomCode] = {
             players: [],
@@ -342,7 +346,7 @@ function setupRoutes(db, io) {
         return res.json({ success: true, roomCode: roomCode });
     });
 
-    // 🟢 JOIN CUSTOM ROOM (NOW WITH ROOM CAPACITY AND MATCH IN-PROGRESS GUARDS)
+    // 🟢 JOIN CUSTOM ROOM (WITH ROOM CAPACITY AND MATCH IN-PROGRESS GUARDS)
     router.post('/api/rooms/join', async (req, res) => {
         const rawUserId = req.signedCookies.mt_user_id;
         const userId = rawUserId ? Number(rawUserId) : null;
