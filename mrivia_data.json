@@ -13,22 +13,19 @@
     "Warped",
     "Pale Oak"
   ],
-  "mobs": [
+  "mobs_and_creatures": [
     "Allay",
     "Armadillo",
     "Axolotl",
     "Bat",
-    "Bee",
     "Blaze",
     "Bogged",
     "Breeze",
     "Camel",
-    "Camel Husk",
     "Cat",
     "Cave Spider",
     "Chicken",
     "Cod",
-    "Cow",
     "Creaking",
     "Creeper",
     "Dolphin",
@@ -45,7 +42,6 @@
     "Glow Squid",
     "Goat",
     "Guardian",
-    "Hoglin",
     "Horse",
     "Husk",
     "Iron Golem",
@@ -57,11 +53,7 @@
     "Ocelot",
     "Panda",
     "Parrot",
-    "Parched",
     "Phantom",
-    "Pig",
-    "Piglin",
-    "Piglin Brute",
     "Pillager",
     "Polar Bear",
     "Pufferfish",
@@ -95,10 +87,8 @@
     "Wither",
     "Wither Skeleton",
     "Wolf",
-    "Zoglin",
     "Zombie",
-    "Zombie Villager",
-    "Zombified Piglin"
+    "Zombie Villager"
   ],
   "equipment": [
     "Sword",
@@ -134,9 +124,10 @@
     "Boat",
     "Minecart",
     "Saddle",
-    "Harness"
+    "Harness",
+    "Raft"
   ],
-  "potions": [
+  "potions_and_effects": [
     "Awkward",
     "Thick",
     "Mundane",
@@ -188,7 +179,9 @@
     "Lightning Rod",
     "TNT",
     "Jukebox",
-    "Note Block"
+    "Note Block",
+    "Composter",
+    "Fletching Table"
   ],
   "building_and_decorations": [
     "Log",
@@ -218,12 +211,10 @@
     "Lantern",
     "Torch",
     "Froglight",
-    "Banner Pattern",
-    "Pottery Sherd",
     "Bookshelf",
     "Dirt Path"
   ],
-  "natural_blocks": [
+  "natural_and_mined_blocks": [
     "Water",
     "Lava",
     "Stone",
@@ -261,7 +252,6 @@
     "Quartz Block",
     "Purpur Block",
     "Prismarine",
-    "Dark Prismarine",
     "Sea Lantern",
     "Bone Block",
     "Terracotta",
@@ -271,15 +261,11 @@
     "Copper Grate",
     "Resin Block",
     "Resin Bricks",
-    "Sulfur Block",
-    "Cinnabar Block",
-    "Potent Sulfur",
-    "Web",
+    "Cobweb",
     "Spawner",
-    "Slime Block",
-    "Honey Block"
+    "Slime Block"
   ],
-  "materials_and_items": [
+  "materials_and_loot": [
     "Iron Ingot",
     "Gold Ingot",
     "Netherite Ingot",
@@ -334,7 +320,6 @@
     "Ink Sac",
     "Glow Ink Sac",
     "Heavy Core",
-    "Honey Fused Core",
     "Armor Trim",
     "Dragon Egg",
     "Paper",
@@ -348,10 +333,9 @@
     "Lead",
     "Name Tag"
   ],
-  "food_items": [
+  "food_and_crops": [
     "Apple",
     "Golden Apple",
-    "Enchanted Golden Apple",
     "Melon Slice",
     "Sweet Berries",
     "Glow Berries",
@@ -360,7 +344,6 @@
     "Golden Carrot",
     "Potato",
     "Baked Potato",
-    "Poisonous Potato",
     "Beetroot",
     "Bread",
     "Cookie",
@@ -373,13 +356,12 @@
     "Suspicious Stew",
     "Beef",
     "Steak",
-    "Porkchop",
     "Mutton",
     "Chicken",
     "Rabbit",
     "Cod",
     "Salmon",
-    "Honey Bottle",
+    "Porkchop",
     "Rotten Flesh"
   ],
   "plants_and_vegetation": [
@@ -391,7 +373,6 @@
     "Moss",
     "Fern",
     "Dandelion",
-    "Golden Dandelion",
     "Poppy",
     "Blue Orchid",
     "Allium",
@@ -431,18 +412,20 @@
     "Dripleaf",
     "Hanging Roots",
     "Pale Moss",
-    "Sulfur Spike",
     "Farmland"
   ],
-  "brewing_supplies": [
-    "Enchanted Book",
-    "Glint",
+  "brewing_ingredients": [
     "Nether Wart",
-    "Fermented Spider Eye",
-    "Glistering Melon Slice",
     "Blaze Powder",
-    "Dragon Breath",
+    "Ghast Tear",
+    "Magma Cream",
+    "Fermented Spider Eye",
+    "Glistering Melon",
+    "Golden Carrot",
+    "Pufferfish",
+    "Rabbit Foot",
+    "Phantom Membrane",
     "Sugar",
-    "Ominous Bottle"
+    "Dragon Breath"
   ]
 }

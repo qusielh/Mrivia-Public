@@ -8,31 +8,40 @@
     "Dark Oak",
     "Mangrove",
     "Cherry",
-    "Bamboo"
+    "Bamboo",
+    "Crimson",
+    "Warped",
+    "Pale Oak"
   ],
-  "mobs_and_monsters": [
+  "fantasy_mobs": [
     "Creeper",
     "Enderman",
-    "Skeleton",
-    "Zombie",
     "Ghast",
     "Slime",
-    "Warden",
+    "Magma Cube",
     "Blaze",
-    "Iron Golem",
-    "Villager",
+    "Breeze",
+    "Warden",
     "Wither",
     "Ender Dragon",
+    "Iron Golem",
     "Snow Golem",
+    "Shulker",
     "Phantom",
     "Guardian",
-    "Dolphin",
-    "Axolotl",
+    "Elder Guardian",
     "Strider",
-    "Shulker",
+    "Creaking",
+    "Sulfur Cube",
+    "Bogged",
+    "Skeleton",
+    "Wither Skeleton",
+    "Zombie",
+    "Drowned",
+    "Husk",
+    "Stray",
     "Silverfish",
-    "Vex",
-    "Witch"
+    "Vex"
   ],
   "weapons_and_tools": [
     "Sword",
@@ -67,6 +76,7 @@
   "building_blocks": [
     "Cobblestone",
     "Stone",
+    "Deepslate",
     "Obsidian",
     "Bedrock",
     "Dirt",
@@ -91,6 +101,8 @@
   "workstations_and_utility": [
     "Crafting Table",
     "Furnace",
+    "Blast Furnace",
+    "Smoker",
     "Chest",
     "Ender Chest",
     "Barrel",
@@ -103,7 +115,11 @@
     "Campfire",
     "Bookshelf",
     "Bell",
-    "Loom"
+    "Loom",
+    "Smithing Table",
+    "Grindstone",
+    "Stonecutter",
+    "Jukebox"
   ],
   "decorations_and_lights": [
     "Torch",
@@ -160,6 +176,7 @@
     "Mushroom Stew",
     "Steak",
     "Fish",
+    "Porkchop",
     "Rotten Flesh"
   ],
   "nature_and_plants": [
@@ -179,6 +196,7 @@
   "transportation": [
     "Boat",
     "Minecart",
+    "Raft",
     "Harness"
   ],
   "brewing_and_alchemy": [
