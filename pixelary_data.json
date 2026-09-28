@@ -8,40 +8,31 @@
     "Dark Oak",
     "Mangrove",
     "Cherry",
-    "Bamboo",
-    "Crimson",
-    "Warped",
-    "Pale Oak"
+    "Bamboo"
   ],
-  "fantasy_mobs": [
-    "Blaze",
-    "Breeze",
-    "Creaking",
+  "mobs_and_monsters": [
     "Creeper",
-    "Ender Dragon",
     "Enderman",
-    "Endermite",
+    "Skeleton",
+    "Zombie",
     "Ghast",
-    "Guardian",
-    "Hoglin",
+    "Slime",
+    "Warden",
+    "Blaze",
     "Iron Golem",
-    "Magma Cube",
+    "Villager",
+    "Wither",
+    "Ender Dragon",
+    "Snow Golem",
     "Phantom",
-    "Piglin",
-    "Pillager",
-    "Ravager",
+    "Guardian",
+    "Dolphin",
+    "Axolotl",
+    "Strider",
     "Shulker",
     "Silverfish",
-    "Skeleton",
-    "Slime",
-    "Snow Golem",
-    "Strider",
-    "Sulfur Cube",
     "Vex",
-    "Warden",
-    "Witch",
-    "Wither",
-    "Zombie"
+    "Witch"
   ],
   "weapons_and_tools": [
     "Sword",
@@ -49,12 +40,12 @@
     "Axe",
     "Shovel",
     "Hoe",
-    "Spear",
-    "Mace",
     "Bow",
     "Crossbow",
     "Trident",
     "Shield",
+    "Mace",
+    "Spear",
     "Fishing Rod",
     "Flint and Steel",
     "Shears",
@@ -62,19 +53,20 @@
     "Compass",
     "Clock"
   ],
-  "armor": [
+  "armor_and_gear": [
     "Helmet",
     "Chestplate",
     "Leggings",
     "Boots",
     "Turtle Shell",
     "Elytra",
+    "Wolf Armor",
     "Horse Armor",
-    "Wolf Armor"
+    "Saddle"
   ],
-  "iconic_blocks": [
-    "Stone",
+  "building_blocks": [
     "Cobblestone",
+    "Stone",
     "Obsidian",
     "Bedrock",
     "Dirt",
@@ -82,23 +74,19 @@
     "Gravel",
     "Clay",
     "Mud",
+    "Ice",
+    "Snow",
+    "Bricks",
+    "Glass",
+    "TNT",
     "Netherrack",
     "Soul Sand",
     "End Stone",
-    "Ice",
-    "Snow",
-    "Magma Block",
-    "Glowstone",
-    "Sea Lantern",
     "Amethyst Block",
-    "Bricks",
-    "Web",
-    "Spawner",
-    "TNT",
+    "Sea Lantern",
+    "Cobweb",
     "Water",
-    "Lava",
-    "Sulfur Block",
-    "Cinnabar Block"
+    "Lava"
   ],
   "workstations_and_utility": [
     "Crafting Table",
@@ -114,16 +102,16 @@
     "Beacon",
     "Campfire",
     "Bookshelf",
-    "Bell"
+    "Bell",
+    "Loom"
   ],
-  "structures_and_decorations": [
+  "decorations_and_lights": [
     "Torch",
     "Lantern",
     "Bed",
     "Door",
     "Ladder",
     "Fence",
-    "Glass",
     "Painting",
     "Flower Pot",
     "Candle",
@@ -131,7 +119,7 @@
     "Banner",
     "Scaffolding"
   ],
-  "materials_and_treasures": [
+  "minerals_and_treasures": [
     "Diamond",
     "Emerald",
     "Gold Ingot",
@@ -153,13 +141,11 @@
     "Totem of Undying",
     "Trial Key",
     "Dragon Egg",
-    "Firework Rocket",
-    "Book",
     "Bucket",
     "Lead",
     "Name Tag"
   ],
-  "food_items": [
+  "food_and_crops": [
     "Apple",
     "Golden Apple",
     "Carrot",
@@ -174,8 +160,7 @@
     "Mushroom Stew",
     "Steak",
     "Fish",
-    "Rotten Flesh",
-    "Honey Bottle"
+    "Rotten Flesh"
   ],
   "nature_and_plants": [
     "Sunflower",
@@ -191,20 +176,18 @@
     "Sapling",
     "Leaves"
   ],
-  "vehicles": [
+  "transportation": [
     "Boat",
     "Minecart",
-    "Saddle"
+    "Harness"
   ],
-  "potion_effects": [
-    "Healing",
-    "Poison",
-    "Fire Resistance",
-    "Invisibility",
-    "Night Vision",
-    "Swiftness",
-    "Water Breathing",
-    "Leaping",
-    "Strength"
+  "brewing_and_alchemy": [
+    "Potion",
+    "Glass Bottle",
+    "Brewing Stand",
+    "Cauldron",
+    "Blaze Powder",
+    "Fermented Spider Eye",
+    "Magma Cream"
   ]
 }
