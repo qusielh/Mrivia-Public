@@ -602,6 +602,25 @@
             padding-top: 1rem;
             text-align: center;
         }
+
+        /* 👁️ Tiny Eye Toggle Icon Button for Secret Key */
+        .seed-eye-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.45);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.15s ease, transform 0.1s ease;
+        }
+
+            .seed-eye-btn:hover {
+                color: var(--sakura);
+                transform: scale(1.1);
+            }
     </style>
 </head>
 <body>
@@ -799,12 +818,22 @@
                         </form>
                     </div>
 
+                    <!-- 🌸 LAYER KEY: HIDDEN BY DEFAULT WITH VECTOR SVG EYE TOGGLE -->
                     <div id="layerKey" class="d-none">
                         <h2 class="fs-4 fw-bold mb-1 text-sakura">Save your secret key</h2>
                         <p class="text-white-50 small mb-3">This is your only login credential. Store it somewhere safe — if you lose it, the account is gone.</p>
 
-                        <div class="mc-input text-break font-monospace text-warning text-center mb-3" id="seedDisplay" style="font-size: 0.8rem; background: rgba(0,0,0,0.55); border-color: oklch(0.5 0.08 350 / 0.5);">
-                            GENERATING_SECURE_TOKEN...
+                        <div class="position-relative mb-3">
+                            <div class="mc-input text-break font-monospace text-warning text-center mb-0 pe-5 d-flex align-items-center justify-content-center" id="seedDisplay" style="font-size: 0.85rem; background: rgba(0,0,0,0.55); border-color: oklch(0.5 0.08 350 / 0.5); min-height: 46px; user-select: all;">
+                                ••••••••••••••••••
+                            </div>
+                            <button type="button" id="toggleSeedMaskBtn" onclick="toggleSeedVisibility()" class="seed-eye-btn position-absolute end-0 top-50 translate-middle-y me-3" title="Reveal / Hide Secret Key">
+                                <!-- Tiny Vector SVG Eye (Not Emoji) -->
+                                <svg id="seedEyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
                         </div>
 
                         <div class="row g-2">
@@ -837,7 +866,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         /* ======================================================== */
-        /* 🌸 CINEMATIC BUTTERFLY INTRO ENGINE                      */
+        /* 🌸 CINEMATIC BUTTERFLY INTRO ENGINE (ZOOM-SAFE DELTA)    */
         /* ======================================================== */
         const introOverlay = document.getElementById('intro-screen-overlay');
         const bgCanvas = document.getElementById('bg-canvas');
@@ -855,6 +884,10 @@
         let bgLoopId = null;
         let introAutoFadeTimer = null;
         let isIntroRunning = false;
+
+        // 🟢 Track screen center to calculate zoom / F11 pixel shift
+        let prevCenterX = window.innerWidth / 2;
+        let prevCenterY = window.innerHeight / 2;
 
         function isPortraitMode() {
             return window.matchMedia("(max-width: 1024px) and (orientation: portrait)").matches;
@@ -896,8 +929,35 @@
             }, 800);
         }
 
+        // 🟢 ZOOM-SAFE CANVAS RESIZE: Shifts existing coordinates by Delta instead of teleporting
         function resizeIntroCanvases() {
             if (!bgCanvas || !mainCanvas) return;
+
+            const newCenterX = window.innerWidth / 2;
+            const newCenterY = window.innerHeight / 2;
+
+            const deltaX = newCenterX - prevCenterX;
+            const deltaY = newCenterY - prevCenterY;
+
+            if (deltaX !== 0 || deltaY !== 0) {
+                butterflies.forEach(b => {
+                    b.x += deltaX;
+                    b.y += deltaY;
+                    b.prevX += deltaX;
+                    b.prevY += deltaY;
+                    b.tx += deltaX;
+                    b.ty += deltaY;
+                });
+
+                sparkles.forEach(s => {
+                    s.x += deltaX;
+                    s.y += deltaY;
+                });
+            }
+
+            prevCenterX = newCenterX;
+            prevCenterY = newCenterY;
+
             bgCanvas.width = window.innerWidth;
             bgCanvas.height = window.innerHeight;
             mainCanvas.width = window.innerWidth;
@@ -1156,6 +1216,8 @@
             }
 
             isIntroRunning = true;
+            prevCenterX = window.innerWidth / 2;
+            prevCenterY = window.innerHeight / 2;
             resizeIntroCanvases();
             window.addEventListener('resize', resizeIntroCanvases);
 
@@ -1194,18 +1256,58 @@
             petal.style.setProperty('--rot-start', rotStartVal + 'deg');
 
             petal.innerHTML = `
-                        <svg viewBox="0 0 16 16" shapeRendering="crispEdges" width="100%" height="100%">
-                            <rect x="4" y="2" width="8" height="2" fill="#ffd1de" />
-                            <rect x="2" y="4" width="12" height="2" fill="#ffbccc" />
-                            <rect x="2" y="6" width="12" height="4" fill="#ff9ebb" />
-                            <rect x="4" y="10" width="8" height="2" fill="#f28da9" />
-                            <rect x="6" y="12" width="4" height="2" fill="#e07392" />
-                        </svg>
-                    `;
+                            <svg viewBox="0 0 16 16" shapeRendering="crispEdges" width="100%" height="100%">
+                                <rect x="4" y="2" width="8" height="2" fill="#ffd1de" />
+                                <rect x="2" y="4" width="12" height="2" fill="#ffbccc" />
+                                <rect x="2" y="6" width="12" height="4" fill="#ff9ebb" />
+                                <rect x="4" y="10" width="8" height="2" fill="#f28da9" />
+                                <rect x="6" y="12" width="4" height="2" fill="#e07392" />
+                            </svg>
+                        `;
             container.appendChild(petal);
         }
 
         const BACKEND_URL = "/api/auth";
+
+        // 🟢 Secret Key Masking State
+        let rawGeneratedSeed = "";
+        let isSeedRevealed = false;
+
+        function updateSeedDisplayUI() {
+            const display = document.getElementById('seedDisplay');
+            const eye = document.getElementById('seedEyeIcon');
+            if (!display) return;
+
+            if (!rawGeneratedSeed) {
+                display.innerText = "••••••••••••••••••";
+                return;
+            }
+
+            if (isSeedRevealed) {
+                display.innerText = rawGeneratedSeed;
+                display.style.letterSpacing = "0.04em";
+                if (eye) {
+                    eye.innerHTML = `
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        `;
+                }
+            } else {
+                display.innerText = "•".repeat(Math.min(rawGeneratedSeed.length, 24));
+                display.style.letterSpacing = "0.18em";
+                if (eye) {
+                    eye.innerHTML = `
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        `;
+                }
+            }
+        }
+
+        function toggleSeedVisibility() {
+            isSeedRevealed = !isSeedRevealed;
+            updateSeedDisplayUI();
+        }
 
         function lockThisDevice(token) {
             const val = token || 'BANNED_PERMANENT';
@@ -1376,7 +1478,9 @@
                         displayAlert("Username exists! Please provide your password or key to sign in.");
                     } else {
                         unlockThisDevice();
-                        document.getElementById('seedDisplay').innerText = data.secretKey;
+                        rawGeneratedSeed = data.secretKey;
+                        isSeedRevealed = false;
+                        updateSeedDisplayUI();
                         document.getElementById('layerLogin').classList.add('d-none');
                         document.getElementById('layerKey').classList.remove('d-none');
                     }
@@ -1387,8 +1491,8 @@
         }
 
         function copySeed() {
-            const token = document.getElementById('seedDisplay').innerText;
-            navigator.clipboard.writeText(token);
+            if (!rawGeneratedSeed) return;
+            navigator.clipboard.writeText(rawGeneratedSeed);
             document.getElementById('copied').innerText = "Secret key copied to clipboard!";
         }
 
