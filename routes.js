@@ -235,7 +235,8 @@ function setupRoutes(db, io) {
     router.get('/Recipe.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'Recipe.html')); });
     router.get('/Minele.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'Minele.html')); });
     router.get('/SZC.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'SZC.html')); });
-    router.get('/solo.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'solo.html')); });
+    router.get('/minele_solo.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'minele_solo.html')); });
+    router.get('/szc_solo.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'szc_solo.html')); });
     router.get('/About%20me.html', (req, res) => { res.sendFile(path.resolve(__dirname, 'project-information.html')); });
     router.get('/removed-admin.html', requireCreator, (req, res) => { res.sendFile(path.resolve(__dirname, 'removed-admin.html')); });
 

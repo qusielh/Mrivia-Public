@@ -1,7 +1,7 @@
 // socketHandler.js
 const cookieParser = require('cookie-parser');
 const { COOKIE_SECRET, userCache, activeRooms, deletionTimeouts, generateMaskedPayload } = require('./config');
-const { startRoomTimer, getModeHandler, runGameWaitingPhase } = require('./gameCore');
+const { startRoomTimer, getModeHandler, runGameWaitingPhase, initiateUniversalGameLoop } = require('./gameCore');
 const { isProfane, community_TROLL_MESSAGE } = require('./profanityFilter');
 
 const GAME_MODE_URLS = {
@@ -181,15 +181,14 @@ function setupSockets(io, db) {
                 });
 
                 // ========================================================
-                // 🟢 MODE 4 (SZC) SPECIALIZED LAUNCH LOGIC
+                // 🟢 MODE 4 (SZC) INSTANT MATCH LAUNCH (ZERO COUNTDOWN DELAY)
                 // ========================================================
                 if (room.mode === 4) {
                     if (room.players.length === 1) {
                         socket.emit('szc_waiting_for_opponent');
                     } else if (room.players.length === 2 && room.status === 'waiting') {
-                        // 2 Players inside: Lock room permanently!
-                        room.status = 'game_waiting';
-                        room.gameWaitingClock = 3;
+                        // 2 Players inside: Lock room and launch round 1 INSTANTLY!
+                        room.status = 'started';
 
                         const p1 = room.players[0];
                         const p2 = room.players[1];
@@ -203,7 +202,7 @@ function setupSockets(io, db) {
                             });
                         });
 
-                        runGameWaitingPhase(roomId);
+                        initiateUniversalGameLoop(roomId);
                     }
                     return;
                 }
@@ -217,7 +216,7 @@ function setupSockets(io, db) {
                     io.to(roomId).emit('update_room_ui', { players: room.players });
                 }
                 else if (room.status === 'started') {
-                    const isPainter = (room.mode === 1 && username === room.currentPainter);
+                    const isPainter = (room.mode === 1 && verifiedUsername === room.currentPainter);
 
                     if (room.mode === 1) {
                         const activeList = room.initialPlayers || room.players;
