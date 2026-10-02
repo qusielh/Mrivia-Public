@@ -33,6 +33,42 @@
             padding: 0;
         }
 
+        /* ========================================================= */
+        /* 🌸 1. UNIVERSAL SLEEK DARK SAKURA SCROLLBAR (ZERO WHITE)   */
+        /* ========================================================= */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 183, 197, 0.3) transparent;
+        }
+
+            *::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+
+            *::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            *::-webkit-scrollbar-thumb {
+                background: rgba(255, 183, 197, 0.25);
+                border-radius: 10px;
+            }
+
+                *::-webkit-scrollbar-thumb:hover {
+                    background: rgba(255, 183, 197, 0.5);
+                }
+
+        /* ========================================================= */
+        /* 🌸 2. SMOOTH TEXT BALANCING (ELIMINATES AWKWARD LINE GAPS) */
+        /* ========================================================= */
+        p, .text-white-75, .notice-point p, .lobby-notice-block p, .story-content p {
+            text-wrap: pretty;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            -webkit-hyphens: auto;
+        }
+
         body {
             background-color: var(--background);
             color: var(--foreground);
