@@ -11,9 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Silkscreen&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ========================================================= */
-        /* 🌸 DESIGN SYSTEM & GLOWING AURORA BACKDROP               */
-        /* ========================================================= */
         :root {
             --font-pixel: "Silkscreen", system-ui, sans-serif;
             --font-display: "Fredoka", "Quicksand", system-ui, sans-serif;
@@ -36,7 +33,7 @@
         }
 
         body {
-            background-color: #0b020a;
+            background: radial-gradient(circle at 50% 35%, #461434 0%, #220919 50%, #0d020a 100%);
             color: var(--foreground);
             font-family: var(--font-sans);
             min-height: 100vh;
@@ -52,16 +49,6 @@
             user-select: none;
         }
 
-        /* 🌸 RICH MULTI-LAYER GLOWING AURORA */
-        .aurora-backdrop-layer {
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 20%, rgba(255, 64, 129, 0.28) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(77, 237, 226, 0.18) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(243, 163, 195, 0.22) 0%, transparent 50%), linear-gradient(180deg, #3d102c 0%, #1c0615 50%, #0a0108 100%);
-            z-index: -4;
-            pointer-events: none;
-        }
-
-        /* AMBIENT STARDUST SPECKS */
         .ambient-dust-field {
             position: fixed;
             inset: 0;
@@ -99,7 +86,6 @@
             }
         }
 
-        /* ARENA TOP BAR */
         header.arena-top-header {
             width: 100%;
             max-width: 1100px;
@@ -172,9 +158,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* ========================================================= */
-        /* ⚔️ THE DUAL ARENA BOARD (SPLIT BY GLOWING VERTICAL LINE)   */
-        /* ========================================================= */
         .arena-duel-board {
             width: 100%;
             max-width: 1100px;
@@ -190,7 +173,6 @@
             z-index: 5;
         }
 
-        /* CENTER VERTICAL DIVIDING LINE */
         .center-divider-rail {
             position: absolute;
             top: 25px;
@@ -219,7 +201,6 @@
             z-index: 25;
         }
 
-        /* LEFT & RIGHT PLAYER LANES */
         .duel-half-lane {
             flex: 1;
             display: flex;
@@ -230,7 +211,6 @@
             position: relative;
         }
 
-        /* ANCHORED SIDE SCOREBOARDS */
         .side-score-box {
             display: flex;
             align-items: center;
@@ -247,10 +227,9 @@
 
             .side-score-box.winner-glow {
                 border-color: var(--diamond) !important;
-                box-shadow: 0 0 18px rgba(77, 237, 226, 0.45);
+                box-shadow: 0 0 18px rgba(77, 237, 226, 0.5);
             }
 
-        /* STATUS BADGE */
         .status-ready-badge {
             font-family: var(--font-pixel);
             font-size: 0.7rem;
@@ -269,7 +248,6 @@
                 box-shadow: 0 0 10px rgba(46, 204, 113, 0.35);
             }
 
-        /* MOB HEAD STAGE */
         .head-platform-stage {
             flex-grow: 1;
             display: flex;
@@ -280,7 +258,6 @@
             width: 100%;
         }
 
-        /* 64x64 PIXEL-ART SHARPNESS */
         .mob-head-img {
             width: 135px;
             height: 135px;
@@ -293,7 +270,6 @@
             display: none;
         }
 
-        /* WAITING PLACEHOLDER */
         .waiting-placeholder {
             width: 110px;
             height: 110px;
@@ -309,9 +285,6 @@
             transition: opacity 0.25s ease;
         }
 
-        /* ========================================================= */
-        /* 🎬 ANIMATIONS (SMOOTH GRAVITY FALL & REACTIONS)           */
-        /* ========================================================= */
         @keyframes smoothDropIn {
             0% {
                 transform: translateY(-240px) scale(0.85, 1.25);
@@ -447,9 +420,6 @@
             animation: tieBounceRight 0.65s ease-out forwards;
         }
 
-        /* ========================================================= */
-        /* 🌸 BOTTOM SELECTION DOCK & LOCK-IN READY BUTTON           */
-        /* ========================================================= */
         .bottom-control-dock {
             width: 100%;
             max-width: 1100px;
@@ -533,7 +503,6 @@
                 transform: none;
             }
 
-        /* VICTORY MODAL */
         .match-overlay {
             position: fixed;
             inset: 0;
@@ -586,7 +555,21 @@
             text-align: center;
         }
 
-        /* 📱 MOBILE ROTATE SHIELD */
+        .mc-btn-stone {
+            background: linear-gradient(180deg, #a3a3a5 0%, #8b8b8d 45%, #6a6a6c 100%);
+            border: 2px solid #404041;
+            color: #ffffff;
+            box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.35), 0 4px 0 #313132;
+            font-family: var(--font-display);
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
         #rotatePromptOverlay {
             display: none;
             position: fixed;
@@ -644,7 +627,6 @@
     </div>
 
     <!-- 🌸 VIBRANT AURORA BACKGROUND & AMBIENT STARDUST -->
-    <div class="aurora-backdrop-layer"></div>
     <div class="ambient-dust-field" id="dustField"></div>
 
     <!-- 🏆 SAKURA VICTORY MODAL OVERLAY -->
@@ -663,7 +645,7 @@
             </div>
 
             <div class="d-flex gap-2">
-                <button onclick="restartSoloMatch()" class="mc-btn stone w-50 font-pixel btn-sm" style="font-size: 0.78rem;">Play Again 🔄</button>
+                <button onclick="restartSoloMatch()" class="mc-btn-stone w-50 font-pixel btn-sm" style="font-size: 0.78rem;">Play Again 🔄</button>
                 <button onclick="location.href='lobby.html'" class="mc-btn-sakura w-50 font-pixel" style="font-size: 0.78rem;">Lobby →</button>
             </div>
         </div>
@@ -865,12 +847,13 @@
             selectedChoiceFile = file;
 
             document.querySelectorAll('.pick-mob-card').forEach(b => b.classList.remove('active'));
-            if (name === 'CREEPER') document.getElementById('btnPickCreeper').classList.add('active');
-            if (name === 'ZOMBIE') document.getElementById('btnPickZombie').classList.add('active');
-            if (name === 'SKELETON') document.getElementById('btnPickSkeleton').classList.add('active');
+            if (name === 'CREEPER') document.getElementById('btnCreeper').classList.add('active');
+            if (name === 'ZOMBIE') document.getElementById('btnZombie').classList.add('active');
+            if (name === 'SKELETON') document.getElementById('btnSkeleton').classList.add('active');
 
             headLeft.src = file;
             btnSubmitReady.disabled = false;
+            statusBadgeLeft.innerText = `SELECTED: ${name}`;
         }
 
         function submitPlayerReady() {
