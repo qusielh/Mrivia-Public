@@ -9,14 +9,16 @@ const MODE_LIMITS = {
     0: 6,   // Mode 0 (Classic Mrivia): 6 players
     1: 6,   // Mode 1 (Pixelary):       6 players
     2: 4,   // Mode 2 (Recipe):         4 players
-    3: 4    // Mode 3 (Minele):         4 players
+    3: 4,   // Mode 3 (Minele):         4 players
+    4: 2    // Mode 4 (SZC):            2 players
 };
 
 const ROUND_LIMITS = {
     0: 12,  // Mode 0: 12 rounds
     1: 6,   // Mode 1: 6 rounds
     2: 8,   // Mode 2: 8 rounds
-    3: 4    // Mode 3: 4 rounds
+    3: 4,   // Mode 3: 4 rounds
+    4: 5    // Mode 4 (SZC):            5 rounds
 };
 
 const userCache = {};

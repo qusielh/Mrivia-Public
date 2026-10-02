@@ -9,10 +9,12 @@ const GAME_MODE_URLS = {
     1: 'Pixelary.html',
     2: 'Recipe.html',
     3: 'Minele.html',
+    4: 'SZC.html',
     'classic': 'Mrivia.html',
     'pixelary': 'Pixelary.html',
     'recipe': 'Recipe.html',
-    'minele': 'Minele.html'
+    'minele': 'Minele.html',
+    'szc': 'SZC.html'
 };
 
 // 🟢 Reliable socket cookie parser that handles base64 '=' padding cleanly
@@ -80,6 +82,18 @@ function setupSockets(io, db) {
         } catch (e) {
             console.error("Cookie parsing error on connect:", e);
         }
+
+        // 🟢 SYNCHRONOUS LISTENER: MODE 4 (SZC) SUBMIT CHOICE
+        socket.on('szc_submit_choice', (data) => {
+            const { username, roomId } = socket.data;
+            const room = activeRooms[roomId];
+            if (!room || room.status !== 'started' || room.mode !== 4) return;
+
+            const handler = getModeHandler(room.mode);
+            if (handler && handler.handlePlayerChoice) {
+                handler.handlePlayerChoice(socket, io, roomId, room, username, data?.choice);
+            }
+        });
 
         // 🟢 REGISTER 'join_match' IMMEDIATELY SO IT NEVER DROPS
         socket.on('join_match', async () => {
@@ -166,6 +180,34 @@ function setupSockets(io, db) {
                     roomCode: room.isCustom ? roomId : null
                 });
 
+                // ========================================================
+                // 🟢 MODE 4 (SZC) SPECIALIZED LAUNCH LOGIC
+                // ========================================================
+                if (room.mode === 4) {
+                    if (room.players.length === 1) {
+                        socket.emit('szc_waiting_for_opponent');
+                    } else if (room.players.length === 2 && room.status === 'waiting') {
+                        // 2 Players inside: Lock room permanently!
+                        room.status = 'game_waiting';
+                        room.gameWaitingClock = 3;
+
+                        const p1 = room.players[0];
+                        const p2 = room.players[1];
+
+                        // Send opponent names to both sockets
+                        const socketsInRoom = await io.in(roomId).fetchSockets();
+                        socketsInRoom.forEach(s => {
+                            const u = s.data?.username;
+                            s.emit('szc_match_start', {
+                                opponentName: (u === p1) ? p2 : p1
+                            });
+                        });
+
+                        runGameWaitingPhase(roomId);
+                    }
+                    return;
+                }
+
                 if (room.status === 'game_waiting') {
                     socket.emit('game_waiting_tick', { time: room.gameWaitingClock });
                     io.to(roomId).emit('update_room_ui', { players: room.players });
@@ -175,7 +217,7 @@ function setupSockets(io, db) {
                     io.to(roomId).emit('update_room_ui', { players: room.players });
                 }
                 else if (room.status === 'started') {
-                    const isPainter = (verifiedUsername === room.currentPainter);
+                    const isPainter = (room.mode === 1 && username === room.currentPainter);
 
                     if (room.mode === 1) {
                         const activeList = room.initialPlayers || room.players;
@@ -311,6 +353,9 @@ function setupSockets(io, db) {
 
             if (room.gameScores && room.gameScores[username]) {
                 room.gameScores[username].hasLeft = true;
+                if (room.mode === 4) {
+                    room.gameScores[username].score = 0; // Forfeiter in Mode 4 gets 0 pts
+                }
 
                 if (room.mode === 1) {
                     const activeList = room.initialPlayers || room.players;
@@ -513,6 +558,9 @@ function setupSockets(io, db) {
 
                     if (username && room.gameScores && room.gameScores[username] && !room.gameScores[username].hasLeft) {
                         room.gameScores[username].isDisconnected = true;
+                        if (room.mode === 4) {
+                            room.gameScores[username].score = 0; // Disconnected player in Mode 4 forfeits points
+                        }
 
                         if (room.mode === 1) {
                             const activeList = room.initialPlayers || room.players;

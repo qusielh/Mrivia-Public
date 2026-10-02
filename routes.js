@@ -234,6 +234,7 @@ function setupRoutes(db, io) {
     router.get('/Pixelary.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'Pixelary.html')); });
     router.get('/Recipe.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'Recipe.html')); });
     router.get('/Minele.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'Minele.html')); });
+    router.get('/SZC.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'SZC.html')); });
     router.get('/solo.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'solo.html')); });
     router.get('/About%20me.html', (req, res) => { res.sendFile(path.resolve(__dirname, 'project-information.html')); });
     router.get('/removed-admin.html', requireCreator, (req, res) => { res.sendFile(path.resolve(__dirname, 'removed-admin.html')); });
@@ -298,7 +299,9 @@ function setupRoutes(db, io) {
             sameSite: 'lax'
         });
 
-        return res.json({ success: true, action: action });
+        // 🟢 MODE 4 (SZC) BYPASSES queue.html DIRECTLY TO SZC.html
+        const destination = (modeId === 4) ? 'SZC.html' : 'queue.html';
+        return res.json({ success: true, action: action, redirectUrl: destination });
     });
 
     // 🟢 CREATE CUSTOM ROOM
@@ -354,7 +357,9 @@ function setupRoutes(db, io) {
             sameSite: 'lax'
         });
 
-        return res.json({ success: true, roomCode: roomCode });
+        // 🟢 MODE 4 (SZC) BYPASSES queue.html DIRECTLY TO SZC.html
+        const destination = (modeId === 4) ? 'SZC.html' : 'queue.html';
+        return res.json({ success: true, roomCode: roomCode, redirectUrl: destination });
     });
 
     // 🟢 JOIN CUSTOM ROOM
@@ -399,7 +404,9 @@ function setupRoutes(db, io) {
             sameSite: 'lax'
         });
 
-        return res.json({ success: true, roomCode: cleanCode });
+        // 🟢 MODE 4 (SZC) BYPASSES queue.html DIRECTLY TO SZC.html
+        const destination = (targetRoom.mode === 4) ? 'SZC.html' : 'queue.html';
+        return res.json({ success: true, roomCode: cleanCode, redirectUrl: destination });
     });
 
     router.post('/api/auth/check-or-register', async (req, res) => {

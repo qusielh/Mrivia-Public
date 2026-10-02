@@ -179,6 +179,8 @@
         .game-grid {
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .game-mode-btn {
@@ -468,11 +470,11 @@
             text-align: left;
         }
 
-        /* 📱 Expands Rules modal reading area on mobile landscape */
         @media (max-height: 540px) {
             .lobby-note-overlay {
                 padding: 0.5rem !important;
             }
+
             .lobby-notice-card {
                 max-width: 780px !important;
                 max-height: 96vh !important;
@@ -480,13 +482,16 @@
                 padding: 0.85rem 1.25rem !important;
                 border-radius: 16px !important;
             }
-            .lobby-notice-card .text-center.mb-3 {
-                margin-bottom: 0.4rem !important;
-            }
-            .lobby-notice-card h2 {
-                font-size: 1.15rem !important;
-                margin-bottom: 2px !important;
-            }
+
+                .lobby-notice-card .text-center.mb-3 {
+                    margin-bottom: 0.4rem !important;
+                }
+
+                .lobby-notice-card h2 {
+                    font-size: 1.15rem !important;
+                    margin-bottom: 2px !important;
+                }
+
             .lobby-notice-block, .kid-safety-box {
                 padding: 0.65rem 0.85rem !important;
                 margin-bottom: 0.5rem !important;
@@ -934,6 +939,7 @@
                                 </svg>
                             </div>
 
+                            <!-- 🟢 5 GAME MODES (CLASSIC, PIXELARY, RECIPE, MINELE, SZC) -->
                             <div class="game-grid">
                                 <button class="game-mode-btn active" onclick="selectMode(this, 'classic')">
                                     <svg viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>
@@ -950,6 +956,10 @@
                                 <button class="game-mode-btn" onclick="selectMode(this, 'minele')">
                                     <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M3 9h18" /><path d="M3 15h18" /><path d="M9 3v18" /><path d="M15 3v18" /></svg>
                                     <span>Minele</span>
+                                </button>
+                                <button class="game-mode-btn" onclick="selectMode(this, 'szc')">
+                                    <svg viewBox="0 0 24 24"><path d="M14.5 17.5 3 6V3h3l11.5 11.5" /><path d="m13 19 6 2 2-6-4.5-4.5" /><path d="m3 3 18 18" /></svg>
+                                    <span>SZC</span>
                                 </button>
                             </div>
 
@@ -974,7 +984,7 @@
                                 <button class="mc-btn diamond mb-2" onclick="joinMatchmaking()">
                                     Matchmaking Queue
                                 </button>
-                                <div class="text-white-50 small ps-1">Compete live against up to 6 real-time players.</div>
+                                <div class="text-white-50 small ps-1" id="matchmakingModeHelpTxt">Compete live against other real-time players.</div>
                             </div>
                             <div class="col-sm-6">
                                 <h4 class="fs-6 text-white-50 mb-2 font-pixel" style="font-size: 0.7rem;">OFFLINE TRAINING</h4>
@@ -1039,17 +1049,19 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const descriptions = {
-            'classic': "Classic: Compete against 7 other players to guess the Minecraft item name first!",
+            'classic': "Classic: Compete against other players to guess the Minecraft item name first!",
             'pixelary': "Pixelary: Draw the item on screen and guess what other players are sketching.",
             'recipe': "Recipe Guess: Analyze the ingredients shown and guess the resulting crafted item.",
-            'minele': "Minele: Test your knowledge in this puzzle to guess the mystery word in limited attempts."
+            'minele': "Minele: Test your knowledge in this puzzle to guess the mystery word in limited attempts.",
+            'szc': "SZC Duel: Real-time 1v1 Rock-Paper-Scissors! Skeleton beats Creeper, Creeper beats Zombie, Zombie beats Skeleton."
         };
 
         const MODE_MAP = {
             'classic': 0,
             'pixelary': 1,
             'recipe': 2,
-            'minele': 3
+            'minele': 3,
+            'szc': 4
         };
 
         let globalUsername = "";
@@ -1068,7 +1080,6 @@
             document.getElementById('inboxModalOverlay').classList.add('d-none');
         }
 
-        // 🟢 LIGHTWEIGHT ON-DEMAND FETCH: Only loads titles on click!
         async function fetchInboxTitles() {
             const container = document.getElementById('inboxListContainer');
             try {
@@ -1103,15 +1114,15 @@
                 btn.onclick = () => openInboxMessageViewer(item.id);
 
                 btn.innerHTML = `
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="text-white fw-bold text-truncate pe-2 font-pixel" style="font-size: 0.85rem;">📢 ${item.title}</span>
-                        <span class="text-white-50 small font-sans" style="font-size: 0.65rem;">${new Date(item.created_at).toLocaleDateString()}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="text-sakura small font-sans" style="font-size: 0.72rem; opacity: 0.85;">Official Update from Creator</span>
-                        <span class="text-diamond small font-pixel" style="font-size: 0.62rem;">Read →</span>
-                    </div>
-                `;
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-white fw-bold text-truncate pe-2 font-pixel" style="font-size: 0.85rem;">📢 ${item.title}</span>
+                            <span class="text-white-50 small font-sans" style="font-size: 0.65rem;">${new Date(item.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-sakura small font-sans" style="font-size: 0.72rem; opacity: 0.85;">Official Update from Creator</span>
+                            <span class="text-diamond small font-pixel" style="font-size: 0.62rem;">Read →</span>
+                        </div>
+                    `;
                 container.appendChild(btn);
             });
 
@@ -1144,7 +1155,6 @@
             }
         }
 
-        // 🟢 LAZY LOADING VIEWER: Fetches full message body only when player taps title
         async function openInboxMessageViewer(id) {
             document.getElementById('inboxModalOverlay').classList.add('d-none');
             const viewer = document.getElementById('inboxMessageViewerModal');
@@ -1179,7 +1189,6 @@
             document.getElementById('inboxMessageViewerModal').classList.add('d-none');
         }
 
-        // --- 🔑 PLAYER IN-LOBBY CHANGE PASSWORD MODAL LOGIC ---
         function openChangePasswordModal() {
             document.getElementById('changePasswordModalOverlay').classList.remove('d-none');
             document.getElementById('lobbyNewPasswordInput').value = "";
@@ -1348,7 +1357,8 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    window.location.href = 'queue.html';
+                    // 🟢 Supports direct redirect to SZC.html or queue.html
+                    window.location.href = data.redirectUrl || 'queue.html';
                 } else {
                     alert(data.message || "Matchmaking failed. Please try again.");
                     btn.innerText = "Matchmaking Queue";
@@ -1374,7 +1384,8 @@
                 });
                 const data = await response.json();
                 if (response.ok && data.success) {
-                    window.location.href = 'queue.html';
+                    // 🟢 Supports direct redirect to SZC.html or queue.html
+                    window.location.href = data.redirectUrl || 'queue.html';
                 } else {
                     alert("Could not create custom room.");
                 }
@@ -1406,7 +1417,8 @@
                 });
                 const data = await response.json();
                 if (response.ok && data.success) {
-                    window.location.href = 'queue.html';
+                    // 🟢 Supports direct redirect to SZC.html or queue.html
+                    window.location.href = data.redirectUrl || 'queue.html';
                 } else {
                     alert(data.message || "Room not found.");
                 }
@@ -1415,7 +1427,6 @@
             }
         }
 
-        // --- 💬 FEEDBACK MODAL LOGIC ---
         function toggleFeedbackModal(show) {
             const el = document.getElementById('feedbackModalOverlay');
             if (!el) return;
@@ -1470,7 +1481,6 @@
             }
         }
 
-        // --- 🚨 REPORT MODAL LOGIC ---
         function toggleReportModal(show) {
             const el = document.getElementById('reportModalOverlay');
             if (!el) return;
@@ -1677,12 +1687,12 @@
             const rankClass = numericRank === 1 ? 'rank-1' : numericRank === 2 ? 'rank-2' : numericRank === 3 ? 'rank-3' : 'bg-dark text-white';
 
             row.innerHTML = `
-                <div class="d-flex align-items-center gap-3">
-                    <div class="rank-badge ${rankClass}">${rankLabel}</div>
-                    <span class="${isCurrentUser ? 'text-sakura' : 'text-white'} fw-bold">${username}</span>
-                </div>
-                <span class="font-pixel" style="color: #4dede2;">${score} pts</span>
-            `;
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rank-badge ${rankClass}">${rankLabel}</div>
+                        <span class="${isCurrentUser ? 'text-sakura' : 'text-white'} fw-bold">${username}</span>
+                    </div>
+                    <span class="font-pixel" style="color: #4dede2;">${score} pts</span>
+                `;
             container.appendChild(row);
         }
 
@@ -1716,10 +1726,10 @@
             petal.style.setProperty('--rot-start', rotStartVal + 'deg');
 
             petal.innerHTML = `
-                <svg viewBox="0 0 16 16" shapeRendering="crispEdges" width="100%" height="100%">
-                    <rect x="4" y="2" width="8" height="2" fill="#ffd1de" /><rect x="2" y="4" width="12" height="2" fill="#ffbccc" /><rect x="2" y="6" width="12" height="4" fill="#ff9ebb" /><rect x="4" y="10" width="8" height="2" fill="#f28da9" /><rect x="6" y="12" width="4" height="2" fill="#e07392" />
-                </svg>
-            `;
+                    <svg viewBox="0 0 16 16" shapeRendering="crispEdges" width="100%" height="100%">
+                        <rect x="4" y="2" width="8" height="2" fill="#ffd1de" /><rect x="2" y="4" width="12" height="2" fill="#ffbccc" /><rect x="2" y="6" width="12" height="4" fill="#ff9ebb" /><rect x="4" y="10" width="8" height="2" fill="#f28da9" /><rect x="6" y="12" width="4" height="2" fill="#e07392" />
+                    </svg>
+                `;
             container.appendChild(petal);
         }
     </script>

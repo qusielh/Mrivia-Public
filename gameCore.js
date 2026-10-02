@@ -15,10 +15,12 @@ const GAME_MODE_URLS = {
     1: 'Pixelary.html',
     2: 'Recipe.html',
     3: 'Minele.html',
+    4: 'SZC.html',
     'classic': 'Mrivia.html',
     'pixelary': 'Pixelary.html',
     'recipe': 'Recipe.html',
-    'minele': 'Minele.html'
+    'minele': 'Minele.html',
+    'szc': 'SZC.html'
 };
 
 let io, db;
@@ -224,6 +226,18 @@ async function executeNextEngineRound(roomId) {
         return;
     }
 
+    // 🟢 MODE 4 (SZC) LAUNCH HOOK
+    if (room.mode === 4) {
+        io.to(roomId).emit('szc_round_start', {
+            round: room.currentRound,
+            maxRounds: room.maxRounds
+        });
+        if (handler.startSZCTurnTicker) {
+            handler.startSZCTurnTicker(io, roomId, room);
+        }
+        return;
+    }
+
     room.revealedPositions = new Array(room.currentWord.length).fill(false);
     room.correctGuessesCount = 0;
     room.isIntermission = false;
@@ -333,7 +347,7 @@ function executeIntermissionHalt(roomId) {
     if (!room) return;
 
     room.isIntermission = true;
-    room.intermissionClock = 5;
+    room.intermissionClock = (room.mode === 4) ? 3 : 5; // 3 seconds for Mode 4, 5 seconds for others
 
     io.to(roomId).emit('round_intermission', {
         correctWord: room.currentWord,
