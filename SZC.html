@@ -12,7 +12,7 @@
 
     <style>
         /* ========================================================= */
-        /* 🌸 DESIGN SYSTEM TOKENS & LIQUID ARENA STYLING            */
+        /* 🌸 UNIQUE ATMOSPHERIC AURORA & GLOW SYSTEM                */
         /* ========================================================= */
         :root {
             --font-pixel: "Silkscreen", system-ui, sans-serif;
@@ -37,7 +37,7 @@
         }
 
         body {
-            background: radial-gradient(circle at 50% 35%, #461434 0%, #220919 50%, #0d020a 100%);
+            background-color: #0b020a;
             color: var(--foreground);
             font-family: var(--font-sans);
             min-height: 100vh;
@@ -49,11 +49,20 @@
             justify-content: space-between;
             overflow: hidden;
             position: relative;
-            padding: 1rem 1.5rem;
+            padding: 1.25rem 2rem;
             user-select: none;
         }
 
-        /* AMBIENT GLOWING STARDUST */
+        /* 🌸 RICH MULTI-LAYER GLOWING AURORA (NO IMAGES, NEVER DARK) */
+        .aurora-backdrop-layer {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 20%, rgba(255, 64, 129, 0.28) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(77, 237, 226, 0.18) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(243, 163, 195, 0.22) 0%, transparent 50%), linear-gradient(180deg, #3d102c 0%, #1c0615 50%, #0a0108 100%);
+            z-index: -4;
+            pointer-events: none;
+        }
+
+        /* AMBIENT STARDUST SPECKS */
         .ambient-dust-field {
             position: fixed;
             inset: 0;
@@ -78,11 +87,11 @@
             }
 
             15% {
-                opacity: 0.5;
+                opacity: 0.55;
             }
 
             85% {
-                opacity: 0.5;
+                opacity: 0.55;
             }
 
             100% {
@@ -91,22 +100,22 @@
             }
         }
 
-        /* 1:1 ARENA HEADER BAR */
-        header.arena-header-bar {
+        /* ARENA TOP BAR */
+        header.arena-top-header {
             width: 100%;
-            max-width: 1120px;
+            max-width: 1100px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: relative;
             z-index: 10;
-            padding: 0.4rem 0.5rem;
+            padding: 0.2rem 0.5rem;
         }
 
         .header-left-cluster {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .mode-title-tag {
@@ -135,38 +144,9 @@
             transform: translate(-50%, -50%);
             font-family: var(--font-display);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: #ffffff;
             white-space: nowrap;
-        }
-
-        /* 30-SECOND TURN TIMER (TURNS RED AT 10S) */
-        .turn-timer-badge {
-            font-family: var(--font-pixel);
-            font-size: 0.85rem;
-            padding: 4px 14px;
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--warning-gold, #ffca1a);
-            transition: color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-            .turn-timer-badge.danger {
-                color: var(--redstone) !important;
-                border-color: var(--redstone) !important;
-                box-shadow: 0 0 12px rgba(255, 94, 94, 0.5);
-                animation: pulseTimer 0.6s infinite alternate;
-            }
-
-        @keyframes pulseTimer {
-            0% {
-                transform: scale(1);
-            }
-
-            100% {
-                transform: scale(1.08);
-            }
         }
 
         .mc-btn-gray {
@@ -199,7 +179,7 @@
         /* ========================================================= */
         .arena-duel-board {
             width: 100%;
-            max-width: 1120px;
+            max-width: 1100px;
             height: 440px;
             background: linear-gradient(180deg, rgba(42, 20, 36, 0.88), rgba(26, 11, 22, 0.95));
             border: 3px solid var(--sakura);
@@ -269,7 +249,7 @@
 
             .side-score-box.winner-glow {
                 border-color: var(--diamond) !important;
-                box-shadow: 0 0 16px rgba(77, 237, 226, 0.45);
+                box-shadow: 0 0 18px rgba(77, 237, 226, 0.45);
             }
 
         /* STATUS BADGE */
@@ -291,7 +271,7 @@
                 box-shadow: 0 0 10px rgba(46, 204, 113, 0.35);
             }
 
-        /* MOB HEAD STAGE */
+        /* HEAD DISPLAY PLATFORM */
         .head-platform-stage {
             flex-grow: 1;
             display: flex;
@@ -315,7 +295,7 @@
             display: none;
         }
 
-        /* WAITING MYSTERY PLACEHOLDER */
+        /* WAITING PLACEHOLDER */
         .waiting-placeholder {
             width: 110px;
             height: 110px;
@@ -332,7 +312,7 @@
         }
 
         /* ========================================================= */
-        /* 🎬 1. SNAPPY GRAVITY DROP ANIMATION                       */
+        /* 🎬 1. BUTTERY SMOOTH GRAVITY DROP & IMPACT SQUASH         */
         /* ========================================================= */
         @keyframes smoothDropIn {
             0% {
@@ -361,7 +341,7 @@
 
         .anim-drop-impact {
             display: block !important;
-            animation: smoothDropIn 0.42s cubic-bezier(0.2, 0.85, 0.3, 1) forwards;
+            animation: smoothDropIn 0.48s cubic-bezier(0.2, 0.85, 0.3, 1) forwards;
         }
 
         /* ========================================================= */
@@ -481,13 +461,12 @@
         /* ========================================================= */
         .bottom-control-dock {
             width: 100%;
-            max-width: 1120px;
+            max-width: 1100px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 16px;
             z-index: 10;
-            padding: 0.4rem 0.5rem;
         }
 
         .mob-cards-group {
@@ -534,7 +513,7 @@
             image-rendering: pixelated;
         }
 
-        /* READY SUBMIT BUTTON (LOCKS ONCE CLICKED) */
+        /* READY SUBMIT BUTTON (LOCKS & CANNOT BE CANCELLED) */
         .btn-ready-lock {
             background: linear-gradient(180deg, #2ecc71 0%, #27ae60 100%);
             border: 2px solid #ffffff;
@@ -565,7 +544,7 @@
             }
 
         /* ========================================================= */
-        /* 🌸 MODALS: WAITING, COUNTDOWN, AND SAKURA VICTORY         */
+        /* 🌸 MODALS: WAITING AND SAKURA VICTORY                     */
         /* ========================================================= */
         .match-overlay {
             position: fixed;
@@ -577,29 +556,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-        }
-
-        .pop-number {
-            font-family: var(--font-pixel);
-            font-size: 6rem;
-            color: var(--sakura);
-            text-shadow: 0 0 30px rgba(255, 183, 197, 0.4);
-        }
-
-        .pulse-tick {
-            animation: popPulse 0.2s ease-out forwards;
-        }
-
-        @keyframes popPulse {
-            0% {
-                transform: scale(1.6);
-                opacity: 0.2;
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
         }
 
         .mc-panel-modal {
@@ -705,22 +661,18 @@
         </p>
     </div>
 
-    <!-- AMBIENT GLOWING STARDUST PARTICLES -->
+    <!-- 🌸 VIBRANT AURORA BACKGROUND & AMBIENT STARDUST -->
+    <div class="aurora-backdrop-layer"></div>
     <div class="ambient-dust-field" id="dustField"></div>
 
-    <!-- 1. WAITING FOR OPPONENT OVERLAY (SHOWN BEFORE 2ND PLAYER JOINS) -->
+    <!-- 1. WAITING FOR OPPONENT OVERLAY (SHOWN ONLY BEFORE 2ND PLAYER JOINS) -->
     <div id="waitingOpponentOverlay" class="match-overlay">
         <h1 class="fw-bold text-white mb-2 font-pixel" style="font-size: 1.5rem;">Waiting for Opponent...</h1>
         <p class="text-white-50 small mb-3" id="waitingNoticeText">A challenger will be routed to your arena shortly.</p>
         <button onclick="leaveArena()" class="mc-btn-gray font-pixel" style="font-size: 0.75rem;">Cancel & Return to Lobby</button>
     </div>
 
-    <!-- 2. GAME START COUNTDOWN OVERLAY -->
-    <div id="countdownOverlay" class="match-overlay d-none">
-        <div id="countdownNumberTxt" class="pop-number">3</div>
-    </div>
-
-    <!-- 3. SAKURA VICTORY MODAL OVERLAY -->
+    <!-- 2. SAKURA VICTORY MODAL OVERLAY -->
     <div id="gameOverOverlay" class="match-overlay d-none">
         <div class="mc-panel-modal p-4 text-center" style="max-width: 440px; width: 90%;">
             <h1 class="font-pixel text-uppercase mb-3" style="color: var(--sakura); font-size: 1.5rem; text-shadow: 0 0 15px rgba(255, 183, 197, 0.5);">🌸 MATCH OVER 🌸</h1>
@@ -740,7 +692,7 @@
     </div>
 
     <!-- 1:1 ARENA HEADER BAR -->
-    <header class="arena-header-bar">
+    <header class="arena-top-header">
         <div class="header-left-cluster">
             <span class="mode-title-tag">SZC</span>
             <!-- CONDITIONAL PRIVATE ROOM CODE BADGE (HIDDEN IF PUBLIC) -->
@@ -752,16 +704,15 @@
             </div>
         </div>
 
-        <h2 class="header-round-pill" id="roundHud">Round 1 of 5</h2>
+        <h2 class="header-round-pill mb-0" id="roundHud">Round 1 of 5 (First to 3 Wins)</h2>
 
-        <div class="d-flex align-items-center gap-3">
-            <div class="turn-timer-badge" id="turnTimerTxt">30s</div>
+        <div class="d-flex align-items-center gap-2">
             <button onclick="leaveArena()" class="mc-btn-gray">Leave Arena</button>
         </div>
     </header>
 
     <!-- ========================================================= -->
-    <!-- ⚔️ SPLIT DUEL ARENA BOARD (LEFT: YOU, RIGHT: OPPONENT)     -->
+    <!-- ⚔️ SPLIT DUEL ARENA (YOU ON LEFT, OPPONENT ON RIGHT)       -->
     <!-- ========================================================= -->
     <div class="arena-duel-board">
         <!-- 🟢 CENTER VERTICAL DIVIDING LINE -->
@@ -772,11 +723,11 @@
         <div class="duel-half-lane" id="laneLeft">
             <div class="side-score-box" id="scoreBoxLeft">
                 <span class="player-name-text text-sakura" id="nameLabelLeft">You</span>
-                <span class="font-pixel text-diamond" id="scoreValLeft">0 PTS</span>
+                <span class="font-pixel text-diamond" id="scoreValLeft">0 WINS</span>
             </div>
 
             <div class="head-platform-stage">
-                <img id="headLeft" src="Creeper_face_1.png" alt="You" class="mob-head-img">
+                <img id="headLeft" src="assets/Creeper_face_1.png" alt="You" class="mob-head-img">
                 <div id="placeholderLeft" class="waiting-placeholder">?</div>
             </div>
 
@@ -787,11 +738,11 @@
         <div class="duel-half-lane" id="laneRight">
             <div class="side-score-box" id="scoreBoxRight">
                 <span class="player-name-text text-white" id="nameLabelRight">Opponent</span>
-                <span class="font-pixel text-diamond" id="scoreValRight">0 PTS</span>
+                <span class="font-pixel text-diamond" id="scoreValRight">0 WINS</span>
             </div>
 
             <div class="head-platform-stage">
-                <img id="headRight" src="Skeleton_face.png" alt="Opponent" class="mob-head-img">
+                <img id="headRight" src="assets/Skeleton_face.png" alt="Opponent" class="mob-head-img">
                 <div id="placeholderRight" class="waiting-placeholder">?</div>
             </div>
 
@@ -805,23 +756,23 @@
     <div class="bottom-control-dock">
         <!-- 3 Mob Choice Cards -->
         <div class="mob-cards-group">
-            <button class="pick-mob-card" id="btnCreeper" onclick="selectChoice('Creeper_face_1.png', 'CREEPER')">
-                <img src="Creeper_face_1.png" class="pick-card-img">
+            <button class="pick-mob-card" id="btnCreeper" onclick="selectChoice('assets/Creeper_face_1.png', 'CREEPER')">
+                <img src="assets/Creeper_face_1.png" class="pick-card-img">
                 <span>Creeper</span>
             </button>
 
-            <button class="pick-mob-card" id="btnZombie" onclick="selectChoice('Zombie_face.png', 'ZOMBIE')">
-                <img src="Zombie_face.png" class="pick-card-img">
+            <button class="pick-mob-card" id="btnZombie" onclick="selectChoice('assets/Zombie_face.png', 'ZOMBIE')">
+                <img src="assets/Zombie_face.png" class="pick-card-img">
                 <span>Zombie</span>
             </button>
 
-            <button class="pick-mob-card" id="btnSkeleton" onclick="selectChoice('Skeleton_face.png', 'SKELETON')">
-                <img src="Skeleton_face.png" class="pick-card-img">
+            <button class="pick-mob-card" id="btnSkeleton" onclick="selectChoice('assets/Skeleton_face.png', 'SKELETON')">
+                <img src="assets/Skeleton_face.png" class="pick-card-img">
                 <span>Skeleton</span>
             </button>
         </div>
 
-        <!-- 🔒 READY SUBMIT BUTTON (LOCKS ONCE CLICKED) -->
+        <!-- 🔒 READY SUBMIT BUTTON (LOCKS & CANNOT BE CANCELLED) -->
         <button class="btn-ready-lock" id="btnSubmitReady" onclick="submitPlayerReady()" disabled>
             LOCK IN (READY)
         </button>
@@ -839,7 +790,7 @@
             speck.style.height = size + 'px';
             speck.style.left = ((i * 5) % 100) + 'vw';
             speck.style.bottom = '-' + (10 + (i * 4) % 35) + 'px';
-            speck.style.animationDelay = (i * 0.35).toFixed(1) + 's';
+            speck.animationDelay = (i * 0.35).toFixed(1) + 's';
             speck.style.animationDuration = (6 + (i % 4) * 2.5) + 's';
             speck.style.setProperty('--dx', ((i % 2 === 0 ? 1 : -1) * (20 + (i * 5) % 40)) + 'px');
             dustField.appendChild(speck);
@@ -867,13 +818,13 @@
         const scoreBoxLeft = document.getElementById('scoreBoxLeft');
         const scoreBoxRight = document.getElementById('scoreBoxRight');
         const roundHud = document.getElementById('roundHud');
-        const turnTimerTxt = document.getElementById('turnTimerTxt');
 
         // =========================================================
-        // 🔊 PROCEDURAL WEB AUDIO SYNTHESIZER (ZERO AUDIO FILES)
+        // 🔊 PROCEDURAL AUDIO (PERSONALIZED: WINNER OR LOSER ONLY)
         // =========================================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+        // ONLY LOSER HEARS THIS DAMAGE HIT SOUND
         function playHitDamage() {
             try {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -891,6 +842,7 @@
             } catch (e) { }
         }
 
+        // ONLY WINNER HEARS THIS ASCENDING XP CHIME
         function playWinnerChime() {
             try {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -909,6 +861,24 @@
                         osc.stop(audioCtx.currentTime + 0.22);
                     }, idx * 65);
                 });
+            } catch (e) { }
+        }
+
+        // SOFT HEAD BONK ON TIE
+        function playTieBonk() {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.12);
             } catch (e) { }
         }
 
@@ -937,7 +907,7 @@
             socket = io();
             socket.emit('join_match');
 
-            // 1. Room Configuration Event
+            // 1. Room Configuration
             socket.on('room_config', (data) => {
                 if (data && data.isCustom && data.roomCode) {
                     isCustomRoom = true;
@@ -951,44 +921,18 @@
                 document.getElementById('waitingOpponentOverlay').classList.remove('d-none');
             });
 
-            // 3. Match Starts (Countdown 3-2-1)
+            // 3. Match Starts (Instant: Zero Countdown Overlay)
             socket.on('szc_match_start', (data) => {
                 document.getElementById('waitingOpponentOverlay').classList.add('d-none');
                 opponentUsername = data.opponentName || "Opponent";
                 document.getElementById('nameLabelRight').innerText = opponentUsername;
             });
 
-            socket.on('game_countdown_tick', (data) => {
-                document.getElementById('waitingOpponentOverlay').classList.add('d-none');
-                const overlay = document.getElementById('countdownOverlay');
-                overlay.classList.remove('d-none');
-                const num = document.getElementById('countdownNumberTxt');
-                const count = typeof data === 'object' ? (data.time ?? data.count) : data;
-                num.innerText = count === 'START' ? "START!" : count;
-                num.classList.remove('pulse-tick');
-                void num.offsetWidth;
-                num.classList.add('pulse-tick');
-
-                if (count === 'START' || count === 0) {
-                    setTimeout(() => overlay.classList.add('d-none'), 600);
-                }
-            });
-
-            // 4. Round Start & Timer Tick
+            // 4. Round Start
             socket.on('szc_round_start', (data) => {
-                document.getElementById('countdownOverlay').classList.add('d-none');
-                roundHud.innerText = `Round ${data.round} of ${data.maxRounds || 5}`;
+                document.getElementById('waitingOpponentOverlay').classList.add('d-none');
+                roundHud.innerText = `Round ${data.round} of ${data.maxRounds || 5} (First to 3 Wins)`;
                 resetBoardForNewTurn();
-            });
-
-            socket.on('szc_timer_tick', (data) => {
-                const sec = data.time !== undefined ? data.time : data;
-                turnTimerTxt.innerText = `${sec}s`;
-                if (sec <= 10) {
-                    turnTimerTxt.classList.add('danger');
-                } else {
-                    turnTimerTxt.classList.remove('danger');
-                }
             });
 
             // 5. Opponent Locked In
@@ -1033,7 +977,6 @@
             if (name === 'ZOMBIE') document.getElementById('btnZombie').classList.add('active');
             if (name === 'SKELETON') document.getElementById('btnSkeleton').classList.add('active');
 
-            // Pre-load in GPU memory (zero render flicker)
             headLeft.src = file;
             btnSubmitReady.disabled = false;
         }
@@ -1049,62 +992,55 @@
             statusBadgeLeft.className = "status-ready-badge is-locked";
             statusBadgeLeft.innerText = "READY ✓";
 
-            // Emit to server
             if (socket) {
                 socket.emit('szc_submit_choice', { choice: selectedChoiceName });
             }
         }
 
         // =========================================================
-        // ⚔️ DUEL RESOLUTION (BUTTERY SMOOTH SIMULTANEOUS DROP)
+        // ⚔️ DUEL RESOLUTION (PERSONALIZED SOUND: WINNER OR LOSER ONLY)
         // =========================================================
         function executeDuelResolution(data) {
-            // Assign files
             const myFile = MOB_FILES[data.yourChoice] || selectedChoiceFile;
-            const oppFile = MOB_FILES[data.opponentChoice] || 'Skeleton_face.png';
+            const oppFile = MOB_FILES[data.opponentChoice] || 'assets/Skeleton_face.png';
 
             headLeft.src = myFile;
             headRight.src = oppFile;
 
-            // Hide placeholders
             placeholderLeft.style.display = 'none';
             placeholderRight.style.display = 'none';
 
-            // Both heads drop together at the exact same millisecond!
+            // Both heads drop together at the exact same millisecond
             headLeft.className = "mob-head-img anim-drop-impact";
             headRight.className = "mob-head-img anim-drop-impact";
 
-            // Resolve outcome once drop finishes (460ms)
+            // Resolve outcome once drop finishes (480ms)
             setTimeout(() => {
                 if (data.outcome === 'win') {
-                    // You Win
+                    // YOU WIN: Play Winner Chime ONLY
                     headLeft.className = "mob-head-img anim-winner";
                     scoreBoxLeft.classList.add('winner-glow');
-                    scoreValLeft.innerText = `${data.yourScore} PTS`;
+                    scoreValLeft.innerText = `${data.yourWins || Math.round(data.yourScore / 50)} WINS`;
 
                     headRight.className = "mob-head-img anim-dead";
-
-                    playHitDamage();
-                    setTimeout(playWinnerChime, 300);
+                    playWinnerChime();
 
                 } else if (data.outcome === 'lose') {
-                    // Opponent Wins
+                    // YOU LOSE: Play Damage Hit Sound ONLY
                     headRight.className = "mob-head-img anim-winner";
                     scoreBoxRight.classList.add('winner-glow');
-                    scoreValRight.innerText = `${data.opponentScore} PTS`;
+                    scoreValRight.innerText = `${data.opponentWins || Math.round(data.opponentScore / 50)} WINS`;
 
                     headLeft.className = "mob-head-img anim-dead";
-
                     playHitDamage();
-                    setTimeout(playWinnerChime, 300);
 
                 } else {
-                    // Tie: Round counter does not change, replay!
+                    // TIE: Soft Bonk sound
                     headLeft.className = "mob-head-img anim-tie-left";
                     headRight.className = "mob-head-img anim-tie-right";
-                    playHitDamage();
+                    playTieBonk();
                 }
-            }, 460);
+            }, 480);
         }
 
         function resetBoardForNewTurn() {

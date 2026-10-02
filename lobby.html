@@ -958,7 +958,7 @@
                                     <span>Minele</span>
                                 </button>
                                 <button class="game-mode-btn" onclick="selectMode(this, 'szc')">
-                                    <svg viewBox="0 0 24 24"><path d="M14.5 17.5 3 6V3h3l11.5 11.5" /><path d="m13 19 6 2 2-6-4.5-4.5" /><path d="m3 3 18 18" /></svg>
+                                    <svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M8 8h2v2H8zM14 8h2v2h-2zM10 12h4v4h-4zM8 14h2v2H8zM14 14h2v2h-2z" /></svg>
                                     <span>SZC</span>
                                 </button>
                             </div>
@@ -1308,6 +1308,11 @@
                 soloBtn.disabled = false;
                 soloBtn.className = "mc-btn sakura mb-2";
                 soloDesc.innerText = "Play casual Wordle at your own pace with no timer.";
+            } else if (mode === 'szc') {
+                soloBtn.innerText = "Solo SZC Practice";
+                soloBtn.disabled = false;
+                soloBtn.className = "mc-btn sakura mb-2";
+                soloDesc.innerText = "Battle against the training bot at your own pace!";
             } else {
                 soloBtn.innerText = "Solo Practice (Coming Soon)";
                 soloBtn.disabled = true;
@@ -1319,7 +1324,9 @@
         function handleSoloLaunch() {
             const activeMode = sessionStorage.getItem('selectedGameMode') || 'classic';
             if (activeMode === 'minele') {
-                window.location.href = 'solo.html';
+                window.location.href = 'minele_solo.html';
+            } else if (activeMode === 'szc') {
+                window.location.href = 'szc_solo.html';
             }
         }
 
@@ -1357,7 +1364,6 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    // 🟢 Supports direct redirect to SZC.html or queue.html
                     window.location.href = data.redirectUrl || 'queue.html';
                 } else {
                     alert(data.message || "Matchmaking failed. Please try again.");
@@ -1384,7 +1390,6 @@
                 });
                 const data = await response.json();
                 if (response.ok && data.success) {
-                    // 🟢 Supports direct redirect to SZC.html or queue.html
                     window.location.href = data.redirectUrl || 'queue.html';
                 } else {
                     alert("Could not create custom room.");
@@ -1417,7 +1422,6 @@
                 });
                 const data = await response.json();
                 if (response.ok && data.success) {
-                    // 🟢 Supports direct redirect to SZC.html or queue.html
                     window.location.href = data.redirectUrl || 'queue.html';
                 } else {
                     alert(data.message || "Room not found.");
