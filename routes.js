@@ -851,6 +851,55 @@ function setupRoutes(db, io) {
         }
     });
 
+    // 🟢 NEW: Clean Delete (Wipes data from database & RAM without banning device)
+    router.post('/api/admin/delete-user', requireCreator, async (req, res) => {
+        try {
+            const { username } = req.body;
+            if (!username) return res.status(400).json({ error: "Username required" });
+
+            const targetName = username.trim();
+            if (targetName === 'Creator') {
+                return res.status(400).json({ error: "Cannot delete the creator area administrator." });
+            }
+
+            const user = await db.get('SELECT id, username FROM users WHERE username = ?', [targetName]);
+            if (!user) return res.status(404).json({ error: "User not found" });
+
+            // Disconnect active socket sessions cleanly without device ban
+            if (io) {
+                try {
+                    const payload = {
+                        reason: "Your account data has been removed by an administrator.",
+                        redirectUrl: '/'
+                    };
+                    io.to("user_" + user.username).emit('force_logout', payload);
+                    io.to("user_" + user.username).emit('redirect_to_lobby', payload);
+
+                    const sockets = await io.fetchSockets();
+                    sockets.forEach(s => {
+                        if (s.data && s.data.username === user.username) {
+                            s.emit('force_logout', payload);
+                            setTimeout(() => {
+                                try { s.disconnect(true); } catch (e) { }
+                            }, 50);
+                        }
+                    });
+                } catch (err) {
+                    console.error("Clean logout error:", err);
+                }
+            }
+
+            // Permanently erase user from Turso database & RAM cache
+            await db.run('DELETE FROM users WHERE id = ?', [user.id]);
+            delete userCache[user.id];
+
+            console.log(`🗑️ [creator area] User [${user.username}] deleted cleanly without device ban.`);
+            return res.json({ success: true, message: `User ${user.username} deleted cleanly. Device is not banned.` });
+        } catch (error) {
+            return res.status(500).json({ error: "Delete user error" });
+        }
+    });
+
     router.post('/api/admin/ban-user', requireCreator, async (req, res) => {
         try {
             const { username } = req.body;
@@ -980,7 +1029,7 @@ function setupRoutes(db, io) {
     router.get('/api/admin/reports', requireCreator, async (req, res) => {
         try {
             const reports = await db.all('SELECT * FROM reports ORDER BY id DESC LIMIT 50');
-            return res.json(reports || []);
+            return res.json(feedbacks || []);
         } catch (e) {
             return res.status(500).json({ error: "Could not fetch reports." });
         }
