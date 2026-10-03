@@ -816,66 +816,6 @@
         const roundHud = document.getElementById('roundHud');
 
         // =========================================================
-        // 🔊 PROCEDURAL AUDIO (PERSONALIZED: WINNER OR LOSER ONLY)
-        // =========================================================
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playHitDamage() {
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(140, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(45, audioCtx.currentTime + 0.14);
-                gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.14);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.14);
-            } catch (e) { }
-        }
-
-        function playWinnerChime() {
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const notes = [523.25, 659.25, 783.99, 1046.50];
-                notes.forEach((freq, idx) => {
-                    setTimeout(() => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                        gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.22);
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.start();
-                        osc.stop(audioCtx.currentTime + 0.22);
-                    }, idx * 65);
-                });
-            } catch (e) { }
-        }
-
-        function playTieBonk() {
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.12);
-                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.12);
-            } catch (e) { }
-        }
-
-        // =========================================================
         // 🔌 SOCKET & ENGINE CONNECTION
         // =========================================================
         window.onload = function () {
@@ -992,7 +932,7 @@
         }
 
         // =========================================================
-        // ⚔️ DUEL RESOLUTION (PERSONALIZED SOUND: WINNER OR LOSER ONLY)
+        // ⚔️ DUEL RESOLUTION (SILENT, SNAPPY RESOLUTION)
         // =========================================================
         function executeDuelResolution(data) {
             const myFile = MOB_FILES[data.yourChoice] || selectedChoiceFile;
@@ -1008,7 +948,27 @@
             headLeft.className = "mob-head-img anim-drop-impact";
             headRight.className = "mob-head-img anim-drop-impact";
 
-            
+            setTimeout(() => {
+                if (data.outcome === 'win') {
+                    headLeft.className = "mob-head-img anim-winner";
+                    scoreBoxLeft.classList.add('winner-glow');
+                    scoreValLeft.innerText = `${data.yourWins || Math.round(data.yourScore / 50)} WINS`;
+
+                    headRight.className = "mob-head-img anim-dead";
+
+                } else if (data.outcome === 'lose') {
+                    headRight.className = "mob-head-img anim-winner";
+                    scoreBoxRight.classList.add('winner-glow');
+                    scoreValRight.innerText = `${data.opponentWins || Math.round(data.opponentScore / 50)} WINS`;
+
+                    headLeft.className = "mob-head-img anim-dead";
+
+                } else {
+                    headLeft.className = "mob-head-img anim-tie-left";
+                    headRight.className = "mob-head-img anim-tie-right";
+                }
+            }, 480);
+        }
 
         function resetBoardForNewTurn() {
             selectedChoiceName = null;
