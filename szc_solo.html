@@ -928,45 +928,7 @@
                 outcome = "lose";
             }
 
-            setTimeout(() => {
-                if (outcome === 'win') {
-                    myWins++;
-                    headLeft.className = "mob-head-img anim-winner";
-                    scoreBoxLeft.classList.add('winner-glow');
-                    scoreValLeft.innerText = `${myWins} WINS`;
-
-                    headRight.className = "mob-head-img anim-dead";
-                    playWinnerChime();
-
-                } else if (outcome === 'lose') {
-                    botWins++;
-                    headRight.className = "mob-head-img anim-winner";
-                    scoreBoxRight.classList.add('winner-glow');
-                    scoreValRight.innerText = `${botWins} WINS`;
-
-                    headLeft.className = "mob-head-img anim-dead";
-                    playHitDamage();
-
-                } else {
-                    headLeft.className = "mob-head-img anim-tie-left";
-                    headRight.className = "mob-head-img anim-tie-right";
-                    playTieBonk();
-                }
-
-                // Check Best-of-5 Match Completion (First to 3 wins)
-                setTimeout(() => {
-                    if (myWins >= 3 || botWins >= 3) {
-                        concludeSoloMatch(myWins >= 3);
-                    } else {
-                        if (outcome !== 'tie') {
-                            currentRound++;
-                        }
-                        roundHud.innerText = `Round ${currentRound} of 5 (First to 3 Wins)`;
-                        resetBoardForNewTurn();
-                    }
-                }, 2200);
-            }, 480);
-        }
+            
 
         function resetBoardForNewTurn() {
             selectedChoiceName = null;

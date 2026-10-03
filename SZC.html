@@ -1008,33 +1008,7 @@
             headLeft.className = "mob-head-img anim-drop-impact";
             headRight.className = "mob-head-img anim-drop-impact";
 
-            setTimeout(() => {
-                if (data.outcome === 'win') {
-                    // YOU WIN: Play Winner Chime ONLY
-                    headLeft.className = "mob-head-img anim-winner";
-                    scoreBoxLeft.classList.add('winner-glow');
-                    scoreValLeft.innerText = `${data.yourWins || Math.round(data.yourScore / 50)} WINS`;
-
-                    headRight.className = "mob-head-img anim-dead";
-                    playWinnerChime();
-
-                } else if (data.outcome === 'lose') {
-                    // YOU LOSE: Play Damage Hit Sound ONLY
-                    headRight.className = "mob-head-img anim-winner";
-                    scoreBoxRight.classList.add('winner-glow');
-                    scoreValRight.innerText = `${data.opponentWins || Math.round(data.opponentScore / 50)} WINS`;
-
-                    headLeft.className = "mob-head-img anim-dead";
-                    playHitDamage();
-
-                } else {
-                    // TIE: Soft Bonk sound
-                    headLeft.className = "mob-head-img anim-tie-left";
-                    headRight.className = "mob-head-img anim-tie-right";
-                    playTieBonk();
-                }
-            }, 480);
-        }
+            
 
         function resetBoardForNewTurn() {
             selectedChoiceName = null;
