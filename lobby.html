@@ -328,34 +328,69 @@
 
         /* Dropdown Menu Styling */
         .mc-dropdown-menu {
-            background: rgba(28, 12, 24, 0.95) !important;
-            border: 2px solid var(--sakura) !important;
-            border-radius: 14px !important;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8) !important;
-            backdrop-filter: blur(16px);
+            background: rgba(28, 12, 24, 0.82) !important;
+            border: 2px solid oklch(0.55 0.1 340 / 0.65) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.75) !important;
+            backdrop-filter: blur(20px);
             padding: 0.5rem;
-            min-width: 175px;
+            min-width: 210px;
+            overflow: hidden;
+        }
+
+        .mc-dropdown-head {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.65rem 0.6rem;
+            margin-bottom: 0.3rem;
+            border-bottom: 1px solid rgba(255, 183, 197, 0.18);
+            background: linear-gradient(90deg, rgba(255, 183, 197, 0.14), rgba(77, 237, 226, 0.08));
+            border-radius: 10px;
         }
 
         .mc-dropdown-item {
             color: #ffffff !important;
             font-size: 0.78rem !important;
-            padding: 0.5rem 0.85rem !important;
-            border-radius: 8px;
-            transition: all 0.12s ease;
+            padding: 0.5rem 0.6rem !important;
+            border-radius: 10px;
+            transition: transform 0.12s ease, background 0.12s ease, color 0.12s ease;
             background: transparent;
             border: none;
             width: 100%;
             text-align: left;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        .mc-dropdown-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            background: rgba(255, 183, 197, 0.12);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+            transition: background 0.12s ease, transform 0.12s ease;
+        }
+
+        .mc-dropdown-label {
+            flex: 1;
         }
 
             .mc-dropdown-item:hover {
-                background: rgba(255, 183, 197, 0.15) !important;
+                background: linear-gradient(90deg, rgba(255, 183, 197, 0.18), rgba(77, 237, 226, 0.1)) !important;
                 color: var(--sakura) !important;
+                transform: translateX(3px);
             }
+
+                .mc-dropdown-item:hover .mc-dropdown-icon {
+                    background: rgba(255, 183, 197, 0.3);
+                    transform: scale(1.08);
+                }
 
         .mc-input {
             width: 100%;
@@ -685,33 +720,168 @@
 
         .support-bubble {
             max-width: 78%;
-            padding: 8px 12px;
-            border-radius: 12px;
+            padding: 8px 12px 6px;
+            border-radius: 16px;
             font-family: var(--font-sans);
+            position: relative;
+            line-height: 1.4;
         }
 
         .support-bubble.is-mine {
-            background: rgba(77, 237, 226, 0.14);
-            border: 1px solid rgba(77, 237, 226, 0.4);
+            background: linear-gradient(135deg, rgba(255, 183, 197, 0.92), rgba(77, 237, 226, 0.85));
+            color: #17110f;
+            border-bottom-right-radius: 6px;
+            box-shadow: 0 6px 18px rgba(255, 183, 197, 0.18);
         }
 
         .support-bubble.is-admin {
-            background: rgba(255, 183, 197, 0.14);
-            border: 1px solid rgba(255, 183, 197, 0.4);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border-bottom-left-radius: 6px;
         }
 
         .support-bubble-text {
-            color: #fff;
             font-size: 0.86rem;
-            line-height: 1.45;
             word-break: break-word;
             white-space: pre-wrap;
         }
 
         .support-bubble-time {
-            color: rgba(255, 255, 255, 0.45);
-            font-size: 0.6rem;
+            font-size: 0.58rem;
             margin-top: 3px;
+            text-align: right;
+            display: block;
+        }
+
+        .support-bubble.is-mine .support-bubble-time {
+            color: rgba(23, 17, 15, 0.65);
+        }
+
+        .support-bubble.is-admin .support-bubble-time {
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .chat-panel {
+            background: rgba(26, 12, 22, 0.72) !important;
+            backdrop-filter: blur(22px) !important;
+            border-radius: 22px !important;
+            border: 2px solid oklch(0.5 0.09 340 / 0.6) !important;
+            box-shadow: 0 22px 70px rgba(0, 0, 0, 0.65);
+            overflow: hidden;
+        }
+
+        .support-contact {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .support-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 183, 197, 0.4), rgba(77, 237, 226, 0.35));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 2px rgba(255, 183, 197, 0.35), 0 4px 14px rgba(0, 0, 0, 0.45);
+        }
+
+        .support-contact-name {
+            font-family: var(--font-pixel);
+            color: #fff;
+            font-size: 0.82rem;
+            line-height: 1.2;
+            letter-spacing: 0.03em;
+        }
+
+        .support-contact-status {
+            color: rgba(255, 255, 255, 0.55);
+            font-family: var(--font-sans);
+            font-size: 0.62rem;
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #3ddc84;
+            display: inline-block;
+            margin-right: 4px;
+            box-shadow: 0 0 6px #3ddc84;
+        }
+
+        .support-messages-area {
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 16px;
+            padding: 0.8rem;
+            min-height: 240px;
+        }
+
+        .chat-composer {
+            width: 100%;
+            border-radius: 24px;
+            padding: 0.6rem 1rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid oklch(0.4 0.06 340 / 0.55);
+            color: var(--foreground);
+            font-family: var(--font-sans);
+            font-size: 0.86rem;
+            outline: none;
+            resize: none;
+            line-height: 1.45;
+            min-height: 46px;
+            max-height: 122px;
+            overflow-y: auto;
+            transition: border-color 0.12s ease, background 0.12s ease;
+        }
+
+        .chat-composer:focus {
+            border-color: var(--sakura);
+            background: rgba(255, 255, 255, 0.09);
+        }
+
+        .chat-send-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #17110f;
+            background: linear-gradient(135deg, var(--sakura), var(--diamond));
+            box-shadow: 0 4px 18px rgba(255, 183, 197, 0.35);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+        }
+
+        .chat-send-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .chat-send-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.08);
+            box-shadow: 0 6px 24px rgba(77, 237, 226, 0.4);
+        }
+
+        .chat-send-btn:active {
+            transform: scale(0.9);
+        }
+
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
     </style>
 </head>
@@ -995,19 +1165,30 @@
 
     <!-- 🎧 DIRECT SUPPORT MODAL -->
     <div id="supportModalOverlay" class="generic-modal-overlay d-none">
-        <div class="mc-panel p-4" style="max-width: 560px; width: 100%; max-height: 86vh; display: flex; flex-direction: column; border-color: var(--diamond);">
-            <div class="d-flex justify-content-between align-items-center mb-2 border-bottom border-light border-opacity-10 pb-2 flex-shrink-0">
-                <span class="font-pixel text-sakura fs-5">🎧 Direct Support</span>
+        <div class="mc-panel chat-panel p-4" style="max-width: 560px; width: 100%; max-height: 86vh; display: flex; flex-direction: column;">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom border-light border-opacity-10 flex-shrink-0">
+                <div class="support-contact">
+                    <div class="support-avatar">🌸</div>
+                    <div>
+                        <div class="support-contact-name">Creator</div>
+                        <div class="support-contact-status"><span class="online-dot"></span>Online • replies quickly</div>
+                    </div>
+                </div>
                 <button onclick="closeSupportModal()" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
             </div>
-            <p class="text-white-50 small mb-3 flex-shrink-0" style="font-size: 0.78rem;">
-                Need help or want to tell Creator something? Send a message here and it goes straight to Creator.
+            <p class="text-white-50 small mb-3 flex-shrink-0" style="font-size: 0.76rem;">
+                Need help or want to tell Creator something? Message them here.
             </p>
-            <div id="supportMessagesContainer" class="flex-grow-1 overflow-y-auto pe-1 mb-3" style="min-height: 220px;"></div>
+            <div id="supportMessagesContainer" class="support-messages-area flex-grow-1 overflow-y-auto pe-1 mb-3"></div>
             <div class="flex-shrink-0">
                 <div class="d-flex gap-2 align-items-end">
-                    <textarea id="supportInput" class="mc-input mb-0" rows="2" placeholder="Type your message..." style="font-family: var(--font-sans); resize: none;" maxlength="2000"></textarea>
-                    <button onclick="sendSupportMessage()" id="supportSendBtn" class="mc-btn sakura font-pixel btn-sm" style="white-space: nowrap;">Send 🌸</button>
+                    <textarea id="supportInput" class="chat-composer mb-0" rows="1" placeholder="Type your message..." maxlength="2000" onkeydown="handleSupportKeydown(event)"></textarea>
+                    <button onclick="sendSupportMessage()" id="supportSendBtn" class="chat-send-btn" title="Send" aria-label="Send">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
@@ -1041,46 +1222,59 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end mc-dropdown-menu" aria-labelledby="lobbyMenuDropdownBtn">
                         <li>
+                            <div class="mc-dropdown-head">
+                                <span class="font-pixel text-sakura small" style="letter-spacing: 0.08em;">🌸 MRIVIA MENU</span>
+                            </div>
+                        </li>
+                        <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openLobbyNotice()">
-                                🛡️ Rules & Notices
+                                <span class="mc-dropdown-icon">🛡️</span>
+                                <span class="mc-dropdown-label">Rules & Notices</span>
                             </button>
                         </li>
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openInboxModal()">
-                                📬 Inbox News
+                                <span class="mc-dropdown-icon">📬</span>
+                                <span class="mc-dropdown-label">Inbox News</span>
                                 <span id="newsItemBadge" class="notif-badge d-none">0</span>
                             </button>
                         </li>
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openSupportModal()">
-                                🎧 Direct Support
+                                <span class="mc-dropdown-icon">🎧</span>
+                                <span class="mc-dropdown-label">Direct Support</span>
                                 <span id="supportItemBadge" class="notif-badge d-none">0</span>
                             </button>
                         </li>
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openChangePasswordModal()">
-                                🔑 Change Password
+                                <span class="mc-dropdown-icon">🔑</span>
+                                <span class="mc-dropdown-label">Change Password</span>
                             </button>
                         </li>
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openChangeUsernameModal()">
-                                ✏️ Change Username
+                                <span class="mc-dropdown-icon">✏️</span>
+                                <span class="mc-dropdown-label">Change Username</span>
                             </button>
                         </li>
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="toggleFeedbackModal(true)">
-                                💬 Feedback
+                                <span class="mc-dropdown-icon">💬</span>
+                                <span class="mc-dropdown-label">Feedback</span>
                             </button>
                         </li>
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel text-danger" onclick="toggleReportModal(true)">
-                                🚨 Report Player
+                                <span class="mc-dropdown-icon">🚨</span>
+                                <span class="mc-dropdown-label">Report Player</span>
                             </button>
                         </li>
                         <li><hr class="dropdown-divider border-secondary border-opacity-25 my-1"></li>
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel text-warning" onclick="signOut()">
-                                🚪 Sign Out
+                                <span class="mc-dropdown-icon">🚪</span>
+                                <span class="mc-dropdown-label">Sign Out</span>
                             </button>
                         </li>
                     </ul>
@@ -1191,7 +1385,7 @@
                         <div id="joinBox" class="mt-4 p-3 rounded d-none" style="background: rgba(0,0,0,0.35); border: 2px solid oklch(0.4 0.06 340 / 0.5);">
                             <label class="font-pixel text-sakura d-block mb-2" style="font-size: 0.65rem;">ENTER ACTIVE ROOM CODE:</label>
                             <div class="d-flex gap-2">
-                                <input type="password" id="roomCodeInput" class="mc-input text-uppercase tracking-wider" placeholder="e.g., SAKURA-71" maxlength="12">
+                                <input type="password" id="roomCodeInput" class="mc-input text-uppercase tracking-wider" placeholder="e.g., SAKURA-71" maxlength="12" onkeydown="handleRoomCodeKeydown(event)">
                                 <button class="mc-btn sakura py-1 px-4" style="width: auto; font-size: 0.8rem;" onclick="connectToCustomRoom()">Connect</button>
                             </div>
                         </div>
@@ -1291,8 +1485,10 @@
             const raw = String(value);
             const iso = raw.includes('T') ? raw : raw.replace(' ', 'T') + 'Z';
             const d = new Date(iso);
-            if (isNaN(d.getTime())) return raw;
-            return d.toLocaleString();
+            if (isNaN(d.getTime())) return "";
+            const hh = String(d.getHours()).padStart(2, '0');
+            const mm = String(d.getMinutes()).padStart(2, '0');
+            return hh + ":" + mm;
         }
 
         function supportLoadingHtml() {
@@ -1318,11 +1514,18 @@
                     <div class="d-flex ${mine ? 'justify-content-end' : 'justify-content-start'} mb-2">
                         <div class="support-bubble ${mine ? 'is-mine' : 'is-admin'}">
                             <div class="support-bubble-text">${supportEscape(m.message)}</div>
-                            <div class="support-bubble-time">${mine ? 'You' : 'Creator'} • ${supportEscape(time)}</div>
+                            <div class="support-bubble-time">${supportEscape(time)}</div>
                         </div>
                     </div>`;
             }).join('');
             container.scrollTop = container.scrollHeight;
+        }
+
+        function handleSupportKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendSupportMessage();
+            }
         }
 
         async function loadSupportThread(showLoading) {
@@ -1801,6 +2004,13 @@
             el.classList.toggle('d-none');
             if (!el.classList.contains('d-none')) {
                 document.getElementById('roomCodeInput').focus();
+            }
+        }
+
+        function handleRoomCodeKeydown(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                connectToCustomRoom();
             }
         }
 
