@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mrivia Bloom - Trial Lobby</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Silkscreen&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   MRIVIA BLOOM — THE GARDEN'S OWN LOBBY (self-contained)
+   Grounded in the garden's own palette, fonts & sakura imagery.
+   ============================================================ */
+
+:root{
+    --font-pixel: "Silkscreen", system-ui, sans-serif;
+    --font-display: "Fredoka", "Quicksand", system-ui, sans-serif;
+    --font-sans: "Quicksand", system-ui, sans-serif;
+    --background: oklch(0.2 0.05 340);
+    --foreground: oklch(0.98 0.01 90);
+    --card: oklch(0.24 0.05 340 / 0.78);
+    --sakura: oklch(0.82 0.14 355);
+    --warning-gold: #ffca1a;
+    --diamond: #4dede2;
+    --redstone: #ff5e5e;
+    --bright-rose: #ff4081;
+    --gold: #ffd700;
+    --emerald: #2ecc71;
+    --ember: #ff914d;
+    --muted: oklch(0.75 0.04 350);
+    --line: rgba(255, 183, 197, 0.16);
+    --accent: var(--diamond);
+    --ease: cubic-bezier(.22,1,.36,1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+    min-height:100dvh;
+    position:relative;
+    overflow-x:hidden;
+    background-color:var(--background);
+    color:var(--foreground);
+    font-family:var(--font-sans);
+    display:flex;flex-direction:column;
+}
+p,.text-white-75,.notice-point p,.lobby-notice-block p,.story-content p{
+    text-wrap:pretty;overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto;
+}
+
+/* scrollbar — sleek dark sakura, zero white */
+*{scrollbar-width:thin;scrollbar-color:rgba(255,183,197,.3) transparent}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,183,197,.25);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,183,197,.5)}
+::selection{background:rgba(255,64,129,.35);color:#fff}
+
+/* ---------- hero background — the garden's own photo ---------- */
+.hero-bg{
+    position:fixed;inset:0;width:100%;height:100%;
+    object-fit:cover;z-index:-3;filter:saturate(1.05);
+}
+.hero-overlay{
+    position:fixed;inset:0;
+    background:linear-gradient(to bottom,rgba(20,12,18,.28),rgba(20,12,18,.82));
+    z-index:-2;pointer-events:none;
+}
+.sakura-veil{
+    position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 42%,rgba(20,12,18,.16),rgba(20,12,18,.66) 78%);
+}
+#skyCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* swaying butterflies (kept from the lobby) */
+.butterfly{position:fixed;z-index:2;pointer-events:none;opacity:.9;width:38px;height:38px;animation:sWay 7s ease-in-out infinite alternate}
+.butterfly svg{width:100%;height:100%;filter:drop-shadow(0 0 8px rgba(255,183,197,.6));animation:flap 3.4s ease-in-out infinite}
+.butterfly.left{left:1.2rem;top:18%}
+.butterfly.right{right:1.2rem;top:66%;animation-delay:-2.2s}
+.butterfly.right svg{animation-delay:-1.3s}
+@keyframes sWay{from{transform:translateY(0) rotate(-6deg)}to{transform:translateY(14px) rotate(8deg)}}
+@keyframes flap{0%,100%{transform:scale(1,1)}50%{transform:scale(.72,1.28)}}
+
+/* ---------- the waypost — a crafted banner, not a nav bar ---------- */
+.topnav{
+    position:sticky;top:0;z-index:40;flex:none;
+    margin:.7rem auto .2rem;
+    align-self:center;width:min(1280px,calc(100% - 1.4rem));
+    display:flex;align-items:center;gap:1rem;
+    padding:.6rem 1rem;
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(255,183,197,.22);border-radius:20px;
+    background-image:
+        radial-gradient(circle at 14px 14px, rgba(255,183,197,.85) 1.5px, transparent 2.4px),
+        radial-gradient(circle at calc(100% - 14px) 14px, rgba(255,183,197,.85) 1.5px, transparent 2.4px),
+        radial-gradient(circle at 14px calc(100% - 14px), rgba(77,237,226,.6) 1.5px, transparent 2.4px),
+        radial-gradient(circle at calc(100% - 14px) calc(100% - 14px), rgba(77,237,226,.6) 1.5px, transparent 2.4px),
+        linear-gradient(180deg,oklch(0.23 0.055 345 / .78),oklch(0.15 0.042 340 / .84));
+    box-shadow:0 14px 34px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.1),inset 0 -2px 0 rgba(0,0,0,.35);
+}
+.topnav::before{ /* aurora breath on the edges */
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:
+        radial-gradient(30% 95% at 4% 0%, rgba(255,64,129,.26), transparent 70%),
+        radial-gradient(26% 85% at 98% 100%, rgba(77,237,226,.2), transparent 70%);
+    animation:breath 6s ease-in-out infinite;
+}
+@keyframes breath{0%,100%{opacity:.55}50%{opacity:1}}
+.topnav::after{ /* sheen sweep across the glass */
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;overflow:hidden;
+    background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.09) 46%,rgba(255,215,215,.15) 50%,rgba(255,255,255,.09) 54%,transparent 68%);
+    background-size:240% 100%;background-position:120% 0;
+    animation:sheen 8s ease-in-out infinite;
+}
+@keyframes sheen{0%,58%{background-position:130% 0}100%{background-position:-40% 0}}
+.nav-sign{display:flex;flex-direction:column;align-items:flex-start;line-height:1;min-width:0}
+.crest-word{
+    font-family:var(--font-display);font-weight:700;font-size:1.3rem;letter-spacing:.03em;
+    background:linear-gradient(100deg,#fff6f8,var(--sakura) 45%,#ffd3de 62%,var(--diamond));
+    -webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;
+}
+.crest-petal{
+    display:inline-block;vertical-align:middle;margin-left:.55rem;width:10px;height:10px;
+    border-radius:2px 5px 2px 5px;background:linear-gradient(135deg,#ffd3de,var(--bright-rose));
+    box-shadow:0 0 12px 3px rgba(255,64,129,.5);animation:petalSpin 5s linear infinite;
+}
+@keyframes petalSpin{to{transform:rotate(360deg)}}
+.nav-sub{font-family:var(--font-pixel);font-size:.4rem;letter-spacing:.34em;color:rgba(255,183,197,.55);margin-top:.3rem}
+.command-spacer{flex:1}
+
+/* the command tray — carved groove holding spelt tokens */
+.tray{display:flex;align-items:center;gap:.45rem;background:oklch(0.11 0.02 340 / .78);border:1px solid rgba(255,183,197,.12);border-radius:15px;padding:4px}
+.rack-btn{
+    display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap;
+    font-family:var(--font-pixel);font-size:.6rem;letter-spacing:.05em;
+    border-radius:11px;padding:.52rem .7rem;text-decoration:none;cursor:pointer;
+    transition:transform .16s var(--ease),box-shadow .16s,filter .2s;
+}
+.rack-btn:hover{transform:translateY(-3px)}
+/* 🍔 For community — the burger-stall token */
+.rack-btn.forcase{color:#3a2300;background:linear-gradient(180deg,#ffe08a,#ffb54d);border:1.5px dashed #a97007;box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 3px 0 #8a5c00,0 7px 14px rgba(0,0,0,.4)}
+.rack-btn.forcase:hover{filter:saturate(1.15);box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 5px 0 #8a5c00,0 14px 26px rgba(255,181,77,.45);animation:burgerWiggle .28s linear}
+@keyframes burgerWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-2deg)}75%{transform:rotate(2deg)}}
+/* 🌸 About Me — the petal token */
+.rack-btn.about{color:#fff;background:linear-gradient(180deg,#ffb7c5,#f4709b);border:1px solid #b03a63;border-radius:13px 13px 13px 5px;box-shadow:inset 0 2px 0 rgba(255,255,255,.5),0 3px 0 #872e51,0 7px 14px rgba(0,0,0,.4)}
+.rack-btn.about:hover{filter:brightness(1.08);box-shadow:inset 0 2px 0 rgba(255,255,255,.55),0 5px 0 #872e51,0 14px 26px rgba(255,112,155,.4)}
+/* ☰ Menu — the deep-rose token with pulse flag */
+.rack-btn.menu{color:#fff;background:linear-gradient(180deg,oklch(0.46 0.11 356 / .95),oklch(0.32 0.08 348 / .96));border:1px solid rgba(255,64,129,.75);box-shadow:inset 0 2px 0 rgba(255,255,255,.22),0 3px 0 oklch(0.2 0.06 348 / .96),0 7px 14px rgba(0,0,0,.4)}
+.rack-btn.menu:hover{box-shadow:inset 0 2px 0 rgba(255,255,255,.28),0 5px 0 oklch(0.2 0.06 348 / .96),0 14px 26px rgba(255,64,129,.5)}
+.rack-btn.menu .dot{width:7px;height:7px;border-radius:50%;background:var(--warning-gold);box-shadow:0 0 8px 2px rgba(255,202,26,.8);display:none}
+.rack-btn.menu.has-flag .dot{display:block;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.role-hidden{display:none!important}
+
+.traveler{
+    display:flex;align-items:center;gap:.55rem;flex:none;
+    border:1px solid oklch(0.5 0.08 350 / .5);border-radius:11px;
+    background:linear-gradient(180deg,oklch(0.3 0.06 345 / .7),oklch(0.2 0.05 340 / .8));padding:.34rem .6rem .34rem .86rem;
+}
+.traveler .portrait{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;font-family:var(--font-pixel);font-size:.5rem;color:#2a0d18;background:linear-gradient(135deg,var(--sakura),#ffb7c5 55%,var(--bright-rose))}
+.traveler .who{line-height:1}
+.traveler .who b{font-family:var(--font-display);font-weight:600;font-size:.8rem;display:block}
+.traveler .who span{font-family:var(--font-pixel);font-size:.42rem;color:var(--muted);letter-spacing:.1em;display:block;margin-top:.14rem}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);flex:none;box-shadow:0 0 9px 2px rgba(46,204,113,.6)}
+/* ---------- arena : mode rail + codex theater, one locked screen ---------- */
+.arena{
+    position:relative;z-index:3;max-width:1280px;margin:0 auto;width:100%;
+    padding:clamp(.5rem,1.6vh,1rem) 1.2rem .8rem;flex:1 1 auto;min-height:0;
+    display:flex;gap:1.1rem;align-items:center;
+}
+.mode-rail{
+    flex:none;width:158px;display:flex;flex-direction:column;
+    background:linear-gradient(180deg,oklch(0.24 0.05 340 / .74),oklch(0.16 0.04 340 / .86));
+    border:2px solid oklch(0.5 0.08 350 / .9);border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    padding:.7rem .6rem;
+}
+.rail-cap{
+    display:flex;align-items:center;justify-content:center;gap:.45rem;flex:none;
+    font-family:var(--font-pixel);font-size:.4rem;letter-spacing:.22em;color:var(--muted);
+    padding-bottom:.5rem;border-bottom:1px dashed var(--line);margin-bottom:.55rem;
+}
+.rail-dot{width:6px;height:6px;border-radius:50%;background:var(--sakura);box-shadow:0 0 8px 2px rgba(255,64,129,.55);animation:blink 1.6s infinite}
+.rail-slabs{flex:1 1 auto;display:flex;flex-direction:column;gap:.5rem;justify-content:center}
+.rail-slabs::-webkit-scrollbar{width:0}
+
+/* compact trial tokens — a row: icon + name */
+.trial-slab{
+    position:relative;cursor:pointer;user-select:none;text-align:left;flex:none;
+    display:flex;align-items:center;gap:.55rem;
+    background:linear-gradient(180deg,oklch(0.27 0.05 340 / .85),oklch(0.19 0.04 340 / .96));
+    border:2px solid rgba(255,255,255,.12);
+    border-radius:13px;padding:8px 9px;overflow:hidden;
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    transition:transform .3s var(--ease),border-color .3s,box-shadow .3s,background .3s;
+}
+.trial-slab::before{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(120% 120% at 0% 50%,var(--accent-glow,rgba(255,64,129,.24)),transparent 70%);
+    opacity:0;transition:opacity .3s;
+}
+.trial-slab:hover{transform:translateX(5px)}
+.trial-slab:hover::before{opacity:.9}
+.trial-slab.active{
+    border-color:var(--accent,var(--diamond));
+    box-shadow:0 0 0 1px var(--accent,var(--diamond)),0 12px 26px -10px var(--accent-shadow,rgba(77,237,226,.45));
+    background:linear-gradient(180deg,oklch(0.29 0.06 340 / .88),oklch(0.21 0.05 340 / .96));
+}
+.trial-slab.active::before{opacity:1}
+.trial-slab .ins{position:relative;z-index:1;display:flex;align-items:center;gap:.55rem;width:100%}
+.slab-icon-pedestal{
+    width:28px;height:28px;flex:none;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.08);position:relative;
+    transition:box-shadow .3s,border-color .3s,background .2s;
+}
+.trial-slab:hover .slab-icon-pedestal{background:rgba(255,255,255,.08)}
+.trial-slab.active .slab-icon-pedestal{border-color:var(--accent,var(--diamond));box-shadow:0 0 12px -3px var(--accent,var(--diamond))}
+.slab-icon-pedestal svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2}
+.slab-icon-pedestal .szc-icon-trio{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1}
+.slab-icon-pedestal .szc-icon-trio .trow{display:flex;gap:1px}
+.slab-icon-pedestal .szc-icon-trio img{width:9px;height:9px;object-fit:contain;image-rendering:pixelated;border-radius:2px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16)}
+.trial-slab .slab-title{font-family:var(--font-display);font-weight:700;font-size:.88rem;margin:0;line-height:1.1;text-shadow:0 1px 5px rgba(0,0,0,.6);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* codex theater — the stage card */
+.theater-stage-card{
+    position:relative;flex:1 1 auto;min-width:0;min-height:0;
+    background:linear-gradient(180deg,oklch(0.26 0.05 340 / .78),oklch(0.18 0.04 340 / .86));
+    border:2px solid var(--accent,rgba(77,237,226,.55));border-radius:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    padding:1rem 1.25rem;display:flex;flex-direction:column;gap:.7rem;overflow:hidden;
+    justify-content:center;transition:border-color .3s;
+}
+.monolith-hall-panel{background:linear-gradient(180deg,oklch(0.26 0.05 340 / .78),oklch(0.18 0.04 340 / .86));border:2px solid oklch(0.5 0.08 350 / .9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+/* stage header pills */
+.stage-head{display:flex;align-items:center;justify-content:flex-end;gap:.8rem;flex-wrap:wrap}
+.mode-badge{
+    font-family:var(--font-pixel);font-size:.46rem;letter-spacing:.1em;
+    border:1px solid var(--line);border-radius:999px;padding:.4rem .7rem;color:var(--foreground);
+    background:oklch(0.14 0.03 340 / .8);
+}
+.mode-badge b{color:var(--accent)}
+.hall-toggle{display:inline-flex;align-items:center;gap:.4rem;padding:.42rem .8rem;font-size:.78rem}
+.hall-close{
+    width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none;
+    background:oklch(0.28 0.06 345 / .6);border:1px solid var(--line);color:var(--foreground);
+    font-family:var(--font-pixel);font-size:.58rem;cursor:pointer;transition:all .2s;
+}
+.hall-close:hover{color:var(--sakura);border-color:var(--sakura);transform:rotate(90deg)}
+
+/* living stage — a fixed window (stable across modes) */
+.stage-living{
+    position:relative;border-radius:18px;flex:none;
+    height:clamp(168px,29vh,300px);
+    background:radial-gradient(130% 150% at 50% 0%,oklch(0.32 0.06 340 / .6),oklch(0.14 0.03 340 / .85));
+    border:1px solid var(--line);overflow:hidden;
+    display:grid;place-items:center;padding:.8rem;
+    transition:border-color .35s;
+}
+.stage-living::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 42px rgba(0,0,0,.5)}
+.stage-living.sweep{animation:stageIn .34s var(--ease)}
+@keyframes stageIn{from{opacity:.1;transform:scale(.975)}to{opacity:1;transform:none}}
+
+/* Classic — runic slots */
+.classic-runic-slots{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.char,.blank{
+    width:clamp(38px,5vw,54px);height:clamp(50px,6vw,64px);border-radius:10px;display:grid;place-items:center;
+    font-family:var(--font-display);font-weight:600;font-size:clamp(1.1rem,2.4vw,1.6rem);
+}
+.char{
+    background:linear-gradient(180deg,oklch(0.5 0.12 190 / .35),oklch(0.22 0.07 190 / .6));
+    border:2px solid rgba(77,237,226,.7);color:var(--diamond);
+    text-shadow:0 0 18px rgba(77,237,226,.8);box-shadow:0 6px 20px -6px rgba(77,237,226,.5);
+    animation:charPulse 2.2s ease-in-out infinite;
+}
+.blank{
+    background:repeating-conic-gradient(rgba(255,255,255,.05) 0% 25%,transparent 0% 50%);
+    background-size:12px 12px;border:2px dashed rgba(77,237,226,.4);color:rgba(77,237,226,.5);
+}
+@keyframes charPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* Pixelary — live studio */
+.pixelary-studio-canvas{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;justify-content:center;padding:8px 14px;background:#ffffff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.7);border:2px solid rgba(255,64,129,.3)}
+.pixelary-studio-canvas .brush{font-size:2.4rem;filter:drop-shadow(0 0 14px rgba(255,64,129,.5))}
+.studio-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.studio-tag{font-family:var(--font-pixel);font-size:.55rem;letter-spacing:.14em;color:#1b0f1c}
+.pal-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(0,0,0,.2);box-shadow:0 2px 6px rgba(0,0,0,.3);display:inline-block}
+.pix-canvas{display:grid;grid-template-columns:repeat(11,12px);grid-auto-rows:12px;background:#fdf3ea;border:2px solid rgba(0,0,0,.18);border-radius:10px;padding:5px;box-shadow:inset 0 2px 8px rgba(0,0,0,.18);width:max-content}
+.pix-canvas i{width:12px;height:12px;display:block;opacity:0;transition:opacity .09s}
+.pix-canvas i.on{opacity:1}
+
+/* Recipe — craft grid */
+.recipe-crafting-panel{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;justify-content:center}
+.recipe-crafting-grid{display:grid;grid-template-columns:repeat(3,clamp(34px,4vw,40px));gap:4px;background:rgba(0,0,0,.55);padding:6px;border-radius:10px;border:2px solid rgba(255,215,0,.4)}
+.recipe-crafting-grid .slot{
+    width:100%;aspect-ratio:1;border-radius:6px;border:2px solid rgba(255,255,255,.14);
+    background:rgba(20,12,18,.8);display:grid;place-items:center;
+}
+.recipe-crafting-grid .slot img{width:70%;height:70%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 3px 5px rgba(0,0,0,.55))}
+.recipe-crafting-grid .slot.on{border-color:rgba(255,215,0,.8);background:radial-gradient(circle at 50% 40%,rgba(255,215,0,.28),rgba(20,12,18,.85));box-shadow:0 0 16px -4px rgba(255,215,0,.8)}
+.craft-side{display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.craft-arrow{font-family:var(--font-pixel);font-size:.8rem;color:var(--gold);animation:versusPulse 2s infinite}
+.craft-label{font-family:var(--font-pixel);font-size:.42rem;letter-spacing:.12em;color:var(--gold);margin-top:.5rem;text-align:center}
+
+/* Minele — wordle tiles */
+.wordle-isometric-row{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center}
+.wordle-isometric-row .tile{
+    width:clamp(42px,5vw,58px);aspect-ratio:1;border-radius:12px;
+    display:grid;place-items:center;color:#fff;font-family:var(--font-pixel);font-size:.8rem;
+    box-shadow:3px 4px 0 rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.18);
+    animation:wtIn .55s var(--ease);
+}
+.wordle-isometric-row .tile.g{background:linear-gradient(180deg,#2ecc71,#1f9d53);box-shadow:0 0 16px -2px rgba(46,204,113,.6)}
+.wordle-isometric-row .tile.y{background:linear-gradient(180deg,#f39c12,#c97a08);box-shadow:0 0 16px -2px rgba(243,156,18,.6)}
+.wordle-isometric-row .tile.n{background:linear-gradient(180deg,#2c3e50,#1a2530)}
+@keyframes wtIn{from{transform:translateY(-16px) rotateX(70deg);opacity:0}to{transform:none;opacity:1}}
+
+/* SZC — the battle triangle */
+.szc-battle-triangle{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;justify-content:center}
+.szc-mob-head{
+    width:clamp(52px,6vw,74px);height:clamp(52px,6vw,74px);object-fit:contain;
+    border-radius:14px;image-rendering:pixelated;
+    filter:drop-shadow(0 0 12px rgba(255,145,77,.5));background:oklch(0.15 0.03 340 / .85);
+    border:2px solid rgba(255,145,77,.45);padding:.45rem;
+    animation:mobFloat 3s ease-in-out infinite;
+}
+@keyframes mobFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
+.szc-vs{font-family:var(--font-pixel);font-size:.85rem;color:var(--ember);animation:versusPulse 1.8s infinite}
+@keyframes versusPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.22)}}
+
+/* narrative — a single compact story line */
+.scene-narrative-box{margin-top:.55rem;text-align:center}
+.scene-narrative-text{
+    font-size:.84rem;line-height:1.5;color:var(--foreground);font-weight:600;margin:0;
+    min-height:2.6em;text-shadow:0 1px 6px rgba(0,0,0,.55);transition:opacity .25s;
+}
+.scene-narrative-text .hl{color:var(--sakura)}
+.scene-narrative-text .hl2{color:var(--accent)}
+
+/* action controls */
+.action-pedestal{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.action-pedestal>div{min-width:0}
+.action-caption{font-family:var(--font-sans);font-weight:600;font-size:.74rem;color:var(--muted);display:block;margin-top:.35rem;line-height:1.4}
+.action-caption .small{font-family:var(--font-pixel);font-size:.4rem;color:var(--accent,butter);letter-spacing:.05em}
+.d-flex-2{display:flex;gap:.6rem;flex-wrap:wrap}
+#joinBox{
+    margin-top:.8rem;background:oklch(0.14 0.03 340 / .8);border:2px solid var(--sakura);
+    border-radius:12px;padding:.9rem;
+}
+#joinBox label{font-family:var(--font-pixel);color:var(--sakura);font-size:.58rem;display:block;margin-bottom:.5rem;letter-spacing:.1em}
+.join-inline{display:flex;gap:.5rem;flex-wrap:wrap}
+.join-inline .mc-input{flex:1;min-width:150px}
+
+/* monolith — hall of legends (hidden slide-in drawer) */
+.monolith-hall-panel{
+    position:fixed;top:5.6rem;right:0;z-index:50;
+    width:min(352px,92vw);height:calc(100dvh - 7rem);
+    display:flex;flex-direction:column;gap:.7rem;overflow:hidden;
+    border-color:oklch(0.5 0.02 300 / .55) !important;
+    border-radius:22px 0 0 22px;border-right:none;
+    transform:translateX(105%);transition:transform .45s var(--ease);
+    box-shadow:0 24px 64px rgba(0,0,0,.6);
+}
+.monolith-hall-panel.show{transform:translateX(0)}
+.monolith-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+.monolith-head h3{font-family:var(--font-display);font-weight:600;font-size:1.2rem;margin:0;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.monolith-head .badge{font-family:var(--font-pixel);font-size:.44rem;letter-spacing:.1em;border:1px solid rgba(255,215,0,.5);color:var(--gold);border-radius:999px;padding:.4rem .6rem;background:rgba(255,215,0,.08)}
+.monolith-sub{font-family:var(--font-sans);font-weight:600;font-size:.74rem;color:var(--muted);line-height:1.55;margin:0}
+.hall-list{flex:1;display:flex;flex-direction:column;gap:.55rem;overflow-y:auto;overflow-x:hidden;min-height:0;max-height:none;padding-right:.4rem}
+.player-row{
+    display:flex;align-items:center;justify-content:space-between;gap:.7rem;min-width:0;
+    padding:.65rem .95rem;border-radius:10px;
+    background:rgba(18,5,17,.7);border:1.5px solid rgba(255,255,255,.08);
+    transition:all .2s ease;
+}
+.player-row:hover{border-color:rgba(255,183,197,.35);background:rgba(30,9,26,.85)}
+.player-row.current-user{border-color:var(--sakura)!important;background:linear-gradient(90deg,rgba(255,183,197,.18),rgba(20,6,18,.8))!important;box-shadow:0 0 15px rgba(255,183,197,.25)}
+.rank-crest{min-width:32px;height:24px;padding:0 6px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:.7rem;font-weight:bold;font-family:var(--font-pixel)}
+.crest-1{background:linear-gradient(135deg,#ffd700,#ffae00);color:#2b1d00;box-shadow:0 0 12px rgba(255,215,0,.6);border:1px solid #ffffff}
+.crest-2{background:linear-gradient(135deg,#f0f0f0,#b0b0b0);color:#1a1a1a;border:1px solid #ffffff}
+.crest-3{background:linear-gradient(135deg,#e69138,#b45f06);color:#ffffff;border:1px solid #ffd966}
+.crest-default{background:rgba(0,0,0,.5);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1)}
+.rank-crest.you{background:transparent;border:1px solid #ffb7c5;color:#ffb7c5;box-shadow:0 0 12px rgba(255,64,129,.5)}
+.player-row .nm-wrap{display:flex;align-items:center;gap:.7rem;min-width:0;flex:1 1 auto}
+.player-row .nm{font-family:var(--font-display);font-weight:700;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.player-row.current-user .nm{color:var(--sakura)}
+.player-row .pts{font-family:var(--font-pixel);font-size:.8rem;color:#4dede2;white-space:nowrap}
+.hall-refresh{margin-top:.8rem;text-align:center;font-family:var(--font-pixel);font-size:.4rem;letter-spacing:.1em;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:.5rem}
+.hall-refresh .p{width:6px;height:6px;border-radius:50%;background:var(--emerald);box-shadow:0 0 8px 2px rgba(46,204,113,.6);animation:blink 1.5s infinite}
+
+/* ============================================================
+   mincRaft buttons — the game's chunky tokens
+   ============================================================ */
+.mc-btn{
+    position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+    padding:.8rem 1.4rem;width:100%;
+    font-family:var(--font-display);font-weight:700;font-size:.95rem;letter-spacing:.04em;
+    border-radius:10px;border:2px solid #000000;color:var(--foreground);cursor:pointer;user-select:none;
+    text-decoration:none;text-shadow:0 1px 2px rgba(0,0,0,.6);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.35),inset 0 -3px 0 rgba(0,0,0,.25);
+    transition:transform .08s ease,box-shadow .08s ease,filter .15s ease;
+}
+.mc-btn:hover{filter:brightness(1.1) saturate(1.05);transform:translateY(-1px);color:currentColor}
+.mc-btn:active{transform:translateY(3px)}
+.mc-btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;filter:grayscale(.6)}
+.mc-btn.btn-sm{padding:.42rem .85rem;font-size:.78rem;width:auto}
+.mc-btn.btn-auto{width:auto}
+.mc-btn.diamond{background:linear-gradient(180deg,#6bf5ed 0%,#4dede2 45%,#23cbc0 100%);border-color:#17837c;color:#112d2a;text-shadow:0 1px 0 rgba(255,255,255,.4);box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.35),0 4px 0 #136a65}
+.mc-btn.diamond:hover{color:#112d2a}
+.mc-btn.sakura{background:linear-gradient(180deg,#ffc2d4 0%,#ff8fab 45%,#f46086 100%);border-color:#851234;color:#2a0410;text-shadow:0 1px 0 rgba(255,255,255,.5);box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -3px 0 rgba(0,0,0,.25),0 4px 0 #700c2a}
+.mc-btn.sakura:hover{color:#2a0410}
+.mc-btn.gold{background:linear-gradient(180deg,#fede4b 0%,#ffca1a 45%,#d9a304 100%);border-color:#795b00;color:#382a00;text-shadow:0 1px 0 rgba(255,255,255,.3);box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.3),0 4px 0 #5c4500}
+.mc-btn.gold:hover{color:#382a00}
+.mc-btn.lapis{background:linear-gradient(180deg,#6381ff 0%,#4b6bfb 45%,#2a49d1 100%);border-color:#162a8c;color:#ffffff;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.4),0 4px 0 #122271}
+.mc-btn.lapis:hover{color:#ffffff}
+.mc-btn.stone{background:linear-gradient(180deg,#a3a3a5 0%,#8b8b8d 45%,#6a6a6c 100%);border-color:#404041;color:#ffffff;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.35),0 4px 0 #313132}
+.mc-btn.stone:hover{color:#ffffff}
+.mc-btn.redstone{background:linear-gradient(180deg,#ff7b6b 0%,#f54834 45%,#c7261a 100%);border-color:#8b1508;color:#ffffff;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.4),0 4px 0 #6b1005}
+.mc-btn.redstone:hover{color:#ffffff}
+
+.mc-input,.mc-textarea{
+    width:100%;background:oklch(0.14 0.03 340 / .85);border:2px solid rgba(255,183,197,.22);border-radius:8px;color:var(--foreground);
+    font-family:var(--font-sans);font-weight:600;font-size:.9rem;padding:.7rem .85rem;outline:none;
+    transition:border-color .25s,box-shadow .25s;
+}
+.mc-input:focus,.mc-textarea:focus{border-color:var(--sakura);box-shadow:0 0 0 3px rgba(255,64,129,.2)}
+.mc-input::placeholder,.mc-textarea::placeholder{color:#b48da3;font-weight:600}
+.mc-input[disabled]{opacity:.55}
+
+/* safety notice blocks (ported from the live lobby) */
+.lobby-notice-block{background:oklch(0.16 0.03 340 / .6);border:1.5px solid rgba(255,183,197,.25);border-radius:13px;padding:.9rem 1rem;margin-bottom:.7rem}
+.kid-safety-box{background:linear-gradient(135deg,rgba(255,202,26,.16),rgba(255,94,94,.16));border:1.5px solid var(--warning-gold);border-radius:13px;padding:.9rem 1rem;margin-bottom:.7rem;box-shadow:0 0 14px rgba(255,202,26,.25)}
+.lobby-notice-block p,.kid-safety-box p{color:var(--foreground)}
+
+/* ============================================================
+   DRAWER
+   ============================================================ */
+.drawer-backdrop{position:fixed;inset:0;z-index:70;background:rgba(20,12,18,.62);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.drawer-backdrop.show{opacity:1;visibility:visible}
+.drawer{
+    position:fixed;top:0;right:0;bottom:0;z-index:71;width:min(360px,92vw);
+    background:linear-gradient(180deg,oklch(0.25 0.06 340 / .98),oklch(0.16 0.04 340 / .99));
+    border-left:2px solid var(--line);
+    transform:translateX(105%);transition:transform .42s var(--ease);
+    display:flex;flex-direction:column;box-shadow:-30px 0 70px rgba(0,0,0,.5);
+}
+.drawer.show{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.2rem;border-bottom:1px solid var(--line)}
+.drawer-head .d-t{font-family:var(--font-display);font-weight:600;font-size:1.05rem}
+.drawer-head .d-t small{display:block;font-family:var(--font-pixel);font-size:.42rem;letter-spacing:.14em;color:var(--muted);margin-top:.4rem;font-weight:400}
+.drawer-x{width:34px;height:34px;border-radius:8px;border:2px solid var(--line);background:rgba(255,255,255,.05);color:var(--foreground);font-size:1rem;cursor:pointer;display:grid;place-items:center;transition:transform .2s,border-color .2s}
+.drawer-x:hover{transform:rotate(90deg);border-color:var(--sakura)}
+.drawer-body{flex:1;overflow-y:auto;padding:1rem 1.2rem 1.4rem;display:grid;align-content:start;gap:.5rem}
+.relic{
+    display:flex;align-items:center;gap:.85rem;cursor:pointer;
+    border:2px solid oklch(0.42 0.06 350 / .6);border-radius:13px;background:oklch(0.2 0.04 340 / .65);
+    padding:.75rem .9rem;text-align:left;color:var(--foreground);width:100%;
+    transition:transform .22s var(--ease),border-color .22s,background .22s,box-shadow .22s;
+}
+.relic:hover{transform:translateX(5px)}
+.relic .ri{width:34px;height:34px;flex:none;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.relic .ri svg{width:50%;height:50%}
+.relic .rt{line-height:1.2;flex:1;min-width:0}
+.relic .rt b{font-family:var(--font-display);font-weight:600;font-size:.88rem;display:block}
+.relic .rt span{font-family:var(--font-sans);font-size:.72rem;color:var(--muted);font-weight:600;display:block;margin-top:.18rem;line-height:1.35}
+.relic .flag{font-family:var(--font-pixel);font-size:.38rem;color:var(--gold);background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.4);border-radius:999px;padding:.35rem .5rem;display:none;white-space:nowrap}
+.relic .flag.show{display:inline-block;animation:popIn .3s var(--ease)}
+@keyframes popIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.relic .arrow{color:#a88395;font-size:.8rem}
+.relic:hover .arrow{color:var(--sakura)}
+.relic.r-rules:hover{border-color:rgba(190,140,255,.6);box-shadow:0 8px 20px -10px rgba(190,140,255,.45)}
+.relic.r-inbox:hover{border-color:rgba(255,210,74,.55);box-shadow:0 8px 20px -10px rgba(255,210,74,.4)}
+.relic.r-pass:hover{border-color:rgba(77,237,226,.5);box-shadow:0 8px 20px -10px rgba(77,237,226,.4)}
+.relic.r-user:hover{border-color:rgba(255,183,197,.5);box-shadow:0 8px 20px -10px rgba(255,183,197,.45)}
+.relic.r-feed:hover{border-color:rgba(255,64,129,.5);box-shadow:0 8px 20px -10px rgba(255,64,129,.4)}
+.relic.r-report:hover{border-color:rgba(255,94,94,.55);box-shadow:0 8px 20px -10px rgba(255,94,94,.4)}
+.relic.r-support:hover{border-color:rgba(255,145,77,.55);box-shadow:0 8px 20px -10px rgba(255,145,77,.45)}
+.relic.r-sign:hover{border-color:#a88395}
+.drawer-foot{padding:.9rem 1.2rem;border-top:1px solid var(--line);text-align:center}
+.drawer-foot span{font-family:var(--font-pixel);font-size:.38rem;letter-spacing:.12em;color:#8a6f7e}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+.mask{
+    position:fixed;inset:0;z-index:80;background:rgba(10,5,9,.7);backdrop-filter:blur(4px);
+    display:none;place-items:center;padding:1rem;overflow-y:auto;
+}
+.mask.show{display:grid}
+.modal-pane{
+    width:min(650px,100%);
+    background:linear-gradient(180deg,oklch(0.26 0.06 340 / .97),oklch(0.17 0.04 340 / .99));
+    border:2px solid oklch(0.55 0.1 350 / .9);border-radius:22px;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    animation:mIn .34s var(--ease);
+    max-height:92vh;display:flex;flex-direction:column;
+}
+@keyframes mIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.pane-head{display:flex;align-items:center;gap:.8rem;padding:1.05rem 1.3rem;border-bottom:2px solid var(--line);flex-wrap:wrap}
+.pane-head .ph-badge{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.05);border:2px solid var(--line);flex:none}
+.pane-head .ph-badge svg{width:52%;height:52%}
+.pane-head .ph-t{flex:1;min-width:0}
+.pane-head .ph-t h3{font-family:var(--font-display);font-weight:600;font-size:1.08rem;margin:0;letter-spacing:.01em}
+.pane-head .ph-t h3 small{display:block;font-family:var(--font-pixel);font-size:.4rem;letter-spacing:.12em;color:var(--muted);margin-top:.4rem;font-weight:400}
+.pane-close{width:32px;height:32px;border-radius:8px;border:2px solid var(--line);background:rgba(255,255,255,.05);color:var(--foreground);font-size:.9rem;cursor:pointer;display:none;place-items:center;transition:transform .2s,border-color .2s}
+.pane-close.chat{display:grid}
+.pane-close:hover{transform:rotate(90deg);border-color:var(--sakura)}
+.pane-body{padding:1.25rem 1.3rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:1rem}
+.pane-foot{display:flex;gap:.6rem;justify-content:flex-end;padding:1rem 1.3rem;border-top:2px solid var(--line);flex-wrap:wrap}
+.pane-foot .mc-btn{width:auto}
+.pane-alert{display:none;font-family:var(--font-pixel);font-size:.46rem;letter-spacing:.05em;line-height:1.8;border-radius:10px;padding:.8rem 1rem;border:2px solid var(--line);margin-top:-.2rem}
+.pane-alert.warn{border-color:rgba(255,210,74,.5);background:rgba(255,210,74,.09);color:var(--gold)}
+.pane-alert.ok{border-color:rgba(46,204,113,.5);background:rgba(46,204,113,.09);color:#7bebb0}
+.pane-alert.err{border-color:rgba(255,94,94,.55);background:rgba(255,94,94,.09);color:#ff9d9d}
+.pane-alert.show{display:block;animation:popIn .3s var(--ease)}
+.mc-field{margin-bottom:.8rem}
+.mc-field label{display:block;font-family:var(--font-pixel);font-size:.42rem;letter-spacing:.1em;color:var(--muted);margin-bottom:.5rem}
+.input-hint{font-family:var(--font-pixel);font-size:.38rem;letter-spacing:.05em;color:#b48da3;margin-top:.4rem;line-height:1.9}
+input.file-input{
+    width:100%;background:oklch(0.14 0.03 340 / .85);border:2px dashed rgba(255,94,94,.5);border-radius:10px;color:var(--foreground);
+    font-family:var(--font-sans);font-weight:600;font-size:.8rem;padding:.7rem;outline:none;
+}
+input.file-input::-webkit-file-upload-button{background:rgba(255,94,94,.14);border:1px solid rgba(255,94,94,.45);color:#ffb0b0;border-radius:7px;padding:.45rem .8rem;margin-right:.8rem;font-family:var(--font-display);font-weight:600;font-size:.72rem;cursor:pointer}
+
+/* inbox */
+.inbox-list{display:grid;gap:.6rem}
+.inbox-item{
+    display:flex;align-items:center;gap:.8rem;cursor:pointer;text-align:left;width:100%;
+    border:2px solid oklch(0.42 0.06 350 / .6);border-radius:13px;background:oklch(0.2 0.04 340 / .6);
+    padding:.8rem .9rem;transition:border-color .2s,transform .2s,background .2s;
+}
+.inbox-item:hover{border-color:rgba(255,215,0,.55);transform:translateX(4px);background:oklch(0.23 0.05 340 / .7)}
+.inbox-item .pumpkin{width:34px;height:34px;flex:none;border-radius:9px;display:grid;place-items:center;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.35)}
+.inbox-item .pumpkin svg{width:50%;height:50%}
+.inbox-item .tx{flex:1;min-width:0;line-height:1.3}
+.inbox-item .tx b{font-family:var(--font-display);font-weight:600;font-size:.88rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inbox-item .tx span{font-family:var(--font-sans);font-weight:600;color:var(--muted);font-size:.72rem;display:block;margin-top:.16rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inbox-item .dt{font-family:var(--font-pixel);font-size:.4rem;color:var(--muted);flex:none}
+.inbox-item .unread-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 9px 2px rgba(255,210,74,.55);flex:none;display:none}
+.inbox-item.unread .unread-dot{display:block}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;border-top:2px solid var(--line);padding-top:1rem}
+.page-dot{width:30px;height:30px;border-radius:8px;border:2px solid var(--line);background:oklch(0.16 0.03 340);color:var(--muted);font-family:var(--font-pixel);font-size:.4rem;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.page-dot.active{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.12)}
+.page-dot:hover{border-color:var(--gold);color:var(--gold)}
+.page-arrow{border:2px solid var(--line);background:oklch(0.16 0.03 340);border-radius:8px;padding:.4rem .9rem;font-family:var(--font-pixel);font-size:.42rem;color:var(--muted);cursor:pointer;transition:border-color .2s,color .2s}
+.page-arrow:hover:not([disabled]){border-color:var(--gold);color:var(--gold)}
+.page-arrow[disabled]{opacity:.4;cursor:not-allowed}
+
+/* letter sheet */
+.letter-sheet{
+    background:linear-gradient(180deg,#fdf3e6,#f7e6cf);color:#5a3a20;border-radius:8px 8px 16px 16px;
+    padding:1.4rem 1.4rem 1.1rem;position:relative;box-shadow:0 12px 30px -10px rgba(0,0,0,.5),inset 0 0 0 1px rgba(120,80,40,.15);line-height:1.7;font-size:.88rem;
+}
+.letter-sheet::before{content:"";position:absolute;inset:0 18px;height:8px;border-radius:0 0 8px 8px;background:rgba(255,255,255,.55);top:-3px}
+.letter-sheet .seal{position:absolute;bottom:-14px;right:20px;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#ff87ac,#e2336b 65%,#ab1f4d);display:grid;place-items:center;box-shadow:0 6px 16px rgba(180,32,80,.5)}
+.letter-sheet .seal::after{content:"MR";font-family:var(--font-pixel);font-size:.46rem;color:#fff0f5;opacity:.95}
+.letter-sheet .ls-eyebrow{font-family:var(--font-pixel);font-size:.42rem;letter-spacing:.18em;color:#b3875f;margin-bottom:.7rem}
+.letter-sheet .ls-title{font-family:var(--font-display);font-weight:600;font-size:1.15rem;color:#3f2713;line-height:1.3}
+.letter-sheet .ls-body{margin-top:.8rem;color:#5a3a20}
+.letter-sheet .ls-body b{color:#33200e}
+.letter-sheet .ls-sign{margin-top:1.1rem;font-family:var(--font-sans);font-style:italic;color:#7c5840;font-size:.85rem}
+
+/* support chat */
+.chat-shell{flex:1;display:flex;flex-direction:column;min-height:340px}
+.chat-area{flex:1;display:flex;flex-direction:column;gap:.65rem;overflow-y:auto;padding:.2rem .1rem .4rem;max-height:330px}
+.msg{max-width:82%;border-radius:14px;padding:.7rem .95rem;font-size:.84rem;line-height:1.5;font-weight:600;position:relative}
+.msg b{display:block;font-family:var(--font-pixel);font-size:.38rem;letter-spacing:.08em;margin-bottom:.35rem;opacity:.75}
+.msg.me{align-self:flex-end;background:linear-gradient(135deg,rgba(255,64,129,.26),rgba(255,64,129,.12));border:2px solid rgba(255,64,129,.5);border-bottom-right-radius:5px}
+.msg.them{align-self:flex-start;background:oklch(0.22 0.04 340 / .8);border:2px solid var(--line);border-bottom-left-radius:5px}
+.msg .time{display:block;font-family:var(--font-pixel);font-size:.36rem;color:#b48da3;margin-top:.4rem;letter-spacing:.06em}
+.chat-composer{display:flex;gap:.6rem;align-items:flex-end;margin-top:.8rem;background:oklch(0.13 0.03 340 / .8);border:2px solid var(--line);border-radius:13px;padding:.5rem}
+.chat-composer textarea{flex:1;background:transparent;border:none;outline:none;color:var(--foreground);font-family:var(--font-sans);font-weight:600;font-size:.86rem;resize:none;padding:.4rem .4rem;line-height:1.4;max-height:96px}
+.chat-composer textarea::placeholder{color:#b48da3}
+.chat-send{flex:none;width:42px;height:42px;border-radius:10px;border:2px solid #000;cursor:pointer;background:linear-gradient(180deg,#ff6ca0,#e22c6d);color:#fff;display:grid;place-items:center;transition:transform .2s,box-shadow .2s}
+.chat-send:hover{transform:translateY(-2px);box-shadow:0 8px 18px -6px rgba(255,64,129,.7)}
+.chat-send svg{width:19px;height:19px}
+.typing{display:inline-flex;gap:.3rem;padding:.7rem .95rem;border-radius:14px;background:oklch(0.22 0.04 340 / .8);border:2px solid var(--line);align-self:flex-start;border-bottom-left-radius:5px}
+.typing i{width:5px;height:5px;border-radius:50%;background:var(--sakura);display:inline-block;animation:typingDot 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.18s}
+.typing i:nth-child(3){animation-delay:.36s}
+@keyframes typingDot{0%,60%,100%{opacity:.25;transform:scale(.8)}30%{opacity:1;transform:scale(1.15)}}
+
+/* gate (beta mock) */
+.gate-pane{width:min(520px,100%);border-radius:22px;text-align:center;padding:2.4rem 2rem;position:relative;overflow:hidden;border-color:rgba(255,215,0,.55)}
+.gate-pane::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 70% at 50% 0%,rgba(255,215,0,.14),transparent 70%)}
+.gate-pane .gate-seal{width:76px;height:76px;margin:0 auto 1.2rem;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 32% 28%,rgba(255,215,0,.2),oklch(0.16 0.04 340) 70%);border:2px solid rgba(255,215,0,.55);position:relative;animation:sealPulse 2.6s ease-in-out infinite}
+.gate-pane .gate-seal::before{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px dashed rgba(255,215,0,.5);animation:spin 18s linear infinite}
+.gate-pane .gate-seal svg{width:44%;height:44%}
+@keyframes sealPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,.25)}50%{box-shadow:0 0 0 14px rgba(255,215,0,0)}}
+.gate-pane h3{font-family:var(--font-display);font-weight:600;font-size:1.3rem;margin:0 0 .7rem}
+.gate-pane p{color:var(--muted);font-weight:600;font-size:.93rem;line-height:1.7;margin:0 auto;max-width:40ch}
+.gate-pane .gate-note{font-family:var(--font-pixel);font-size:.4rem;letter-spacing:.08em;color:var(--gold);margin-top:1.3rem;line-height:1.9}
+.gate-pane .mc-btn{width:100%;margin-top:1.5rem}
+
+/* notice overlay */
+.notice-overlay{position:fixed;inset:0;z-index:90;background:rgba(10,5,9,.82);backdrop-filter:blur(6px);display:none;place-items:center;padding:1rem}
+.notice-overlay.show{display:grid}
+.notice-card{
+    width:min(600px,100%);border:2px solid rgba(255,215,0,.45);border-radius:24px;
+    background:linear-gradient(180deg,oklch(0.3 0.07 350 / .98),oklch(0.18 0.04 340 / .99));
+    padding:2rem;position:relative;overflow:hidden;text-align:center;animation:mIn .4s var(--ease);
+    box-shadow:0 30px 90px -20px rgba(0,0,0,.8),0 0 60px -30px rgba(255,215,0,.5);
+}
+.notice-card .nc-badge{margin:0 auto 1rem;width:64px;height:64px;border-radius:16px;display:grid;place-items:center;background:rgba(255,215,0,.1);border:2px solid rgba(255,215,0,.45)}
+.notice-card .nc-badge svg{width:50%;height:50%}
+.notice-card .e{font-family:var(--font-pixel);font-size:.46rem;letter-spacing:.22em;color:var(--gold)}
+.notice-card h3{font-family:var(--font-display);font-weight:600;font-size:1.5rem;margin:.9rem 0 .6rem;line-height:1.25}
+.notice-card p{color:var(--muted);font-weight:600;line-height:1.75;font-size:.94rem;margin:0 auto;max-width:46ch}
+.notice-card .nc-foot{margin-top:1.6rem;display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+.notice-card .mc-btn{width:auto}
+
+/* toast */
+.toast-host{position:fixed;bottom:1.3rem;left:50%;transform:translateX(-50%);z-index:120;display:grid;gap:.5rem;width:min(460px,92vw)}
+.toast{
+    display:flex;align-items:center;gap:.7rem;padding:.85rem 1.1rem;border-radius:12px;
+    background:oklch(0.24 0.05 340 / .96);border:2px solid var(--line);font-family:var(--font-sans);font-weight:700;font-size:.82rem;color:var(--foreground);
+    box-shadow:0 16px 40px -10px rgba(0,0,0,.6);animation:tIn .35s var(--ease);line-height:1.35;
+}
+.toast .tdot{width:8px;height:8px;border-radius:50%;flex:none;background:#ffb7c5;box-shadow:0 0 10px 2px rgba(255,64,129,.5)}
+.toast.gold .tdot{background:var(--gold);box-shadow:0 0 10px 2px rgba(255,215,0,.5)}
+.toast.teal .tdot{background:var(--diamond);box-shadow:0 0 10px 2px rgba(77,237,226,.5)}
+@keyframes tIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.toast.out{animation:tOut .3s forwards}
+@keyframes tOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+/* rotate shield */
+.rotate-shield{position:fixed;inset:0;z-index:200;background:#1b0f1c;display:none;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;text-align:center;padding:2rem}
+.rotate-shield.show{display:flex}
+.rotate-shield .rot-ph{width:76px;height:76px;border:2px dashed var(--sakura);border-radius:18px;display:grid;place-items:center;color:var(--sakura);animation:spinHint 2.2s ease-in-out infinite}
+@keyframes spinHint{0%{transform:rotate(0deg)}60%{transform:rotate(360deg)}100%{transform:rotate(360deg)}}
+.rotate-shield .rot-ph svg{width:40%;height:40%}
+.rotate-shield h3{font-family:var(--font-display);font-weight:600;font-size:1.2rem;margin:0}
+.rotate-shield p{font-family:var(--font-pixel);font-size:.48rem;letter-spacing:.1em;color:var(--muted);line-height:1.9;max-width:34ch;margin:0}
+
+/* footer */
+.foot{position:relative;z-index:3;max-width:1200px;margin:0 auto;width:100%;padding:1rem 1.2rem 1.1rem;text-align:center;flex:none}
+.foot .credit{font-family:var(--font-pixel);font-size:.4rem;letter-spacing:.2em;color:#a88395;line-height:2.2}
+.foot .credit .hl{color:var(--sakura)}
+.foot-sig{display:inline-block;margin-top:.6rem;color:#a88395;font-size:.75rem;font-weight:600}
+.foot-sig svg{width:14px;height:14px;vertical-align:-2px}
+
+/* responsive */
+@media(max-width:960px){
+    .trials{grid-template-columns:repeat(3,1fr)}
+    .action-pedestal{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+    .arena{gap:.6rem;padding:0 .6rem .4rem}
+    .mode-rail{width:112px}
+    .rack .rack-btn.about,.rack .rack-btn.forcase{display:none}
+    .action-pedestal{grid-template-columns:1fr}
+}
+@media(max-height:780px){
+    .nav-sub{display:none}
+    .hall-list{gap:.4rem}
+}
+@media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HERO BACKGROUND — the garden's own photo ============ -->
+<img src="assets/sakura-8.jpg" alt="" class="hero-bg" onerror="this.src='assets/sakura-3.jpg'">
+<div class="hero-overlay"></div>
+<div class="sakura-veil"></div>
+<canvas id="skyCanvas"></canvas>
+
+<div class="butterfly left" aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="none">
+    <defs>
+      <linearGradient id="bwl" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ffd3de"/><stop offset="1" stop-color="#ff4081"/>
+      </linearGradient>
+    </defs>
+    <path d="M12 12 C9 7 4 6 2 9 C0.5 11.5 3 15 12 12 Z" fill="url(#bwl)"/>
+    <path d="M12 12 C15 7 20 6 22 9 C23.5 11.5 21 15 12 12 Z" fill="url(#bwl)"/>
+    <path d="M12 12 C9 17 4 18 2 15 C0.5 12.5 3 9 12 12 Z" fill="url(#bwl)" opacity=".7"/>
+    <path d="M12 12 C15 17 20 18 22 15 C23.5 12.5 21 9 12 12 Z" fill="url(#bwl)" opacity=".7"/>
+    <circle cx="12" cy="12" r="1.6" fill="#fbe7ee"/>
+  </svg>
+</div>
+<div class="butterfly right" aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="none">
+    <defs>
+      <linearGradient id="bwr" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ffe7ee" stop-opacity="0"/><stop offset="1" stop-color="#a563ff"/>
+      </linearGradient>
+    </defs>
+    <path d="M12 12 C9 7 4 6 2 9 C0.5 11.5 3 15 12 12 Z" fill="url(#bwr)"/>
+    <path d="M12 12 C15 7 20 6 22 9 C23.5 11.5 21 15 12 12 Z" fill="url(#bwr)"/>
+    <path d="M12 12 C9 17 4 18 2 15 C0.5 12.5 3 9 12 12 Z" fill="url(#bwr)" opacity=".7"/>
+    <path d="M12 12 C15 17 20 18 22 15 C23.5 12.5 21 9 12 12 Z" fill="url(#bwr)" opacity=".7"/>
+    <circle cx="12" cy="12" r="1.6" fill="#fbe7ee"/>
+  </svg>
+</div>
+
+<!-- ============ THE WAYPOST ============ -->
+<header class="topnav">
+  <div class="nav-sign">
+    <div class="crest-word">Mrivia<span class="crest-petal"></span></div>
+    <div class="nav-sub">GARDEN LOBBY</div>
+  </div>
+  <div class="command-spacer"></div>
+
+  <nav class="rack tray">
+    <a class="rack-btn forcase role-hidden" id="navcommunityBtn" href="/community">🍔 For community</a>
+    <a class="rack-btn about" href="/about">🌸 About Me</a>
+    <div class="traveler">
+      <span class="portrait">M</span>
+      <span class="who"><b>Traveler</b><span>WANDERER</span></span>
+      <span class="status-dot"></span>
+    </div>
+    <button class="rack-btn menu" id="menuBtn" onclick="openDrawer()">
+      <span>☰ Menu</span>
+      <span class="dot" id="menuFlag"></span>
+    </button>
+  </nav>
+</header>
+
+<!-- ============ ARENA : MODE RAIL BESIDE THE CODEX THEATER ============ -->
+<main class="arena">
+  <!-- LEFT : THE MODE RAIL — five compact trial tokens -->
+  <aside class="mode-rail">
+    <div class="rail-cap"><span class="rail-dot"></span>MODES</div>
+    <div class="rail-slabs" id="trials"></div>
+  </aside>
+
+  <!-- RIGHT : THE THEATER -->
+  <div class="theater-stage-card">
+    <div class="stage-head">
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <span class="mode-badge" id="modeRulesBadge">—</span>
+        <button class="mc-btn gold hall-toggle btn-auto" onclick="toggleHall()">🏆 Hall of Legends</button>
+      </div>
+    </div>
+
+    <!-- LIVING STAGE -->
+    <div class="stage-living" id="stageLiving"></div>
+
+    <!-- NARRATIVE — EXTENDED EXPLANATION -->
+    <div class="scene-narrative-box">
+      <p class="scene-narrative-text" id="modeNarrativeText"></p>
+    </div>
+
+    <!-- ACTION PEDESTAL -->
+    <div class="action-pedestal">
+      <div>
+        <button class="mc-btn diamond" id="queueBtn" onclick="joinMatchmaking()">Public Matchmaking</button>
+        <span class="action-caption" id="beeQueue"></span>
+      </div>
+      <div>
+        <button class="mc-btn stone" id="soloBtn" onclick="openSoloGate()">Solo Practice</button>
+        <span class="action-caption" id="beeSolo"></span>
+      </div>
+    </div>
+
+    <div class="d-flex-2">
+      <button class="mc-btn lapis btn-auto" onclick="generateCustomRoom()">Create Private Room</button>
+      <button class="mc-btn gold btn-auto" onclick="toggleJoin()">Join Room Code</button>
+    </div>
+
+    <div id="joinBox" style="display:none">
+      <label>ENTER ACTIVE ROOM CODE:</label>
+      <div class="join-inline">
+        <input type="text" class="mc-input text-uppercase" id="roomCodeInput" placeholder="e.g., SAKURA-71" maxlength="12" autocomplete="off">
+        <button class="mc-btn sakura btn-auto" onclick="connectToCustomRoom()">Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT : HALL OF LEGENDS — hidden slide-in drawer -->
+  <div class="monolith-hall-panel" id="hallPanel">
+    <div class="monolith-head">
+      <h3>Hall of Legends</h3>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <span class="badge">TOP 10 ALL-TIME</span>
+        <button class="hall-close" onclick="toggleHall()" aria-label="Hide legends">✕</button>
+      </div>
+    </div>
+    <p class="monolith-sub">Decoded Overworld masters, ranked by accuracy, speed, and duel streaks.</p>
+    <div class="hall-list" id="hallList"></div>
+    <div class="hall-refresh"><span class="p"></span><span>LIVE SCORES FROM THE GARDEN</span></div>
+  </div>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="foot">
+  <div class="credit">
+    MRIVIA BLOOM — THE GARDEN'S OWN LOBBY<br>
+    <span class="hl">SHAPED BY Creator · THE BRIDGE TO THE LIVE REALM IS BEING LAID</span>
+  </div>
+  <div class="foot-sig">brought to you with <svg viewBox="0 0 24 24" fill="#ff4081"><path d="M12 21S4 14.5 4 9.5C4 6.5 6.2 4 9 4c1.6 0 2.9.8 3.7 2C13.5 4.8 14.9 4 16.5 4 19.3 4 21.5 6.5 21.5 9.5c0 5-8 11.5-9.5 11.5Z"/></svg> sakura &amp; stone</div>
+</footer>
+
+<!-- ============ COMMAND DRAWER ============ -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-label="Command menu">
+  <div class="drawer-head">
+    <div class="d-t">Command Rack<small>EVERYTHING FOR YOUR JOURNEY</small></div>
+    <button class="drawer-x" onclick="closeDrawer()" aria-label="Close menu">✕</button>
+  </div>
+  <div class="drawer-body">
+
+    <button class="relic r-rules" onclick="openModal('rulesModal')">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h10a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Z" stroke="#be8cff" stroke-width="1.7" fill="rgba(190,140,255,.12)"/><path d="M17 7h2a2 2 0 0 1 2 2v11h-4" stroke="#be8cff" stroke-width="1.7" fill="rgba(190,140,255,.05)"/><path d="M8 9h5M8 13h5" stroke="#be8cff" stroke-width="1.6"/></svg></span>
+      <span class="rt"><b>Rules &amp; Notices</b><span>How the realm stays safe</span></span>
+      <span class="arrow">›</span>
+    </button>
+
+    <button class="relic r-inbox" onclick="openInbox()">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" stroke="#ffd700" stroke-width="1.7" fill="rgba(255,215,0,.1)"/><path d="M3 15h5l2 2h4l2-2h5" stroke="#ffd700" stroke-width="1.6" fill="none"/></svg></span>
+      <span class="rt"><b>Official Inbox</b><span>News from the keeper</span></span>
+      <span class="flag" id="inboxFlag">3 NEW</span>
+      <span class="arrow">›</span>
+    </button>
+
+    <button class="relic r-pass" onclick="openPassModal()">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2.5" stroke="#4dede2" stroke-width="1.7" fill="rgba(77,237,226,.08)"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="#4dede2" stroke-width="1.7"/><circle cx="12" cy="15.5" r="1.4" fill="#4dede2"/><path d="M12 15.5V17" stroke="#4dede2" stroke-width="1.6"/></svg></span>
+      <span class="rt"><b>Change Password</b><span>Lock your vault again</span></span>
+      <span class="arrow">›</span>
+    </button>
+
+    <button class="relic r-user" onclick="openUserModal()">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4" stroke="#ffb7c5" stroke-width="1.7" fill="rgba(255,183,197,.1)"/><path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" stroke="#ffb7c5" stroke-width="1.7" fill="none"/></svg></span>
+      <span class="rt"><b>Change Username</b><span>Rename your waypoint</span></span>
+      <span class="arrow">›</span>
+    </button>
+
+    <button class="relic r-feed" onclick="openFeedModal()">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 14.5 9 21 9.6 16 14l1.4 6.3L12 17l-5.4 3.3L8 14 3 9.6 9.5 9Z" stroke="#ff4081" stroke-width="1.6" fill="rgba(255,64,129,.12)"/></svg></span>
+      <span class="rt"><b>Send Feedback</b><span>A gift to the garden keeper</span></span>
+      <span class="arrow">›</span>
+    </button>
+
+    <button class="relic r-report" onclick="openReportModal()">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><path d="M6 4h9l3 3v13H6Z" stroke="#ff5e5e" stroke-width="1.7" fill="rgba(255,94,94,.1)"/><path d="M10 9h3M11 9v5" stroke="#ff5e5e" stroke-width="1.6"/><circle cx="11.5" cy="16.6" r=".9" fill="#ff5e5e"/></svg></span>
+      <span class="rt"><b>Report a Player</b><span>Raise a redstone flag</span></span>
+      <span class="arrow">›</span>
+    </button>
+
+    <button class="relic r-support" onclick="openSupport()">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-6l-5 4v-4H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" stroke="#ff914d" stroke-width="1.7" fill="rgba(255,145,77,.1)"/><circle cx="8" cy="11" r="1" fill="#ff914d"/><circle cx="12" cy="11" r="1" fill="#ff914d"/><circle cx="16" cy="11" r="1" fill="#ff914d"/></svg></span>
+      <span class="rt"><b>Direct Support</b><span>Talk to the keeper, one-on-one</span></span>
+      <span class="flag" id="supportFlag">1 NOTE</span>
+      <span class="arrow">›</span>
+    </button>
+
+    <a class="relic r-feed" href="/about">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4" stroke="#ff4081" stroke-width="1.7" fill="rgba(255,64,129,.1)"/><path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" stroke="#ff4081" stroke-width="1.7" fill="none"/></svg></span>
+      <span class="rt"><b>About Me</b><span>Meet the keeper of the garden</span></span>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="relic r-inbox role-hidden" id="drawercommunityBtn" href="/community">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" stroke="#ffd700" stroke-width="1.7" fill="rgba(255,215,0,.1)"/><path d="M3 15h5l2 2h4l2-2h5" stroke="#ffd700" stroke-width="1.6" fill="none"/></svg></span>
+      <span class="rt"><b>For community</b><span>A letter for the burger stall</span></span>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="relic r-pass role-hidden" id="drawercreator areaBtn" href="/admin">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h10a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Z" stroke="#4dede2" stroke-width="1.7" fill="rgba(77,237,226,.08)"/><path d="M17 7h2a2 2 0 0 1 2 2v11h-4" stroke="#4dede2" stroke-width="1.7" fill="rgba(77,237,226,.05)"/><path d="M8 9h5M8 13h5" stroke="#4dede2" stroke-width="1.6"/></svg></span>
+      <span class="rt"><b>creator area</b><span>Keeper's hall — restricted</span></span>
+      <span class="arrow">›</span>
+    </a>
+
+    <button class="relic r-sign" onclick="signOut()">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8" stroke="#ffb7c5" stroke-width="1.7" fill="none"/><path d="M10 12h11m0 0-3.5-3.5M21 12l-3.5 3.5" stroke="#ffb7c5" stroke-width="1.7"/></svg></span>
+      <span class="rt"><b>Sign Out</b><span>Return to the front gate</span></span>
+      <span class="arrow">›</span>
+    </button>
+
+  </div>
+  <div class="drawer-foot"><span>MRIVIA BLOOM · THE LOBBY · BUILD C.02</span></div>
+</aside>
+
+<!-- ============ RULES ============ -->
+<div class="mask" id="rulesModal">
+  <div class="modal-pane">
+    <div class="pane-head">
+      <span class="ph-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h10a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Z" stroke="#be8cff" stroke-width="1.7" fill="rgba(190,140,255,.12)"/><path d="M17 7h2a2 2 0 0 1 2 2v11h-4" stroke="#be8cff" stroke-width="1.7" fill="rgba(190,140,255,.05)"/><path d="M8 9h5M8 13h5" stroke="#be8cff" stroke-width="1.6"/></svg></span>
+      <div class="ph-t"><h3>Rules &amp; Notices<small>THE REALM STAYS GENTLE BY DESIGN</small></h3></div>
+    </div>
+    <div class="pane-body" style="display:block">
+      <div class="mc-field" style="margin-bottom:1rem"><b style="font-family:var(--font-display);font-size:.95rem">Our quiet promises</b></div>
+      <div class="letter-sheet" style="background:linear-gradient(180deg,#f6f0ff,#e9defa);color:#49306b">
+        <div class="ls-eyebrow">THE KEEPER'S COVENANT</div>
+        <div class="ls-body" style="color:#49306b">
+          <b>1. Kindness floors everything.</b> No harassment, no slurs, no personal attacks — in chat, pings, or drawn words.<br>
+          <b>2. What happens in the garden stays wholesome.</b> No adult content, no gore, no real cruelty. Pixelary draws stay cute.<br>
+          <b>3. One person, one waypoint.</b> Multi-account tricks and stat padding are against the codex.<br>
+          <b>4. Your details are your own.</b> We never ask for — and never store — email, phone, or real name. Username + a drop-secret only.<br>
+          <b>5. Reports are read by a real keeper.</b> Redstone flags reach Creator, and are answered with care.
+        </div>
+        <div class="ls-sign">— Creator, keeper of the garden</div>
+      </div>
+      <div class="kid-safety-box">
+        <p style="font-weight:600;line-height:1.65"><b>🛡️ Stay safe, always.</b> Never share your real name, school, phone number, address, or passwords with anyone — here or anywhere online. If a stranger asks for personal details or makes you uncomfortable, tell a trusted adult and raise a redstone flag with the Report tool. The keeper reads every flag.</p>
+      </div>
+      <div class="lobby-notice-block">
+        <p style="font-weight:600;line-height:1.65"><b>Be the reason someone smiles today.</b> Kindness is the whole garden law — no exceptions. Report bad behaviour instead of answering it, and let the keepers handle the rest.</p>
+      </div>
+    </div>
+    <div class="pane-foot">
+      <button class="mc-btn sakura" onclick="closeModal('rulesModal')">I understand 🌸</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ INBOX ============ -->
+<div class="mask" id="inboxModal">
+  <div class="modal-pane">
+    <div class="pane-head">
+      <span class="ph-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" stroke="#ffd700" stroke-width="1.7" fill="rgba(255,215,0,.1)"/><path d="M3 15h5l2 2h4l2-2h5" stroke="#ffd700" stroke-width="1.6" fill="none"/></svg></span>
+      <div class="ph-t"><h3>Official Inbox<small>SEALED LETTERS FROM THE KEEPER</small></h3></div>
+    </div>
+    <div class="pane-body">
+      <div class="inbox-list" id="inboxList"></div>
+      <div class="pager">
+        <button class="page-arrow" id="inboxPrev" onclick="shiftInboxPage(-1)" disabled>‹ Prev</button>
+        <div class="pager-pages" id="inboxPages"></div>
+        <button class="page-arrow" id="inboxNext" onclick="shiftInboxPage(1)" disabled>Next ›</button>
+      </div>
+    </div>
+    <div class="pane-foot">
+      <button class="mc-btn stone" onclick="closeModal('inboxModal')">Close 📬</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ INBOX VIEWER ============ -->
+<div class="mask" id="viewerModal">
+  <div class="modal-pane">
+    <div class="pane-head">
+      <span class="ph-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h10a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Z" stroke="#ffd700" stroke-width="1.7" fill="rgba(255,215,0,.1)"/><path d="M8 9h5M8 12h5" stroke="#ffd700" stroke-width="1.6"/></svg></span>
+      <div class="ph-t"><h3 id="viewerTitle">Letter</h3></div>
+    </div>
+    <div class="pane-body" style="display:block">
+      <div class="letter-sheet">
+        <div class="ls-eyebrow" id="viewerDate">—</div>
+        <div class="ls-title" id="viewerHeading">—</div>
+        <div class="ls-body" id="viewerBody">—</div>
+        <div class="ls-sign">— Creator, keeper of the garden</div>
+      </div>
+    </div>
+    <div class="pane-foot">
+      <button class="mc-btn stone" onclick="backToInbox()">← Back to Inbox</button>
+      <button class="mc-btn sakura" onclick="backToInbox()">Close ✉</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CHANGE PASSWORD ============ -->
+<div class="mask" id="passModal">
+  <div class="modal-pane">
+    <div class="pane-head">
+      <span class="ph-badge"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2.5" stroke="#4dede2" stroke-width="1.7" fill="rgba(77,237,226,.08)"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="#4dede2" stroke-width="1.7"/><circle cx="12" cy="15.5" r="1.4" fill="#4dede2"/></svg></span>
+      <div class="ph-t"><h3>Change Password<small>THE VAULT KEEPS YOUR DROP-SECRET</small></h3></div>
+    </div>
+    <div class="pane-body">
+      <div class="pane-alert" id="passAlert"></div>
+      <div class="mc-field"><label>NEW PASSWORD</label><input type="password" class="mc-input" id="newPassInput" placeholder="At least 3 characters..." autocomplete="new-password"></div>
+      <div class="mc-field"><label>CONFIRM IT</label><input type="password" class="mc-input" id="confPassInput" placeholder="Say it twice so it stays true..." autocomplete="new-password"></div>
+      <div class="input-hint">MINIMUM 3 CHARACTERS. YOUR DROP-SECRET STAYS IN THE VAULT.</div>
+    </div>
+    <div class="pane-foot">
+      <button class="mc-btn stone" onclick="closeModal('passModal')">Cancel</button>
+      <button class="mc-btn sakura" onclick="savePassword()">Save Password ✨</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CHANGE USERNAME ============ -->
+<div class="mask" id="userModal">
+  <div class="modal-pane">
+    <div class="pane-head">
+      <span class="ph-badge"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4" stroke="#ffb7c5" stroke-width="1.7" fill="rgba(255,183,197,.1)"/><path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" stroke="#ffb7c5" stroke-width="1.7" fill="none"/></svg></span>
+      <div class="ph-t"><h3>Change Username<small>RENAME YOUR WAYPOINT</small></h3></div>
+    </div>
+    <div class="pane-body">
+      <div class="pane-alert" id="userAlert"></div>
+      <div class="mc-field"><label>CURRENT NAME</label><input type="text" class="mc-input" id="curNameInput" value="Traveler" disabled></div>
+      <div class="mc-field"><label>NEW NAME</label><input type="text" class="mc-input" id="newNameInput" placeholder="3–16 letters, must stay pure..." maxlength="16" autocomplete="off"></div>
+      <div class="input-hint">ALLOWED: A–Z, a–z, 0–9, SPACE &amp; UNDERSCORE ONLY. 3–16 CHARS.</div>
+    </div>
+    <div class="pane-foot">
+      <button class="mc-btn stone" onclick="closeModal('userModal')">Cancel</button>
+      <button class="mc-btn sakura" onclick="saveUsername()">Save Username ✨</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FEEDBACK ============ -->
+<div class="mask" id="feedModal">
+  <div class="modal-pane">
+    <div class="pane-head">
+      <span class="ph-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 14.5 9 21 9.6 16 14l1.4 6.3L12 17l-5.4 3.3L8 14 3 9.6 9.5 9Z" stroke="#ff4081" stroke-width="1.6" fill="rgba(255,64,129,.12)"/></svg></span>
+      <div class="ph-t"><h3>Send Feedback<small>A GIFT TO THE GARDEN KEEPER</small></h3></div>
+    </div>
+    <div class="pane-body">
+      <div class="pane-alert" id="feedAlert"></div>
+      <div class="mc-field"><label>YOUR MESSAGE</label><textarea class="mc-textarea" id="feedText" rows="4" placeholder="A wish, a smooth edge to sand, a bug to chase..." maxlength="2000"></textarea></div>
+      <div class="input-hint">EVERY LETTER LANDS ON THE KEEPER'S DESK. BE HONEST, BE KIND.</div>
+    </div>
+    <div class="pane-foot">
+      <button class="mc-btn stone" onclick="closeModal('feedModal')">Cancel</button>
+      <button class="mc-btn sakura" onclick="submitFeedback()">Send 🌸</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ REPORT ============ -->
+<div class="mask" id="reportModal">
+  <div class="modal-pane">
+    <div class="pane-head">
+      <span class="ph-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M6 4h9l3 3v13H6Z" stroke="#ff5e5e" stroke-width="1.7" fill="rgba(255,94,94,.1)"/><path d="M10 9h3M11 9v5" stroke="#ff5e5e" stroke-width="1.6"/><circle cx="11.5" cy="16.6" r=".9" fill="#ff5e5e"/></svg></span>
+      <div class="ph-t"><h3>Report a Player<small>RAISE A REDSTONE FLAG</small></h3></div>
+    </div>
+    <div class="pane-body">
+      <div class="pane-alert" id="reportAlert"></div>
+      <div class="mc-field"><label>WHO BROKE THE PEACE</label><input type="text" class="mc-input" id="reportTarget" placeholder="Exact username..." autocomplete="off"></div>
+      <div class="mc-field"><label>WHAT HAPPENED</label><textarea class="mc-textarea" id="reportContext" rows="3" placeholder="Explain it plainly — time, mode, what was said or drawn..."></textarea></div>
+      <div class="mc-field"><label>PROOF (SCREENSHOT)</label><input type="file" class="file-input" id="reportFile" accept="image/*" onchange="checkFileSize(this)"><div class="input-hint">JPEG/PNG · MAX 5MB · COMPRESSED ON THE WAY IN</div></div>
+    </div>
+    <div class="pane-foot">
+      <button class="mc-btn stone" onclick="closeModal('reportModal')">Cancel</button>
+      <button class="mc-btn redstone" onclick="submitReport()">Flag It ⚠</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DIRECT SUPPORT ============ -->
+<div class="mask" id="supportModal">
+  <div class="modal-pane">
+    <div class="pane-head">
+      <span class="ph-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-6l-5 4v-4H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" stroke="#ff914d" stroke-width="1.7" fill="rgba(255,145,77,.1)"/><circle cx="8" cy="11" r="1" fill="#ff914d"/><circle cx="12" cy="11" r="1" fill="#ff914d"/><circle cx="16" cy="11" r="1" fill="#ff914d"/></svg></span>
+      <div class="ph-t"><h3>Direct Support<small>ONE-ON-ONE WITH THE KEEPER</small></h3></div>
+      <span class="pane-close chat" onclick="closeSupport()" aria-label="Close chat">✕</span>
+    </div>
+    <div class="pane-body" style="padding-top:1rem;min-height:400px">
+      <div class="chat-shell">
+        <div class="chat-area" id="chatArea"></div>
+        <div class="chat-composer">
+          <textarea id="chatInput" rows="1" placeholder="Type to the keeper..." maxlength="2000" onkeydown="chatKey(event)"></textarea>
+          <button class="chat-send" onclick="sendChat()" aria-label="Send"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12 20 4l-4 16-4-7-8-1Z" stroke="#fff" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M12 13 20 4" stroke="#fff" stroke-width="1.8"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ GATE (beta mock) ============ -->
+<div class="mask" id="gateModal">
+  <div class="modal-pane gate-pane">
+    <div class="gate-seal"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2 20 8v8l-8 6-8-6V8Z" stroke="#ffd700" stroke-width="1.7" fill="rgba(255,215,0,.12)"/><path d="m8 12 3 3 5-6" stroke="#ffd700" stroke-width="1.9"/></svg></div>
+    <h3 id="gateTitle">The gate is being prepared</h3>
+    <p id="gateText">The path beyond this handle is nearly laid. Pick a trial, live its scene, and when the keeper lights the bridge, this button opens straight into the realm.</p>
+    <div class="gate-note" id="gateNote">THE KEEPER SEES YOUR EAGER TAP</div>
+    <button class="mc-btn gold" onclick="closeModal('gateModal')">Back to the Lobby</button>
+  </div>
+</div>
+
+<!-- ============ NOTICE ON LOAD ============ -->
+<div class="notice-overlay" id="noticeOverlay">
+  <div class="notice-card">
+    <div class="nc-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 14.5 9 21 9.6 16 14l1.4 6.3L12 17l-5.4 3.3L8 14 3 9.6 9.5 9Z" stroke="#ffd700" stroke-width="1.6" fill="rgba(255,215,0,.14)"/></svg></div>
+    <div class="e">A WORD FROM THE KEEPER</div>
+    <h3>The garden gate swings open</h3>
+    <p>The Mrivia lobby has been re-grown branch by branch. Every slab holds its own living scene and its full story. Wander the trials, pick your flower — the live bridge is being laid beyond.</p>
+    <div class="nc-foot"><button class="mc-btn gold" onclick="dismissNotice()">Enter the Lobby 🌸</button></div>
+  </div>
+</div>
+
+<!-- ============ TOASTS ============ -->
+<div class="toast-host" id="toastHost"></div>
+
+<!-- ============ ROTATE SHIELD ============ -->
+<div class="rotate-shield" id="rotateShield">
+  <div class="rot-ph"><svg viewBox="0 0 24 24" fill="none"><path d="M15 5 19.5 9.5 15 14" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 9.5H9a4 4 0 0 0 0 8h2.5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></div>
+  <h3>Rotate to explore</h3>
+  <p>The lobby blooms best in a wide view.<br>Turn your device sideways, traveler.</p>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+/* ============================================================
+   MRIVIA BLOOM — trial lobby logic (wired to the live garden)
+   ============================================================ */
+const MODES = {
+  classic:{
+    accent:'#4dede2', shadow:'rgba(77,237,226,.45)', accentGlow:'rgba(77,237,226,.22)',
+    name:'Classic', badge:'6 PLAYERS MAX', cat:'TRIAL SHOWCASE',
+    tale:'One hidden treasure, a row of blank slots. <span class="hl">Letters peel back</span> one by one — first traveler to name the item correctly claims the round.',
+    traits:[
+      ['Guess the hidden treasure first','The secret item\'s slots open letter by letter. Only quick eyes crown a champion.'],
+      ['Every correct letter buys more time','Each find widens the window; every wrong one teaches the whole room.'],
+      ['One winner, friendly rematch','Fresh sets, random picks, and the table reshuffles for another round.']
+    ],
+    steps:[
+      'The vault seals a secret item behind a row of empty slots.',
+      'Letters are revealed one by one as the crowd holds its breath.',
+      'Type one full guess. The first correct answer calls the round.',
+      'Win count up — then the shroud picks a brand new treasure.'
+    ],
+    queue:'Compete live against real-time players — up to 6 per table.',
+    solo:'Solo facing is not open for this trial yet.',
+    demo:'classic'
+  },
+  pixelary:{
+    accent:'#ff4081', shadow:'rgba(255,64,129,.45)', accentGlow:'rgba(255,64,129,.22)',
+    name:'Pixelary', badge:'1 ARTIST + 3 GUESSERS', cat:'LIVE CANVAS',
+    tale:'One artist paints a secret word live on the <span class="hl">shared canvas</span> while everyone guesses. The drawings stay pure and Halal — imagination in pixels, nothing more.',
+    traits:[
+      ['One of you draws, the rest chase the word','Every stroke is a clue and every pause is a tease on the shared canvas.'],
+      ['A letter may be coaxed from the artist','The room stalls? The artist may tip one slot open to help it along.'],
+      ['Pure, cute images only','No real creatures, no gore — the garden keeps its drawings wholesome.'],
+      ['The round bell rings, blades flip','Artist and guessers trade seats each round, so everybody tastes the paint.']
+    ],
+    steps:[
+      'A secret word is handed to the hidden artist.',
+      'Everyone watches the canvas bloom, stroke by stroke.',
+      'A letter may be coaxed out when the room stalls.',
+      'First full guess wins — then the artist passes the brush.'
+    ],
+    queue:'Drop into a live lobby with an artist ready to draw.',
+    solo:'Solo practice is still waiting for its canvas.',
+    demo:'pixelary'
+  },
+  recipe:{
+    accent:'#ffd700', shadow:'rgba(255,215,0,.45)', accentGlow:'rgba(255,215,0,.2)',
+    name:'Recipe', badge:'3×3 WORKBENCH', cat:'BLUEPRINT FORGE',
+    tale:'A crafting table lays out its <span class="hl">3×3 pockets of mystery</span>. Ingredients slide in, you and your crew stitch the blueprint together, and name the craft before the grid fills.',
+    traits:[
+      ['Nine pockets, one blueprint','Ingredient icons drop into the grid one pocket at a time — shape the craft as a team.'],
+      ['Cooperate to name the craft','Whisper between turns and call out the item before the last pocket lands.'],
+      ['Wrong guesses reveal more','A bad call burns a nearby pocket open. Every reveal sharpens the picture.'],
+      ['Together, until the anvil rings','A chilled twist: this trial smells like teamwork, not blood sport.']
+    ],
+    steps:[
+      'The scenario sets a mystery item to craft.',
+      'Pockets of the 3×3 grid reveal glowing ingredients.',
+      'Talk it out — name the item before the final pocket.',
+      'Score as a table, then the next blueprint shuffles in.'
+    ],
+    queue:'Join a crafting table with kind strangers.',
+    solo:'Solo practice is not on the workbench yet.',
+    demo:'recipe'
+  },
+  minele:{
+    accent:'#2ecc71', shadow:'rgba(46,204,113,.45)', accentGlow:'rgba(46,204,113,.2)',
+    name:'Minele', badge:'SOLO & RACE', cat:'THE TENDER CIPHER',
+    tale:'A five-letter whisper waits in a column of tiles. Guess and the tiles <span class="hl">glow green, gold, or grey</span> — guiding you home gently. No bell, no timer, no sweat.',
+    traits:[
+      ['No timer, no rush, just letters','Minele moves at your own pace — the gentle sibling of the word family.'],
+      ['Green, gold, and grey sing the truth','Each tile confesses: right spot, somewhere close, or not at all.'],
+      ['One daily path, endless replay','A kind word pool offers quiet puzzles whenever the day feels heavy.'],
+      ['Truly full solo play','The only trial where solo is home — a perfect first flower for new friends.']
+    ],
+    steps:[
+      'A secret five-letter word hides in the column.',
+      'Guess with any word; tiles answer in honest colors.',
+      'Green locks in, gold comes close, grey lets go.',
+      'Find the word in quiet triumph — then breathe and go again.'
+    ],
+    queue:'A soft live race — same word, same pace, no timer.',
+    solo:'Solo Minele Practice is live — the gentle herb of calm.',
+    demo:'minele'
+  },
+  szc:{
+    accent:'#ff914d', shadow:'rgba(255,145,77,.45)', accentGlow:'rgba(255,145,77,.22)',
+    name:'SZC Duel', badge:'1V1 MOB DUEL', cat:'TRI-MOB PREDICTION',
+    tale:'Three mobs cycle forever: <span class="hl">Skeleton outwits Creeper, Creeper spooks Zombie, Zombie hunts Skeleton</span>. Pick yours against a rival — best of three flips crown the smarter hunter.',
+    traits:[
+      ['Skeleton, Creeper, Zombie — forever cycling','One beats the other in a tight, honest loop. Guess the order, claim the round.'],
+      ['No decks, no cards, pure mind tricks','Read your rival while they read you. Rock-paper-feathers.'],
+      ['Best of three, crown to the thinker','First to three wins is the whole contract — nothing hidden, nothing stacked.'],
+      ['A training bot sharpens your instinct','Solo practice against a steady, sport-spirited bot while you warm up.']
+    ],
+    steps:[
+      'Read your rival, then pick one of the three mobs.',
+      'The stronger mob flips the point.',
+      'Second flip, third flip — adapt or lose the rhythm.',
+      'Best of three decides the smarter hunter.'
+    ],
+    queue:'Find a rival fast in the live dueling lane.',
+    solo:'Solo SZC Practice is live — train against the bot.',
+    demo:'szc'
+  }
+};
+
+const HALL = [
+  ['PlayerOne',1240,'GILDED DAWN'],['PlayerTwo',1080,'GILDED DAWN'],['PlayerThree',990,'GILDED DAWN'],
+  ['PlayerFour',880,'ASCENDANT'],['PlayerFive',770,'ASCENDANT'],['PlayerSix',665,'ASCENDANT'],
+  ['PlayerSeven',540,'ASCENDANT'],['PlayerEight',410,'ASCENDANT'],['PlayerNine',300,'ASCENDANT'],
+  ['Traveler',125,'THIS IS YOU']
+];
+
+const PIXEL_ART = [
+  '...DD.DD...',
+  '...DD.DD...',
+  '...DD.DD...',
+  '.GGGGGGGGG.',
+  'GGGGGGGGGGG',
+  'GGGGGGGGGGG',
+  'GG.GGGGG.GG',
+  'GGG.GGG.GGG',
+  'GGGGG.GGGGG'
+];
+const PIXEL_PAL = {G:'#77b255',D:'#1b2219'};
+
+const RECIPE_SCENE = {
+  label:'DIAMOND PICKAXE',
+  slots:{0:'recipe_data/DIAMOND.png',1:'recipe_data/DIAMOND.png',2:'recipe_data/DIAMOND.png',4:'recipe_data/STICK.png',7:'recipe_data/STICK.png'}
+};
+
+const CHAT_DEMO = [
+  {from:'them', text:'Hi traveler! I\'m the keeper. Ask me anything about the lobby — mode rules, the garden code, or where the best petals fall.'}
+];
+
+/* ---------- helpers & shared state ---------- */
+const $ = (id) => document.getElementById(id);
+const APP = 'mrivia_bloom_';
+const MODE_MAP = { classic:0, pixelary:1, recipe:2, minele:3, szc:4 };
+let globalUsername = '';
+let supportUnreadCount = 0;
+
+function escapeHtml(str){
+  return String(str == null ? '' : str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function balloon(msg, kind){
+  const t = document.createElement('div');
+  t.className = 'toast ' + (kind||'');
+  t.innerHTML = '<span class="tdot"></span>' + escapeHtml(msg);
+  $('toastHost').appendChild(t);
+  setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(), 320); }, 3200);
+}
+function openModal(id){ $(id).classList.add('show'); }
+function closeModal(id){ $(id).classList.remove('show'); }
+
+/* ---------- sky canvas: petals + fireflies ---------- */
+function startSky(){
+  const cv = $('skyCanvas'); const ctx = cv.getContext('2d');
+  let W = 0, H = 0, dpr = 1;
+  let parts = [];
+  const density = () => Math.max(14, Math.round((W*H)/30000));
+  const spawn = (n) => {
+    for(let i=0;i<n;i++){
+      parts.push({
+        x: Math.random()*W, y: Math.random()*H,
+        r: 1.6 + Math.random()*2.6,
+        vx: -.18 - Math.random()*.5, vy: .18 + Math.random()*.55,
+        sway: Math.random()*Math.PI*2, dr: .02 + Math.random()*.03,
+        kind: Math.random() < .28 ? 'fly' : 'petal',
+        c: Math.random()<.5 ? '#ffc7d6' : '#ff9dbb'
+      });
+    }
+  };
+  const resize = () => {
+    const nextW = innerWidth, nextH = innerHeight;
+    dpr = window.devicePixelRatio || 1;
+    if(W > 0 && H > 0){
+      const sx = nextW / W, sy = nextH / H;
+      for(const p of parts){ p.x *= sx; p.y *= sy; }
+    }
+    W = nextW; H = nextH;
+    cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    if(!parts.length){ spawn(density()); return; }
+    const want = density();
+    if(want > parts.length) spawn(want - parts.length);
+    else if(want < parts.length) parts.length = want;
+  };
+  resize(); addEventListener('resize', resize);
+  (function loop(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of parts){
+      p.sway += p.dr;
+      p.x += p.vx + Math.cos(p.sway)*.4;
+      p.y += p.vy;
+      if(p.y > H+10){ p.y = -10; p.x = Math.random()*W; }
+      if(p.x < -10){ p.x = W+10; }
+      const sz = p.r / dpr;
+      if(p.kind === 'fly'){
+        ctx.save(); ctx.globalAlpha = .5 + Math.sin(p.sway*2)*.35;
+        ctx.shadowColor = '#ffe9a8'; ctx.shadowBlur = 8/dpr; ctx.fillStyle = '#ffe7a3';
+        ctx.beginPath(); ctx.arc(p.x, p.y, sz*.7, 0, 7); ctx.fill(); ctx.restore();
+      } else {
+        ctx.save(); ctx.globalAlpha = .75; ctx.translate(p.x, p.y); ctx.rotate(Math.sin(p.sway)*.9);
+        ctx.shadowColor = '#ff9dbb'; ctx.shadowBlur = 6/dpr; ctx.fillStyle = p.c;
+        ctx.beginPath(); ctx.ellipse(0,0,sz,sz*.55,0,0,7); ctx.fill(); ctx.restore();
+      }
+    }
+    requestAnimationFrame(loop);
+  })();
+}
+
+/* ---------- slab selection & codex ---------- */
+function selectMode(mode){
+  const m = MODES[mode];
+  const r = document.documentElement.style;
+  r.setProperty('--accent', m.accent);
+  r.setProperty('--accent-shadow', m.shadow);
+  document.querySelectorAll('.trial-slab').forEach(w => w.classList.toggle('active', w.dataset.mode === mode));
+
+  const theater = document.querySelector('.theater-stage-card');
+  theater.style.borderColor = m.accent;
+
+  $('modeRulesBadge').textContent = m.badge;
+  $('modeRulesBadge').style.color = m.accent;
+  $('modeNarrativeText').innerHTML = m.tale;
+
+  $('beeQueue').textContent = m.queue;
+  $('beeSolo').textContent = m.solo;
+  sessionStorage.setItem('selectedGameMode', mode);
+
+  const solo = (mode === 'minele' || mode === 'szc');
+  const sb = $('soloBtn');
+  sb.disabled = !solo;
+  sb.className = 'mc-btn ' + (solo ? 'gold' : 'stone');
+
+  renderDemo(mode, m.accent);
+
+  const stage = $('stageLiving');
+  stage.classList.remove('sweep');
+  void stage.offsetWidth;
+  stage.classList.add('sweep');
+}
+
+/* ---------- living scenes (the visual explanation) ---------- */
+let demoHandle = null;
+function renderDemo(mode, accent){
+  const box = $('stageLiving');
+  if(demoHandle){ clearInterval(demoHandle); demoHandle = null; }
+
+  if(mode === 'classic'){
+    const seq = 'DIAMOND';
+    let n = 2;
+    const mk = () => {
+      let html = '<div class="classic-runic-slots">';
+      for(let i=0;i<seq.length;i++){
+        if(i === 2 || i === 4){ html += '<div class="blank">_</div>'; }
+        else {
+          const shown = i < n;
+          html += '<div class="' + (shown ? 'char' : 'blank') + '">' + (shown ? seq[i] : '_') + '</div>';
+        }
+      }
+      html += '</div>';
+      box.innerHTML = html;
+      n = (n + 1) % seq.length;
+    };
+    mk(); demoHandle = setInterval(mk, 1300);
+  } else if(mode === 'pixelary'){
+    let reveal = 1;
+    const mk = () => {
+      let cells = '';
+      for(let y=0;y<PIXEL_ART.length;y++){
+        const line = PIXEL_ART[y];
+        for(let x=0;x<line.length;x++){
+          const lit = y < reveal;
+          const color = PIXEL_PAL[line[x]];
+          cells += '<i class="' + (lit ? 'on' : '') + '"' + (lit ? ' style="background:' + color + '"' : '') + '></i>';
+        }
+      }
+      box.innerHTML = '<div class="pixelary-studio-canvas"><span class="brush">🖌️</span>' +
+        '<div><div class="studio-row"><span class="studio-tag">LIVE CANVAS</span>' +
+        '<span class="pal-dot" style="background:#77b255"></span><span class="pal-dot" style="background:#1b2219"></span><span class="pal-dot" style="background:#4dede2"></span></div>' +
+        '<div class="pix-canvas">' + cells + '</div></div></div>';
+      reveal++;
+      if(reveal > PIXEL_ART.length){ reveal = 1; }
+    };
+    mk(); demoHandle = setInterval(mk, 110);
+  } else if(mode === 'recipe'){
+    const slotKeys = [0,1,2,4,7];
+    let n = 0;
+    const mk = () => {
+      let html = '<div class="recipe-crafting-panel"><div class="recipe-crafting-grid">';
+      for(let i=0;i<9;i++){
+        const src = RECIPE_SCENE.slots[i];
+        const on = src && slotKeys.indexOf(i) < n;
+        html += '<div class="slot' + (on ? ' on' : '') + '">' + (on ? '<img src="' + src + '" alt="" onerror="this.style.display=\'none\'">' : '') + '</div>';
+      }
+      const done = n >= slotKeys.length;
+      html += '</div><div class="craft-side"><div class="craft-arrow">→</div>' +
+        '<div class="craft-label">' + (done ? RECIPE_SCENE.label + ' ASSEMBLED' : 'REVEALING THE PATTERN…') + '</div></div></div>';
+      box.innerHTML = html;
+      n = (n > slotKeys.length) ? 0 : n + 1;
+    };
+    mk(); demoHandle = setInterval(mk, 700);
+  } else if(mode === 'minele'){
+    const tiles = [['S','g'],['W','g'],['O','y'],['R','n'],['D','g']];
+    box.innerHTML = '<div class="wordle-isometric-row">' +
+      tiles.map((t,i) => '<div class="tile ' + t[1] + '" style="animation-delay:' + (i*0.1) + 's">' + t[0] + '</div>').join('') +
+      '</div>';
+  } else if(mode === 'szc'){
+    box.innerHTML = '<div class="szc-battle-triangle">' +
+      '<img src="assets/Skeleton_face.png" class="szc-mob-head" title="Skeleton beats Creeper" style="animation-delay:0s" onerror="this.style.display=\'none\'">' +
+      '<span class="szc-vs">⚔️</span>' +
+      '<img src="assets/Creeper_face_1.png" class="szc-mob-head" title="Creeper beats Zombie" style="animation-delay:.35s" onerror="this.style.display=\'none\'">' +
+      '<span class="szc-vs">⚔️</span>' +
+      '<img src="assets/Zombie_face.png" class="szc-mob-head" title="Zombie beats Skeleton" style="animation-delay:.7s" onerror="this.style.display=\'none\'">' +
+      '</div>';
+  } else {
+    box.innerHTML = '<div style="text-align:center;color:var(--muted);font-weight:600">Stage loading…</div>';
+  }
+}
+
+/* ---------- slabs render ---------- */
+const SLAB_ICONS = {
+  classic:'<svg viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>',
+  pixelary:'<svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>',
+  recipe:'<svg viewBox="0 0 24 24"><path d="m12 3-1.91 5.83a2 2 0 0 1-1.27 1.27L3 12l5.83 1.91a2 2 0 0 1 1.27 1.27L12 21l1.91-5.83a2 2 0 0 1 1.27-1.27L21 12l-5.83-1.91a2 2 0 0 1-1.27-1.27L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>',
+  minele:'<svg viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>',
+  szc:'<span class="szc-icon-trio"><img src="assets/Skeleton_face.png" alt="" onerror="this.style.visibility=\'hidden\'"><span class="trow"><img src="assets/Creeper_face_1.png" alt="" onerror="this.style.visibility=\'hidden\'"><img src="assets/Zombie_face.png" alt="" onerror="this.style.visibility=\'hidden\'"></span></span>'
+};
+function renderSlabs(){
+  const holder = $('trials');
+  holder.innerHTML = Object.keys(MODES).map(k => {
+    const m = MODES[k];
+    return '<div class="trial-slab" data-mode="' + k + '" onclick="selectMode(\'' + k + '\')" role="button" tabindex="0" style="--accent:' + m.accent + ';--accent-glow:' + m.accentGlow + ';--accent-shadow:' + m.shadow + '">' +
+      '<div class="ins"><div class="slab-icon-pedestal">' + SLAB_ICONS[k] + '</div>' +
+      '<p class="slab-title">' + m.name + '</p></div></div>';
+  }).join('');
+}
+
+/* ---------- inbox (live) ---------- */
+let allInboxTitles = [];
+let inboxPage = 0;
+const PER = 3;
+async function fetchInboxTitles(){
+  try {
+    const res = await fetch('/api/inbox/titles');
+    const titles = await res.json();
+    allInboxTitles = Array.isArray(titles) ? titles : [];
+    inboxPage = 0;
+    renderInbox();
+    if(allInboxTitles.length){
+      const latestId = Math.max(...allInboxTitles.map(t => Number(t.id) || 0));
+      localStorage.setItem('mt_seen_news_id', String(latestId));
+    }
+    updateBadgeStatus();
+  } catch(e){
+    $('inboxList').innerHTML = '<div style="text-align:center;color:var(--muted);font-weight:600;padding:1rem">Could not load announcements.</div>';
+  }
+}
+function renderInbox(){
+  const list = $('inboxList');
+  if(!allInboxTitles.length){
+    list.innerHTML = '<div style="text-align:center;color:var(--muted);font-weight:600;padding:1rem">No announcements yet. Check back soon! 🌸</div>';
+    $('inboxPages').innerHTML = '';
+    $('inboxPrev').disabled = true; $('inboxNext').disabled = true;
+    return;
+  }
+  const pages = Math.max(1, Math.ceil(allInboxTitles.length / PER));
+  if(inboxPage >= pages) inboxPage = pages - 1;
+  const pageItems = allInboxTitles.slice(inboxPage * PER, inboxPage * PER + PER);
+  list.innerHTML = pageItems.map(i =>
+    '<button class="inbox-item" onclick="openLetter(' + Number(i.id) + ')">' +
+    '<span class="pumpkin"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" stroke="#ffd700" stroke-width="1.6" fill="rgba(255,215,0,.1)"/><path d="M3 15h5l2 2h4l2-2h5" stroke="#ffd700" stroke-width="1.6" fill="none"/></svg></span>' +
+    '<span class="tx"><b>' + escapeHtml(i.title) + '</b><span>Official Update from Creator</span></span>' +
+    '<span class="dt">' + escapeHtml(new Date(i.created_at).toLocaleDateString()) + '</span></button>').join('');
+  $('inboxPages').innerHTML = Array.from({length: pages}, (_, i) =>
+    '<button class="page-dot ' + (i === inboxPage ? 'active' : '') + '" onclick="inboxPageTo(' + i + ')">' + (i + 1) + '</button>').join('');
+  $('inboxPrev').disabled = inboxPage === 0;
+  $('inboxNext').disabled = inboxPage >= pages - 1;
+}
+function shiftInboxPage(d){
+  const pages = Math.max(1, Math.ceil(allInboxTitles.length / PER));
+  inboxPage = Math.max(0, Math.min(inboxPage + d, pages - 1));
+  renderInbox();
+}
+function inboxPageTo(i){ inboxPage = i; renderInbox(); }
+async function openLetter(id){
+  closeModal('inboxModal');
+  openModal('viewerModal');
+  $('viewerTitle').textContent = "Keeper's Letter";
+  $('viewerDate').textContent = '--';
+  $('viewerHeading').textContent = 'Loading...';
+  $('viewerBody').textContent = 'Fetching message from the realm...';
+  try {
+    const res = await fetch('/api/inbox/message/' + id);
+    const data = await res.json();
+    if(res.ok && data.title){
+      $('viewerHeading').textContent = data.title;
+      $('viewerDate').textContent = new Date(data.created_at).toLocaleString();
+      $('viewerBody').textContent = data.content;
+    } else {
+      $('viewerBody').textContent = 'Could not load announcement content.';
+    }
+  } catch(e){
+    $('viewerBody').textContent = 'Network error loading announcement.';
+  }
+}
+function backToInbox(){ closeModal('viewerModal'); openModal('inboxModal'); }
+function openInbox(){ closeDrawer(); openModal('inboxModal'); fetchInboxTitles(); }
+function updateFlags(){
+  const seen = parseInt(localStorage.getItem('mt_seen_news_id') || '0', 10) || 0;
+  const newsUnread = allInboxTitles.filter(t => (Number(t.id) || 0) > seen).length;
+  const sup = Number(supportUnreadCount) || 0;
+  const flag = $('inboxFlag');
+  if(flag){ flag.classList.toggle('show', newsUnread > 0); flag.textContent = newsUnread + ' NEW'; }
+  const sflag = $('supportFlag');
+  if(sflag){ sflag.classList.toggle('show', sup > 0); sflag.textContent = sup + ' NOTE' + (sup === 1 ? '' : 'S'); }
+  const menuBtn = $('menuBtn');
+  if(menuBtn) menuBtn.classList.toggle('has-flag', (newsUnread > 0 || sup > 0));
+}
+
+/* ---------- account actions (live) ---------- */
+function openPassModal(){
+  closeDrawer();
+  $('newPassInput').value = ''; $('confPassInput').value = '';
+  $('passAlert').className = 'pane-alert';
+  openModal('passModal');
+}
+function openUserModal(){
+  closeDrawer();
+  $('curNameInput').value = globalUsername || '';
+  $('newNameInput').value = '';
+  $('userAlert').className = 'pane-alert';
+  openModal('userModal');
+}
+function openFeedModal(){
+  closeDrawer();
+  $('feedText').value = '';
+  $('feedAlert').className = 'pane-alert';
+  openModal('feedModal');
+}
+function openReportModal(){
+  closeDrawer();
+  $('reportTarget').value = ''; $('reportContext').value = ''; $('reportFile').value = '';
+  $('reportAlert').className = 'pane-alert';
+  openModal('reportModal');
+}
+async function savePassword(){
+  const a = $('newPassInput').value.trim(), b = $('confPassInput').value.trim();
+  const al = $('passAlert');
+  if(!a || !b){ al.className = 'pane-alert err show'; al.textContent = 'BOTH FIELDS MUST BE FILLED.'; return; }
+  if(a.length < 3){ al.className = 'pane-alert err show'; al.textContent = 'NEW SECRET MUST BE AT LEAST 3 CHARACTERS.'; return; }
+  if(a !== b){ al.className = 'pane-alert err show'; al.textContent = 'THE TWO COPIES DON\'T MATCH.'; return; }
+  try {
+    const res = await fetch('/api/user/change-password', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ newPassword: a })
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      al.className = 'pane-alert ok show'; al.textContent = (data.message || 'Vault secret accepted.').toUpperCase();
+      $('newPassInput').value = ''; $('confPassInput').value = '';
+      balloon('Vault secret updated 🌸','teal');
+      setTimeout(()=>closeModal('passModal'), 1500);
+    } else {
+      al.className = 'pane-alert err show'; al.textContent = (data.error || 'Could not update password.').toUpperCase();
+    }
+  } catch(e){ al.className = 'pane-alert err show'; al.textContent = 'NETWORK ERROR UPDATING PASSWORD.'; }
+}
+async function saveUsername(){
+  const v = $('newNameInput').value.trim();
+  const al = $('userAlert');
+  if(!/^[A-Za-z0-9_ ]{3,16}$/.test(v)){ al.className = 'pane-alert err show'; al.textContent = 'USE 3–16 LETTERS, NUMBERS, SPACES OR UNDERSCORES ONLY.'; return; }
+  try {
+    const res = await fetch('/api/user/change-username', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ newUsername: v })
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      al.className = 'pane-alert ok show'; al.textContent = (data.message || 'Waypoint renamed.').toUpperCase();
+      globalUsername = data.username || v;
+      setPlayerName(globalUsername);
+      balloon('Traveler → ' + globalUsername + ' 🌸','gold');
+      setTimeout(()=>{ closeModal('userModal'); window.location.reload(); }, 1500);
+    } else {
+      al.className = 'pane-alert err show'; al.textContent = (data.error || 'Could not update username.').toUpperCase();
+    }
+  } catch(e){ al.className = 'pane-alert err show'; al.textContent = 'NETWORK ERROR UPDATING USERNAME.'; }
+}
+async function submitFeedback(){
+  const v = $('feedText').value.trim();
+  const al = $('feedAlert');
+  if(!v){ al.className = 'pane-alert err show'; al.textContent = 'WRITE A LITTLE MESSAGE FIRST.'; return; }
+  try {
+    const res = await fetch('/api/user/feedback', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ message: v })
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      al.className = 'pane-alert ok show'; al.textContent = (data.message || 'Dropped on the keeper\'s desk.').toUpperCase();
+      $('feedText').value = '';
+      setTimeout(()=>closeModal('feedModal'), 1600);
+    } else {
+      al.className = 'pane-alert err show'; al.textContent = (data.error || 'Failed to send feedback.').toUpperCase();
+    }
+  } catch(e){ al.className = 'pane-alert err show'; al.textContent = 'NETWORK ERROR SENDING FEEDBACK.'; }
+}
+function checkFileSize(inp){
+  if(inp.files && inp.files[0] && inp.files[0].size > 5*1024*1024){
+    $('reportAlert').className = 'pane-alert err show';
+    $('reportAlert').textContent = 'FILE EXCEEDS 5MB — PICK A SMALLER PROOF.';
+    inp.value = '';
+  } else if($('reportAlert').classList.contains('show')){
+    $('reportAlert').className = 'pane-alert';
+  }
+}
+function compressImage(file){
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onerror = () => resolve('');
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        const max = 900;
+        if(w > max || h > max){
+          if(w >= h){ h = Math.round(h * max / w); w = max; }
+          else { w = Math.round(w * max / h); h = max; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        try { resolve(canvas.toDataURL('image/jpeg', 0.75)); }
+        catch(err){ resolve(e.target.result); }
+      };
+      img.onerror = () => resolve(e.target.result);
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function submitReport(){
+  const t = $('reportTarget').value.trim();
+  const c = $('reportContext').value.trim();
+  const fileInput = $('reportFile');
+  const al = $('reportAlert');
+  if(!t){ al.className = 'pane-alert err show'; al.textContent = 'NAME THE PLAYER FIRST.'; return; }
+  if(!c){ al.className = 'pane-alert err show'; al.textContent = 'DESCRIBE WHAT HAPPENED.'; return; }
+  if(!fileInput.files || !fileInput.files[0]){ al.className = 'pane-alert err show'; al.textContent = 'ATTACH A SCREENSHOT PROOF.'; return; }
+  const file = fileInput.files[0];
+  if(file.size > 5*1024*1024){ al.className = 'pane-alert err show'; al.textContent = 'SCREENSHOT EXCEEDS 5MB.'; return; }
+  al.className = 'pane-alert warn show'; al.textContent = 'COMPRESSING & DISPATCHING...';
+  try {
+    const screenshotBase64 = await compressImage(file);
+    const res = await fetch('/api/user/report', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ targetUsername: t, context: c, screenshotBase64 })
+    });
+    const data = await res.json();
+    if(res.ok && data.success){
+      al.className = 'pane-alert ok show'; al.textContent = (data.message || 'Redstone flag raised.').toUpperCase();
+      $('reportTarget').value = ''; $('reportContext').value = ''; $('reportFile').value = '';
+      setTimeout(()=>closeModal('reportModal'), 2000);
+    } else {
+      al.className = 'pane-alert err show'; al.textContent = (data.error || 'Failed to submit report.').toUpperCase();
+    }
+  } catch(e){ al.className = 'pane-alert err show'; al.textContent = 'NETWORK ERROR SUBMITTING REPORT.'; }
+}
+
+/* ---------- support chat (live) ---------- */
+let supportPollTimer = null;
+function supportTime(ts){
+  const d = new Date(ts);
+  if(isNaN(d.getTime())) return '';
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+function renderSupportMessages(messages){
+  const area = $('chatArea');
+  if(!messages || !messages.length){
+    area.innerHTML = '<div style="text-align:center;color:var(--muted);font-weight:600;padding:1.5rem">No messages yet 🌸<br><span style="font-size:.72rem;font-family:var(--font-sans);font-weight:600">Say hello to Creator!</span></div>';
+    return;
+  }
+  area.innerHTML = messages.map(m => {
+    const mine = m.sender === 'user';
+    return '<div class="msg ' + (mine ? 'me' : 'them') + '">' +
+      '<b>' + (mine ? 'TRAVELER' : 'KEEPER · Creator') + '</b>' +
+      '<span>' + escapeHtml(m.message) + '</span>' +
+      '<span class="time">' + escapeHtml(supportTime(m.created_at)) + '</span></div>';
+  }).join('');
+  area.scrollTop = area.scrollHeight;
+}
+async function loadSupportThread(showLoading){
+  const area = $('chatArea'); if(!area) return;
+  if(showLoading) area.innerHTML = '<div style="text-align:center;color:var(--muted);padding:1.5rem">Loading conversation...</div>';
+  try {
+    const res = await fetch('/api/support/thread');
+    if(res.status === 401) return;
+    const data = await res.json();
+    renderSupportMessages(data.messages || []);
+  } catch(e){
+    if(showLoading) area.innerHTML = '<div style="text-align:center;color:var(--redstone);padding:1.5rem">Could not load conversation.</div>';
+  }
+}
+async function sendChat(){
+  const inp = $('chatInput');
+  const v = inp.value.trim();
+  if(!v) return;
+  inp.value = '';
+  try {
+    const res = await fetch('/api/support/send', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ message: v })
+    });
+    const data = await res.json();
+    if(res.ok && data.success){ loadSupportThread(false); }
+    else { balloon(data.error || 'Could not send message.'); }
+  } catch(e){ balloon('Network error sending message.'); }
+}
+function chatKey(e){ if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); } }
+function openSupport(){
+  closeDrawer();
+  openModal('supportModal');
+  supportUnreadCount = 0; updateFlags();
+  loadSupportThread(true);
+  if(supportPollTimer) clearInterval(supportPollTimer);
+  supportPollTimer = setInterval(() => loadSupportThread(false), 5000);
+}
+function closeSupport(){
+  closeModal('supportModal');
+  if(supportPollTimer){ clearInterval(supportPollTimer); supportPollTimer = null; }
+}
+
+/* ---------- matchmaking, rooms & solo (live) ---------- */
+function openGate(){
+  $('gateTitle').textContent = 'Solo practice awaits';
+  $('gateText').textContent = 'This trial has no solo path yet — but Minele and SZC Duel are open any time. Pick their slab and press Solo Practice.';
+  $('gateNote').textContent = 'SOLO PATH · COMING SOON';
+  openModal('gateModal');
+}
+function openSoloGate(){
+  const mode = sessionStorage.getItem('selectedGameMode') || 'classic';
+  if(mode === 'minele'){ window.location.href = '/minele-solo'; return; }
+  if(mode === 'szc'){ window.location.href = '/szc-solo'; return; }
+  openGate();
+}
+async function joinMatchmaking(){
+  const btn = $('queueBtn');
+  const modeInteger = MODE_MAP[sessionStorage.getItem('selectedGameMode') || 'classic'] ?? 0;
+  if(btn){ btn.disabled = true; }
+  try {
+    const response = await fetch('/api/matchmaking/join', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ mode: modeInteger })
+    });
+    if(response.status === 401){
+      lockThisDevice('BANNED_PERMANENT');
+      window.location.href = '/?restricted=1';
+      return;
+    }
+    const data = await response.json();
+    if(response.ok && data.success){
+      window.location.href = data.redirectUrl || '/queue';
+    } else {
+      balloon(data.message || 'Matchmaking failed. Please try again.');
+      if(btn) btn.disabled = false;
+    }
+  } catch(e){
+    balloon('Could not connect to the matchmaking server.');
+    if(btn) btn.disabled = false;
+  }
+}
+async function generateCustomRoom(){
+  const modeInteger = MODE_MAP[sessionStorage.getItem('selectedGameMode') || 'classic'] ?? 0;
+  try {
+    const response = await fetch('/api/rooms/create', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ mode: modeInteger })
+    });
+    const data = await response.json();
+    if(response.ok && data.success){ window.location.href = data.redirectUrl || '/queue'; }
+    else { balloon('Could not create custom room.'); }
+  } catch(e){ balloon('Server connection error.'); }
+}
+function toggleJoin(){
+  const box = $('joinBox');
+  box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+  if(box.style.display === 'block'){ $('roomCodeInput').focus(); }
+}
+async function connectToCustomRoom(){
+  const v = $('roomCodeInput').value.trim();
+  if(!v){ balloon('Type a room code first, traveler 🌸'); return; }
+  try {
+    const response = await fetch('/api/rooms/join', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ roomCode: v })
+    });
+    const data = await response.json();
+    if(response.ok && data.success){ window.location.href = data.redirectUrl || '/queue'; }
+    else { balloon(data.message || 'Room not found.'); }
+  } catch(e){ balloon('Could not connect to room.'); }
+}
+
+/* ---------- drawer ---------- */
+function openDrawer(){ $('drawer').classList.add('show'); $('drawerBackdrop').classList.add('show'); }
+function closeDrawer(){ $('drawer').classList.remove('show'); $('drawerBackdrop').classList.remove('show'); }
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){
+    closeDrawer();
+    document.querySelectorAll('.mask.show').forEach(m => m.classList.remove('show'));
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' || e.key === ' '){
+    const w = e.target.closest('.trial-slab');
+    if(w){ e.preventDefault(); w.click(); }
+  }
+});
+$('roomCodeInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') connectToCustomRoom(); });
+
+/* ---------- hall ---------- */
+function toggleHall(){
+  const p = $('hallPanel');
+  const willShow = !p.classList.contains('show');
+  p.classList.toggle('show');
+  if(willShow) renderHall();
+}
+function setupHallSwipes(){
+  const theater = document.querySelector('.theater-stage-card');
+  const hall = $('hallPanel');
+  let x0 = null;
+  theater.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, {passive:true});
+  theater.addEventListener('touchend', e => {
+    if(x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if(x0 !== null && dx < -46) toggleHall();
+    x0 = null;
+  }, {passive:true});
+  hall.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, {passive:true});
+  hall.addEventListener('touchend', e => {
+    if(x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if(dx > 46) toggleHall();
+    x0 = null;
+  }, {passive:true});
+}
+function hallRow(rankLabel, numericRank, username, score, isYou){
+  const crest = isYou ? 'you' : (numericRank === 1 ? 'crest-1' : numericRank === 2 ? 'crest-2' : numericRank === 3 ? 'crest-3' : 'crest-default');
+  return '<div class="player-row' + (isYou ? ' current-user' : '') + '">' +
+    '<div class="nm-wrap"><div class="rank-crest ' + crest + '">' + (isYou ? 'YOU' : escapeHtml(rankLabel)) + '</div>' +
+    '<span class="nm">' + escapeHtml(username) + '</span></div>' +
+    '<span class="pts">' + escapeHtml(String(score)) + ' pts</span></div>';
+}
+async function renderHall(){
+  const list = $('hallList');
+  list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:1rem">Loading legends...</div>';
+  try {
+    const res = await fetch('/api/leaderboard');
+    const players = await res.json();
+    const arr = Array.isArray(players) ? players : [];
+    let html = '';
+    let rank = 1;
+    let userInTop = false;
+    arr.forEach((player, index) => {
+      if(index > 0 && player.score < arr[index - 1].score){ rank = index + 1; }
+      const isTied = arr.filter(p => p.score === player.score).length > 1;
+      const rankLabel = isTied ? ('T-' + rank) : String(rank);
+      const you = player.username === globalUsername;
+      if(you) userInTop = true;
+      html += hallRow(rankLabel, rank, player.username, player.score, you);
+    });
+    if(!userInTop && globalUsername){
+      try {
+        const rankRes = await fetch('/api/user/rank');
+        if(rankRes.ok){
+          const u = await rankRes.json();
+          if(u && u.rank){
+            const isTied = (u.tied_count && u.tied_count > 1);
+            html += hallRow(isTied ? ('T-' + u.rank) : String(u.rank), u.rank, globalUsername, u.score, true);
+          }
+        }
+      } catch(e){}
+    }
+    list.innerHTML = html || '<div style="text-align:center;color:var(--muted);padding:1rem">No legends yet — be the first! 🌸</div>';
+  } catch(e){
+    list.innerHTML = '<div style="text-align:center;color:var(--redstone);padding:1rem">Could not load the Hall.</div>';
+  }
+}
+
+/* ---------- notice ---------- */
+function dismissNotice(){ localStorage.setItem(APP + 'notice_seen', '1'); $('noticeOverlay').classList.remove('show'); }
+function notifyIfNeeded(){ if(!localStorage.getItem(APP + 'notice_seen')) $('noticeOverlay').classList.add('show'); }
+
+/* ---------- rotate shield ---------- */
+function checkRotate(){ if(innerWidth > 760) $('rotateShield').classList.remove('show'); }
+addEventListener('resize', checkRotate);
+
+/* ---------- profile, badges & socket guards ---------- */
+function setPlayerName(name){
+  const who = document.querySelector('.traveler .who b');
+  if(who) who.textContent = name || 'Traveler';
+  const cur = $('curNameInput');
+  if(cur) cur.value = name || '';
+}
+function applyRoleVisibility(name){
+  const l = (name || '').toLowerCase();
+  const isQ = l === 'Creator';
+  const show = (el, on) => { if(el) el.classList.toggle('role-hidden', !on); };
+  show($('navcommunityBtn'), isQ || l === 'community');
+  show($('drawercommunityBtn'), isQ || l === 'community');
+  show($('drawercreator areaBtn'), isQ);
+}
+async function loadProfile(){
+  try {
+    const res = await fetch('/api/user/profile');
+    if(res.status === 401){ window.location.href = '/?restricted=1'; return; }
+    const user = await res.json();
+    globalUsername = user.username || '';
+    setPlayerName(globalUsername || 'Guest');
+    applyRoleVisibility(globalUsername);
+  } catch(e){ /* stay as guest */ }
+}
+async function updateBadgeStatus(){
+  try {
+    const sres = await fetch('/api/support/status');
+    if(sres.ok){ const sdata = await sres.json(); supportUnreadCount = Number(sdata.unread) || 0; }
+  } catch(e){}
+  try {
+    const nres = await fetch('/api/inbox/titles');
+    if(nres.ok){
+      const titles = await nres.json();
+      if(Array.isArray(titles)) allInboxTitles = titles;
+    }
+  } catch(e){}
+  updateFlags();
+}
+function lockThisDevice(token){
+  const val = token || 'BANNED_PERMANENT';
+  localStorage.setItem('mt_device_ban', val);
+  document.cookie = 'mt_device_ban=' + val + '; path=/; max-age=31536000; SameSite=Lax';
+  document.cookie = 'mt_device_ban_client=' + val + '; path=/; max-age=31536000; SameSite=Lax';
+}
+function wireSocket(){
+  if(typeof io !== 'function') return;
+  try {
+    const socket = io();
+    socket.on('force_device_lock', (data) => {
+      lockThisDevice(data && data.lockToken ? data.lockToken : 'BANNED_PERMANENT');
+    });
+    socket.on('force_logout', (data) => {
+      lockThisDevice('BANNED_PERMANENT');
+      alert((data && data.reason) || 'Your access has been restricted.');
+      window.location.href = (data && data.redirectUrl) || '/?restricted=1';
+    });
+    socket.on('redirect_to_lobby', (data) => {
+      const reason = (data && data.reason) || '';
+      if(reason.includes('restricted') || reason.includes('suspended') || reason.includes('Session')){
+        lockThisDevice('BANNED_PERMANENT');
+        alert(reason);
+        window.location.href = '/?restricted=1';
+      }
+    });
+  } catch(e){ /* socket unavailable */ }
+}
+async function signOut(){
+  closeDrawer();
+  try { await fetch('/api/auth/logout', { method:'POST' }); } catch(e){}
+  window.location.href = '/';
+}
+
+/* ---------- boot ---------- */
+(function boot(){
+  renderSlabs();
+  setupHallSwipes();
+  startSky();
+
+  const saved = sessionStorage.getItem('selectedGameMode') || sessionStorage.getItem(APP + 'mode') || 'classic';
+  selectMode(saved);
+
+  document.querySelectorAll('.trial-slab').forEach(w => {
+    w.addEventListener('click', () => sessionStorage.setItem(APP + 'mode', w.dataset.mode));
+  });
+
+  notifyIfNeeded();
+  checkRotate();
+  wireSocket();
+  loadProfile();
+  updateBadgeStatus();
+  setInterval(updateBadgeStatus, 20000);
+})();
+</script>
+</body>
+</html>
