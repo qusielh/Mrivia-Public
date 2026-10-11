@@ -833,6 +833,37 @@
         </div>
     </div>
 
+    <!-- ✏️ PLAYER CHANGE USERNAME MODAL -->
+    <div id="changeUsernameModalOverlay" class="generic-modal-overlay d-none">
+        <div class="mc-panel p-4" style="max-width: 440px; width: 100%; border-color: var(--diamond);">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="font-pixel text-sakura fs-5">✏️ Change Username</span>
+                <button onclick="closeChangeUsernameModal()" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+            </div>
+            <p class="text-white-50 small mb-3">
+                Pick a new username. Letters, numbers, spaces, and underscores (3-16 characters). You can change it once per week.
+            </p>
+
+            <form onsubmit="submitUsernameChange(event)">
+                <div class="mb-2">
+                    <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">CURRENT USERNAME:</label>
+                    <input type="text" id="lobbyCurrentUsernameDisplay" class="mc-input" disabled>
+                </div>
+                <div class="mb-3">
+                    <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">NEW USERNAME (3-16 CHARACTERS):</label>
+                    <input type="text" id="lobbyNewUsernameInput" class="mc-input mb-0" placeholder="New Username..." autocomplete="off" maxlength="16">
+                </div>
+
+                <div id="changeUsernameAlert" class="alert d-none py-2 small font-pixel text-center"></div>
+
+                <div class="d-flex gap-2 mt-3">
+                    <button type="button" onclick="closeChangeUsernameModal()" class="mc-btn stone w-50 font-pixel btn-sm">Cancel</button>
+                    <button type="submit" id="saveUsernameBtn" class="mc-btn sakura w-50 font-pixel btn-sm">Save Username ✨</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- 💬 PLAYER FEEDBACK MODAL -->
     <div id="feedbackModalOverlay" class="generic-modal-overlay d-none">
         <div class="mc-panel p-4" style="max-width: 500px; width: 100%;">
@@ -929,6 +960,11 @@
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openChangePasswordModal()">
                                 🔑 Change Password
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openChangeUsernameModal()">
+                                ✏️ Change Username
                             </button>
                         </li>
                         <li>
@@ -1285,6 +1321,68 @@
             } catch (err) {
                 alertEl.className = "alert alert-danger py-2 small font-pixel text-center";
                 alertEl.innerText = "Network error updating password.";
+                alertEl.classList.remove('d-none');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function openChangeUsernameModal() {
+            document.getElementById('changeUsernameModalOverlay').classList.remove('d-none');
+            document.getElementById('lobbyCurrentUsernameDisplay').value = globalUsername || "";
+            document.getElementById('lobbyNewUsernameInput').value = "";
+            document.getElementById('changeUsernameAlert').classList.add('d-none');
+            setTimeout(() => document.getElementById('lobbyNewUsernameInput').focus(), 100);
+        }
+
+        function closeChangeUsernameModal() {
+            document.getElementById('changeUsernameModalOverlay').classList.add('d-none');
+        }
+
+        async function submitUsernameChange(e) {
+            e.preventDefault();
+            const newName = document.getElementById('lobbyNewUsernameInput').value.trim();
+            const alertEl = document.getElementById('changeUsernameAlert');
+            const btn = document.getElementById('saveUsernameBtn');
+
+            if (!newName) {
+                alertEl.className = "alert alert-warning py-2 small font-pixel text-center";
+                alertEl.innerText = "Please enter a new username.";
+                alertEl.classList.remove('d-none');
+                return;
+            }
+
+            if (newName === (globalUsername || "")) {
+                alertEl.className = "alert alert-warning py-2 small font-pixel text-center";
+                alertEl.innerText = "That is already your username.";
+                alertEl.classList.remove('d-none');
+                return;
+            }
+
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/user/change-username', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newUsername: newName })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    alertEl.className = "alert alert-success py-2 small font-pixel text-center";
+                    alertEl.innerText = data.message || "Username updated! 🌸";
+                    alertEl.classList.remove('d-none');
+                    globalUsername = data.username;
+                    document.getElementById('navUsername').innerText = data.username;
+                    setTimeout(() => window.location.reload(), 1800);
+                } else {
+                    alertEl.className = "alert alert-danger py-2 small font-pixel text-center";
+                    alertEl.innerText = data.error || "Could not update username.";
+                    alertEl.classList.remove('d-none');
+                }
+            } catch (err) {
+                alertEl.className = "alert alert-danger py-2 small font-pixel text-center";
+                alertEl.innerText = "Network error updating username.";
                 alertEl.classList.remove('d-none');
             } finally {
                 btn.disabled = false;

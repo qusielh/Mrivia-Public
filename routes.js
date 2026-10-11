@@ -31,6 +31,21 @@ function setupRoutes(db, io) {
         return "PASS_" + crypto.createHmac('sha256', COOKIE_SECRET).update(password.trim()).digest('hex');
     }
 
+    // 🟢 USERNAME RULES: letters, numbers, single spaces and underscores (3-16 characters)
+    const USERNAME_REGEX = /^[A-Za-z0-9_ ]{3,16}$/;
+    const USERNAME_CHANGE_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // One username change per week
+
+    function normalizeUsername(raw) {
+        return (raw || '').toString().replace(/\s+/g, ' ').trim();
+    }
+
+    function parseDbTimestamp(value) {
+        if (!value) return NaN;
+        let s = String(value).trim().replace(' ', 'T');
+        if (!/[zZ]$|[+\-]\d{2}:?\d{2}$/.test(s)) s += 'Z';
+        return Date.parse(s);
+    }
+
     // 🛡️ Fast In-Memory Set of Active Banned Device Integer IDs
     const bannedDeviceIdsSet = new Set();
 
@@ -82,6 +97,18 @@ function setupRoutes(db, io) {
                         content TEXT NOT NULL,
                         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    );
+                `);
+            } catch (ignore) { }
+
+            try {
+                await db.run(`
+                    CREATE TABLE IF NOT EXISTS username_changes (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER NOT NULL,
+                        old_username TEXT NOT NULL,
+                        new_username TEXT NOT NULL,
+                        changed_at DATETIME DEFAULT CURRENT_TIMESTAMP
                     );
                 `);
             } catch (ignore) { }
@@ -421,18 +448,17 @@ function setupRoutes(db, io) {
             const { username, customPassword } = req.body;
             if (!username) return res.status(400).json({ error: "Username required" });
 
-            const trimmedName = username.trim();
+            const trimmedName = normalizeUsername(username);
 
             if (isProfane(trimmedName, true)) {
                 return res.status(400).json({ error: "Username contains inappropriate language." });
             }
 
-            const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
-            if (!usernameRegex.test(trimmedName)) {
-                return res.status(400).json({ error: "Usernames can only contain letters, numbers, and underscores (3-16 characters)." });
+            if (!USERNAME_REGEX.test(trimmedName)) {
+                return res.status(400).json({ error: "Usernames can only contain letters, numbers, spaces, and underscores (3-16 characters)." });
             }
 
-            const user = await db.get('SELECT * FROM users WHERE username = ?', [trimmedName]);
+            const user = await db.get('SELECT * FROM users WHERE LOWER(username) = LOWER(?)', [trimmedName]);
 
             if (user) return res.json({ exists: true });
 
@@ -478,19 +504,19 @@ function setupRoutes(db, io) {
     router.post('/api/auth/login', async (req, res) => {
         try {
             const { username, secretKey } = req.body;
-            const cleanUser = username ? username.trim() : "";
+            const cleanUser = normalizeUsername(username);
             const cleanKey = secretKey ? secretKey.trim() : "";
 
             let user;
             if (cleanKey.startsWith('MINE_')) {
                 user = await db.get(
-                    'SELECT id, username, score, is_suspended, device_ban_id FROM users WHERE username = ? AND secret_key = ?',
+                    'SELECT id, username, score, is_suspended, device_ban_id FROM users WHERE LOWER(username) = LOWER(?) AND secret_key = ?',
                     [cleanUser, cleanKey]
                 );
             } else {
                 const hashedInput = hashPassword(cleanKey);
                 user = await db.get(
-                    'SELECT id, username, score, is_suspended, device_ban_id FROM users WHERE username = ? AND secret_key = ?',
+                    'SELECT id, username, score, is_suspended, device_ban_id FROM users WHERE LOWER(username) = LOWER(?) AND secret_key = ?',
                     [cleanUser, hashedInput]
                 );
             }
@@ -550,6 +576,87 @@ function setupRoutes(db, io) {
         } catch (err) {
             console.error("Change password error:", err);
             return res.status(500).json({ error: "Server error changing password." });
+        }
+    });
+
+    // 🟢 PLAYER IN-LOBBY USERNAME UPDATE (Once per week + full audit log + history propagation)
+    router.post('/api/user/change-username', requireAuth, async (req, res) => {
+        try {
+            const rawUserId = req.signedCookies.mt_user_id;
+            const userId = rawUserId ? Number(rawUserId) : null;
+            if (!userId || isNaN(userId)) return res.status(401).json({ error: "Unauthorized session" });
+
+            const { newUsername } = req.body;
+            const cleanName = normalizeUsername(newUsername);
+
+            if (!cleanName) return res.status(400).json({ error: "Username required." });
+            if (isProfane(cleanName, true)) {
+                return res.status(400).json({ error: "Username contains inappropriate language." });
+            }
+            if (!USERNAME_REGEX.test(cleanName)) {
+                return res.status(400).json({ error: "Usernames can only contain letters, numbers, spaces, and underscores (3-16 characters)." });
+            }
+
+            const me = await db.get('SELECT id, username FROM users WHERE id = ?', [userId]);
+            if (!me) return res.status(404).json({ error: "Account not found." });
+
+            const oldName = me.username;
+            if (oldName === 'Creator') {
+                return res.status(403).json({ error: "The admin account username cannot be changed." });
+            }
+
+            if (cleanName.toLowerCase() === (oldName || '').toLowerCase()) {
+                return res.status(400).json({ error: "That is already your username." });
+            }
+
+            // ⏳ Weekly cooldown based on the audit log (survives renames via stable user_id)
+            const lastChange = await db.get(
+                'SELECT changed_at FROM username_changes WHERE user_id = ? ORDER BY id DESC LIMIT 1',
+                [userId]
+            );
+            if (lastChange && lastChange.changed_at) {
+                const lastMs = parseDbTimestamp(lastChange.changed_at);
+                if (!isNaN(lastMs)) {
+                    const elapsed = Date.now() - lastMs;
+                    if (elapsed < USERNAME_CHANGE_COOLDOWN_MS) {
+                        const remain = USERNAME_CHANGE_COOLDOWN_MS - elapsed;
+                        const days = Math.floor(remain / 86400000);
+                        const hours = Math.floor((remain % 86400000) / 3600000);
+                        const mins = Math.floor((remain % 3600000) / 60000);
+                        return res.status(429).json({ error: `You can only change your username once per week. Try again in ${days}d ${hours}h ${mins}m.` });
+                    }
+                }
+            }
+
+            // 🛡️ Case-insensitive uniqueness (prevents lookalike impersonation)
+            const taken = await db.get(
+                'SELECT id FROM users WHERE LOWER(username) = LOWER(?) AND id != ?',
+                [cleanName, userId]
+            );
+            if (taken) return res.status(409).json({ error: "That username is already taken." });
+
+            // 💾 Apply the rename
+            await db.run('UPDATE users SET username = ? WHERE id = ?', [cleanName, userId]);
+
+            // 🔁 Propagate the new name across historical records (case-insensitive matching)
+            await db.run('UPDATE feedback SET username = ? WHERE LOWER(username) = LOWER(?)', [cleanName, oldName]);
+            await db.run('UPDATE reports SET reporter_username = ? WHERE LOWER(reporter_username) = LOWER(?)', [cleanName, oldName]);
+            await db.run('UPDATE reports SET target_username = ? WHERE LOWER(target_username) = LOWER(?)', [cleanName, oldName]);
+            await db.run('UPDATE banned_devices SET username = ? WHERE LOWER(username) = LOWER(?)', [cleanName, oldName]);
+
+            // 🧾 Audit log entry (never deleted, so rename cannot hide a ban)
+            await db.run(
+                'INSERT INTO username_changes (user_id, old_username, new_username) VALUES (?, ?, ?)',
+                [userId, oldName, cleanName]
+            );
+
+            userCache[userId] = cleanName;
+
+            console.log(`✏️ [Security] User ID #${userId} renamed from "${oldName}" to "${cleanName}".`);
+            return res.json({ success: true, message: "Username updated successfully! 🌸", username: cleanName });
+        } catch (err) {
+            console.error("Change username error:", err);
+            return res.status(500).json({ error: "Server error changing username." });
         }
     });
 

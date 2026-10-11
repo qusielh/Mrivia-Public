@@ -131,8 +131,16 @@ const db = {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
+
+            CREATE TABLE IF NOT EXISTS username_changes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                old_username TEXT NOT NULL,
+                new_username TEXT NOT NULL,
+                changed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
         `);
-        console.log("🟢 Connected to Turso Cloud DB & Verified Tables (Users, Devices, Feedback, Reports, Announcements).");
+        console.log("🟢 Connected to Turso Cloud DB & Verified Tables (Users, Devices, Feedback, Reports, Announcements, Username Changes).");
 
         // 🌸 Initialize community & supporters ledger in Turso
         await initcommunityDatabase(db);
