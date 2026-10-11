@@ -602,7 +602,7 @@ function setupRoutes(db, io) {
 
             const oldName = me.username;
             if (oldName === 'Creator') {
-                return res.status(403).json({ error: "The admin account username cannot be changed." });
+                return res.status(409).json({ error: "That username is already taken." });
             }
 
             if (cleanName.toLowerCase() === (oldName || '').toLowerCase()) {
@@ -955,6 +955,27 @@ function setupRoutes(db, io) {
             });
         } catch (e) {
             return res.status(500).json({ error: "Database inspect error" });
+        }
+    });
+
+    // 🧾 ADMIN: USERNAME CHANGE AUDIT LOG (full rename history for a user)
+    router.get('/api/admin/username-changes', requireCreator, async (req, res) => {
+        try {
+            const { username } = req.query;
+            if (!username) return res.status(400).json({ error: "Username required" });
+
+            const targetName = normalizeUsername(username);
+            const user = await db.get('SELECT id FROM users WHERE LOWER(username) = LOWER(?)', [targetName]);
+            if (!user) return res.status(404).json({ error: `Account "${targetName}" not found.` });
+
+            const rows = await db.all(
+                'SELECT old_username, new_username, changed_at FROM username_changes WHERE user_id = ? ORDER BY id DESC',
+                [user.id]
+            );
+
+            return res.json({ history: rows });
+        } catch (e) {
+            return res.status(500).json({ error: "Database audit error" });
         }
     });
 
