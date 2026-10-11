@@ -150,7 +150,7 @@ p,.text-white-75,.notice-point p,.lobby-notice-block p,.story-content p{
 /* ☰ Menu — the deep-rose token with pulse flag */
 .rack-btn.menu{color:#fff;background:linear-gradient(180deg,oklch(0.46 0.11 356 / .95),oklch(0.32 0.08 348 / .96));border:1px solid rgba(255,64,129,.75);box-shadow:inset 0 2px 0 rgba(255,255,255,.22),0 3px 0 oklch(0.2 0.06 348 / .96),0 7px 14px rgba(0,0,0,.4)}
 .rack-btn.menu:hover{box-shadow:inset 0 2px 0 rgba(255,255,255,.28),0 5px 0 oklch(0.2 0.06 348 / .96),0 14px 26px rgba(255,64,129,.5)}
-.rack-btn.menu .dot{width:7px;height:7px;border-radius:50%;background:var(--warning-gold);box-shadow:0 0 8px 2px rgba(255,202,26,.8);display:none}
+.rack-btn.menu .dot{width:7px;height:7px;border-radius:50%;background:var(--bright-rose);box-shadow:0 0 8px 2px rgba(255,64,129,.85);display:none}
 .rack-btn.menu.has-flag .dot{display:block;animation:blink 1.4s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 .role-hidden{display:none!important}
@@ -469,10 +469,10 @@ p,.text-white-75,.notice-point p,.lobby-notice-block p,.story-content p{
 .relic .rt{line-height:1.2;flex:1;min-width:0}
 .relic .rt b{font-family:var(--font-display);font-weight:600;font-size:.88rem;display:block}
 .relic .rt span{font-family:var(--font-sans);font-size:.72rem;color:var(--muted);font-weight:600;display:block;margin-top:.18rem;line-height:1.35}
-.relic .flag{font-family:var(--font-pixel);font-size:.38rem;color:var(--gold);background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.4);border-radius:999px;padding:.35rem .5rem;display:none;white-space:nowrap}
+.relic .flag{font-family:var(--font-pixel);font-size:.38rem;color:#ffe1e9;background:rgba(255,64,129,.22);border:1px solid rgba(255,64,129,.6);border-radius:999px;padding:.35rem .5rem;display:none;white-space:nowrap;box-shadow:0 0 10px rgba(255,64,129,.4)}
 .relic .flag.show{display:inline-block;animation:popIn .3s var(--ease)}
 @keyframes popIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
-.relic .arrow{color:#a88395;font-size:.8rem}
+.relic .arrow{color:var(--sakura);opacity:.7;font-size:.9rem}
 .relic:hover .arrow{color:var(--sakura)}
 .relic.r-rules:hover{border-color:rgba(190,140,255,.6);box-shadow:0 8px 20px -10px rgba(190,140,255,.45)}
 .relic.r-inbox:hover{border-color:rgba(255,210,74,.55);box-shadow:0 8px 20px -10px rgba(255,210,74,.4)}
@@ -483,7 +483,7 @@ p,.text-white-75,.notice-point p,.lobby-notice-block p,.story-content p{
 .relic.r-support:hover{border-color:rgba(255,145,77,.55);box-shadow:0 8px 20px -10px rgba(255,145,77,.45)}
 .relic.r-sign:hover{border-color:#a88395}
 .drawer-foot{padding:.9rem 1.2rem;border-top:1px solid var(--line);text-align:center}
-.drawer-foot span{font-family:var(--font-pixel);font-size:.38rem;letter-spacing:.12em;color:#8a6f7e}
+.drawer-foot span{font-family:var(--font-pixel);font-size:.38rem;letter-spacing:.12em;color:var(--muted)}
 
 /* ============================================================
    MODALS
@@ -535,7 +535,7 @@ input.file-input::-webkit-file-upload-button{background:rgba(255,94,94,.14);bord
     border:2px solid oklch(0.42 0.06 350 / .6);border-radius:13px;background:oklch(0.2 0.04 340 / .6);
     padding:.8rem .9rem;transition:border-color .2s,transform .2s,background .2s;
 }
-.inbox-item:hover{border-color:rgba(255,215,0,.55);transform:translateX(4px);background:oklch(0.23 0.05 340 / .7)}
+.inbox-item:hover{border-color:rgba(255,64,129,.6);transform:translateX(4px);background:oklch(0.23 0.05 340 / .7)}
 .inbox-item .pumpkin{width:34px;height:34px;flex:none;border-radius:9px;display:grid;place-items:center;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.35)}
 .inbox-item .pumpkin svg{width:50%;height:50%}
 .inbox-item .tx{flex:1;min-width:0;line-height:1.3}
@@ -546,10 +546,10 @@ input.file-input::-webkit-file-upload-button{background:rgba(255,94,94,.14);bord
 .inbox-item.unread .unread-dot{display:block}
 .pager{display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;border-top:2px solid var(--line);padding-top:1rem}
 .page-dot{width:30px;height:30px;border-radius:8px;border:2px solid var(--line);background:oklch(0.16 0.03 340);color:var(--muted);font-family:var(--font-pixel);font-size:.4rem;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
-.page-dot.active{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.12)}
-.page-dot:hover{border-color:var(--gold);color:var(--gold)}
+.page-dot.active{border-color:var(--sakura);color:#140811;background:var(--sakura)}
+.page-dot:hover{border-color:var(--sakura);color:var(--sakura)}
 .page-arrow{border:2px solid var(--line);background:oklch(0.16 0.03 340);border-radius:8px;padding:.4rem .9rem;font-family:var(--font-pixel);font-size:.42rem;color:var(--muted);cursor:pointer;transition:border-color .2s,color .2s}
-.page-arrow:hover:not([disabled]){border-color:var(--gold);color:var(--gold)}
+.page-arrow:hover:not([disabled]){border-color:var(--sakura);color:var(--sakura)}
 .page-arrow[disabled]{opacity:.4;cursor:not-allowed}
 
 /* letter sheet */
@@ -629,14 +629,13 @@ input.file-input::-webkit-file-upload-button{background:rgba(255,94,94,.14);bord
 .toast.out{animation:tOut .3s forwards}
 @keyframes tOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
 
-/* rotate shield */
-.rotate-shield{position:fixed;inset:0;z-index:200;background:#1b0f1c;display:none;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;text-align:center;padding:2rem}
-.rotate-shield.show{display:flex}
-.rotate-shield .rot-ph{width:76px;height:76px;border:2px dashed var(--sakura);border-radius:18px;display:grid;place-items:center;color:var(--sakura);animation:spinHint 2.2s ease-in-out infinite}
-@keyframes spinHint{0%{transform:rotate(0deg)}60%{transform:rotate(360deg)}100%{transform:rotate(360deg)}}
-.rotate-shield .rot-ph svg{width:40%;height:40%}
-.rotate-shield h3{font-family:var(--font-display);font-weight:600;font-size:1.2rem;margin:0}
-.rotate-shield p{font-family:var(--font-pixel);font-size:.48rem;letter-spacing:.1em;color:var(--muted);line-height:1.9;max-width:34ch;margin:0}
+/* unified mobile rotate gate (mirrors the live lobby & every other page) */
+#rotatePromptOverlay{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;background:rgba(14,6,12,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:99999;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
+#rotatePromptOverlay .font-pixel{font-family:var(--font-pixel)}
+#rotatePromptOverlay .text-sakura{color:var(--sakura)}
+.rotate-phone-animation{width:60px;height:60px;margin-bottom:1.5rem;animation:rotateDevice 2.4s ease-in-out infinite alternate}
+@keyframes rotateDevice{0%,40%{transform:rotate(0deg)}70%,100%{transform:rotate(90deg)}}
+@media (max-width:1024px) and (orientation:portrait){#rotatePromptOverlay{display:flex!important}}
 
 /* footer */
 .foot{position:relative;z-index:3;max-width:1200px;margin:0 auto;width:100%;padding:1rem 1.2rem 1.1rem;text-align:center;flex:none}
@@ -886,27 +885,62 @@ input.file-input::-webkit-file-upload-button{background:rgba(255,94,94,.14);bord
   <div class="modal-pane">
     <div class="pane-head">
       <span class="ph-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h10a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Z" stroke="#be8cff" stroke-width="1.7" fill="rgba(190,140,255,.12)"/><path d="M17 7h2a2 2 0 0 1 2 2v11h-4" stroke="#be8cff" stroke-width="1.7" fill="rgba(190,140,255,.05)"/><path d="M8 9h5M8 13h5" stroke="#be8cff" stroke-width="1.6"/></svg></span>
-      <div class="ph-t"><h3>Rules &amp; Notices<small>THE REALM STAYS GENTLE BY DESIGN</small></h3></div>
+      <div class="ph-t"><h3>Rules &amp; Notices<small>COMMUNITY GUIDELINES &amp; SAFETY NOTICES</small></h3></div>
     </div>
     <div class="pane-body" style="display:block">
-      <div class="mc-field" style="margin-bottom:1rem"><b style="font-family:var(--font-display);font-size:.95rem">Our quiet promises</b></div>
-      <div class="letter-sheet" style="background:linear-gradient(180deg,#f6f0ff,#e9defa);color:#49306b">
-        <div class="ls-eyebrow">THE KEEPER'S COVENANT</div>
-        <div class="ls-body" style="color:#49306b">
-          <b>1. Kindness floors everything.</b> No harassment, no slurs, no personal attacks — in chat, pings, or drawn words.<br>
-          <b>2. What happens in the garden stays wholesome.</b> No adult content, no gore, no real cruelty. Pixelary draws stay cute.<br>
-          <b>3. One person, one waypoint.</b> Multi-account tricks and stat padding are against the codex.<br>
-          <b>4. Your details are your own.</b> We never ask for — and never store — email, phone, or real name. Username + a drop-secret only.<br>
-          <b>5. Reports are read by a real keeper.</b> Redstone flags reach Creator, and are answered with care.
+      <div style="text-align:center;margin-bottom:1rem">
+        <span class="ls-eyebrow" style="color:var(--sakura)">🌸 COMMUNITY GUIDELINES &amp; SAFETY NOTICES 🌸</span>
+        <b style="display:block;font-family:var(--font-display);font-size:1rem;margin-top:.35rem">Rules &amp; Safety Guidelines</b>
+        <p style="color:var(--muted);font-size:.8rem;margin-top:.35rem;margin-bottom:0">Please review these notes to keep your experience safe, fun, and secure:</p>
+      </div>
+
+      <div class="lobby-notice-block" style="border-color:var(--sakura)">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem">
+          <span style="font-size:1.05rem">🌸</span>
+          <b style="font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.05em;color:var(--sakura)">Official Website &amp; Anti-Impersonation Notice</b>
         </div>
-        <div class="ls-sign">— Creator, keeper of the garden</div>
+        <p style="font-size:.85rem;line-height:1.55;margin-bottom:.55rem"><b>This is the only official Mrivia website</b> created solely by <b>Creator</b>. Creator does <b>not</b> have public social media accounts, alternative community pages, or external payment links anywhere else on the internet.</p>
+        <p style="font-size:.85rem;line-height:1.55;margin:0">Never trust anyone claiming to represent Creator or soliciting funds outside of this website. If any official links or campaigns are ever launched, they will be announced right here! You can always reach out directly using the <b>Feedback or Q&amp;A</b> button.</p>
       </div>
-      <div class="kid-safety-box">
-        <p style="font-weight:600;line-height:1.65"><b>🛡️ Stay safe, always.</b> Never share your real name, school, phone number, address, or passwords with anyone — here or anywhere online. If a stranger asks for personal details or makes you uncomfortable, tell a trusted adult and raise a redstone flag with the Report tool. The keeper reads every flag.</p>
-      </div>
+
       <div class="lobby-notice-block">
-        <p style="font-weight:600;line-height:1.65"><b>Be the reason someone smiles today.</b> Kindness is the whole garden law — no exceptions. Report bad behaviour instead of answering it, and let the keepers handle the rest.</p>
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem">
+          <span style="font-size:1.05rem">🛡️</span>
+          <b style="font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.05em;color:var(--sakura)">Chat Safety &amp; Reporting</b>
+        </div>
+        <p style="font-size:.85rem;line-height:1.55;margin-bottom:.55rem">Never share sensitive personal info in the chat. If you choose to share your Discord tag or social handle, that responsibility is entirely on you.</p>
+        <p style="font-size:.85rem;line-height:1.55;margin:0">Never listen to anyone attempting to lie, manipulate, or exploit you. Always report any troll, scammer, or harmful behavior by taking a clean screenshot that clearly shows both their username and the chat!</p>
       </div>
+
+      <div class="kid-safety-box">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
+          <span style="font-size:1.05rem">⚠️</span>
+          <b style="font-family:var(--font-pixel);font-size:.48rem;letter-spacing:.05em;color:var(--warning-gold)">IF YOU ARE A KID, PLEASE READ THIS:</b>
+        </div>
+        <p style="font-size:.85rem;line-height:1.6;margin-bottom:.5rem">I know you just want to play games and have fun, but <b>please do not share any personal info whatsoever</b>. You are completely protected from anything bad people might tell you.</p>
+        <p style="font-size:.85rem;line-height:1.6;margin:0">Do not answer personal questions strangers ask you, and don't let emotional tricks fool you. <b>Your safety matters above everything else</b>—you can always report them and I will ban them as soon as I can.</p>
+      </div>
+
+      <div class="lobby-notice-block">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem">
+          <span style="font-size:1.05rem">⛏️</span>
+          <b style="font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.05em;color:var(--diamond)">Gameplay Optimization Notes</b>
+        </div>
+        <p style="font-size:.85rem;line-height:1.55;margin-bottom:.55rem">Word pools have been intentionally optimized so you don't need to stress over material variations. You don't guess <i>"DIAMOND PICKAXE"</i>—simply guess <b>"PICKAXE"</b>! The same applies to <b>SWORD, DOOR, STAIRS, SPEAR</b>, etc... Pixelary allows you to use custom colors and save them in the bottom slots, if you spend a whole round/attempt without submitting anything you will be disconnected (afk), and you can come back anytime by submitting an answer.</p>
+        <p style="font-size:.85rem;line-height:1.55;margin:0">If you ever spot a missing mob or item, please let me know! I will gladly update them. Feel free to leave feedback—my ultimate goal is to make sure everyone has fun.</p>
+      </div>
+
+      <div class="lobby-notice-block" style="border-color:var(--diamond)">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem">
+          <span style="font-size:1.05rem">📱</span>
+          <b style="font-family:var(--font-pixel);font-size:.5rem;letter-spacing:.05em;color:var(--diamond)">Mobile Players: Permanent Fullscreen &amp; App Install</b>
+        </div>
+        <p style="font-size:.85rem;line-height:1.55;margin-bottom:.55rem">Want to play without the browser address bar getting in your way? You can install Mrivia as a native-feeling app!</p>
+        <p style="font-size:.85rem;line-height:1.55;margin-bottom:.55rem"><b>How to install:</b> Tap your mobile browser's menu (<b>⋮</b> three dots on Chrome or <b>Share</b> on Safari) and select <b>"Install app"</b> or <b>"Add to Home screen"</b>. Once installed, launching Mrivia from your home screen keeps the game in <b>permanent horizontal fullscreen</b> across all matches with zero browser clutter!</p>
+        <p style="font-size:.85rem;line-height:1.55;margin:0"><i>Troubleshooting:</i> If your browser doesn't show "Install app" immediately, tap <b>"Add shortcut"</b> or <b>"Add to Home screen"</b> first, or refresh the page and check the menu again.</p>
+      </div>
+
+      <p style="color:var(--muted);text-align:center;font-size:.62rem;letter-spacing:.04em;margin:.5rem 0 0">NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</p>
     </div>
     <div class="pane-foot">
       <button class="mc-btn sakura" onclick="closeModal('rulesModal')">I understand 🌸</button>
@@ -1081,11 +1115,15 @@ input.file-input::-webkit-file-upload-button{background:rgba(255,94,94,.14);bord
 <!-- ============ TOASTS ============ -->
 <div class="toast-host" id="toastHost"></div>
 
-<!-- ============ ROTATE SHIELD ============ -->
-<div class="rotate-shield" id="rotateShield">
-  <div class="rot-ph"><svg viewBox="0 0 24 24" fill="none"><path d="M15 5 19.5 9.5 15 14" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 9.5H9a4 4 0 0 0 0 8h2.5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></div>
-  <h3>Rotate to explore</h3>
-  <p>The lobby blooms best in a wide view.<br>Turn your device sideways, traveler.</p>
+<!-- ============ MOBILE ROTATE GATE (unified with the rest of Mrivia) ============ -->
+<div id="rotatePromptOverlay">
+  <svg class="rotate-phone-animation" viewBox="0 0 24 24" fill="none" stroke="var(--sakura)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+    <path d="M12 18h.01"/>
+  </svg>
+  <span class="font-pixel text-sakura small d-block mb-2">🌸 LANDSCAPE MODE REQUIRED 🌸</span>
+  <h2 class="fs-4 fw-bold text-white mb-2" style="font-family:var(--font-display)">Please Rotate Your Device</h2>
+  <p class="text-white-50 small mb-0" style="max-width:320px;font-family:var(--font-sans)">Mrivia is designed for a horizontal screen. Turn your phone sideways to enter the lobby arena!</p>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -1887,9 +1925,7 @@ async function renderHall(){
 function dismissNotice(){ localStorage.setItem(APP + 'notice_seen', '1'); $('noticeOverlay').classList.remove('show'); }
 function notifyIfNeeded(){ if(!localStorage.getItem(APP + 'notice_seen')) $('noticeOverlay').classList.add('show'); }
 
-/* ---------- rotate shield ---------- */
-function checkRotate(){ if(innerWidth > 760) $('rotateShield').classList.remove('show'); }
-addEventListener('resize', checkRotate);
+/* ---------- rotate gate is pure-CSS (see #rotatePromptOverlay) ---------- */
 
 /* ---------- profile, badges & socket guards ---------- */
 function setPlayerName(name){
@@ -1978,7 +2014,6 @@ async function signOut(){
   });
 
   notifyIfNeeded();
-  checkRotate();
   wireSocket();
   loadProfile();
   updateBadgeStatus();
