@@ -281,7 +281,8 @@ function setupRoutes(db, io) {
         { url: '/szc-solo', file: 'szc_solo.html', guard: requireAuth },
         { url: '/about', file: 'project-information.html', guard: null },
         { url: '/admin', file: 'removed-admin.html', guard: requireCreator },
-        { url: '/community', file: 'removed-page.html', guard: requireAuth }
+        { url: '/community', file: 'removed-page.html', guard: requireAuth },
+        { url: '/bloom', file: 'lobby_bloom.html', guard: requireCreator }
     ];
 
     pageRoutes.forEach(({ url, file, guard }) => {
@@ -305,7 +306,8 @@ function setupRoutes(db, io) {
         '/About%20me.html': '/about',
         '/removed-admin.html': '/admin',
         '/removed-page.html': '/community',
-        '/letter%20to%20community.html': '/community'
+        '/letter%20to%20community.html': '/community',
+        '/lobby_bloom.html': '/bloom'
     };
     router.use((req, res, next) => {
         if (req.method !== 'GET') return next();
