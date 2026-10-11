@@ -113,6 +113,10 @@
             color: var(--sakura);
         }
 
+        .text-diamond {
+            color: var(--diamond);
+        }
+
         .mc-panel {
             position: relative;
             background: linear-gradient(180deg, oklch(0.24 0.05 340 / 0.75), oklch(0.18 0.04 340 / 0.82));
@@ -504,10 +508,11 @@
         }
 
         .lobby-notice-card {
-            background: linear-gradient(180deg, rgba(42, 20, 36, 0.97), rgba(26, 11, 22, 0.98));
+            background: linear-gradient(180deg, rgba(42, 20, 36, 0.82), rgba(26, 11, 22, 0.86));
             border: 3px solid var(--sakura);
             border-radius: 24px;
             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(255, 183, 197, 0.25);
+            backdrop-filter: blur(20px);
             max-width: 650px;
             width: 100%;
             max-height: 88vh;
@@ -883,6 +888,116 @@
             cursor: not-allowed;
             transform: none;
         }
+
+        /* ========================================================= */
+        /* 🌸 3. POLISHED MODAL & ACTION STYLES (SHARED ACROSS LOBBY) */
+        /* ========================================================= */
+        .modal-glass {
+            background: rgba(26, 12, 22, 0.78) !important;
+            backdrop-filter: blur(20px) !important;
+            border-radius: 20px !important;
+            box-shadow: 0 20px 65px rgba(0, 0, 0, 0.6);
+        }
+
+        .mc-modal-head {
+            background: linear-gradient(90deg, rgba(255, 183, 197, 0.14), rgba(77, 237, 226, 0.08));
+            border: 1px solid rgba(255, 183, 197, 0.18);
+            border-radius: 12px;
+            padding: 0.55rem 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .mc-modal-close {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid oklch(0.55 0.08 340 / 0.5);
+            color: #ffffff;
+            font-family: var(--font-pixel);
+            font-size: 0.8rem;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            padding: 0;
+            transition: background 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+        }
+
+        .mc-modal-close:hover {
+            background: rgba(255, 183, 197, 0.25);
+            border-color: var(--sakura);
+            transform: rotate(90deg) scale(1.05);
+            box-shadow: 0 0 12px rgba(255, 183, 197, 0.35);
+        }
+
+        .mc-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(77, 237, 226, 0.35);
+            color: var(--foreground);
+            font-family: var(--font-pixel);
+            font-size: 0.68rem;
+            padding: 0.5rem 0.9rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
+        }
+
+        .mc-back-btn:hover {
+            background: rgba(77, 237, 226, 0.18);
+            box-shadow: 0 0 14px rgba(77, 237, 226, 0.3);
+            transform: translateX(-2px);
+        }
+
+        .mc-pill-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-family: var(--font-pixel);
+            font-size: 0.68rem;
+            border: 1px solid rgba(255, 183, 197, 0.4);
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(255, 183, 197, 0.25), rgba(77, 237, 226, 0.18));
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+        }
+
+        .mc-pill-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(255, 183, 197, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .mc-pill-btn.danger {
+            background: linear-gradient(135deg, rgba(255, 94, 94, 0.28), rgba(255, 170, 0, 0.18));
+            border-color: rgba(255, 94, 94, 0.5);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+            .status-dot.amber {
+                background: #f6c453;
+                box-shadow: 0 0 6px #f6c453;
+            }
+
+            .status-dot.sakura {
+                background: var(--sakura);
+                box-shadow: 0 0 6px rgba(255, 183, 197, 0.6);
+            }
     </style>
 </head>
 <body>
@@ -992,19 +1107,17 @@
             </div>
 
             <div class="mt-3 pt-2 border-top border-light border-opacity-10">
-                <button id="closeLobbyNoticeBtn" onclick="dismissLobbyNotice()" class="mc-btn stone font-pixel" style="font-size: 0.85rem;">
-                    Close Notice
-                </button>
+                <button id="closeLobbyNoticeBtn" onclick="dismissLobbyNotice()" class="mc-pill-btn">Close Notice 🌸</button>
             </div>
         </div>
     </div>
 
     <!-- 📬 INBOX ANNOUNCEMENTS TITLES MODAL (PAGINATED) -->
     <div id="inboxModalOverlay" class="generic-modal-overlay d-none">
-        <div class="mc-panel p-4" style="max-width: 580px; width: 100%; max-height: 86vh; display: flex; flex-direction: column;">
-            <div class="d-flex justify-content-between align-items-center mb-2 border-bottom border-light border-opacity-10 pb-2 flex-shrink-0">
+        <div class="mc-panel modal-glass p-4" style="max-width: 580px; width: 100%; max-height: 86vh; display: flex; flex-direction: column;">
+            <div class="d-flex justify-content-between align-items-center mc-modal-head flex-shrink-0">
                 <span class="font-pixel text-sakura fs-5">📬 Official Announcements</span>
-                <button onclick="closeInboxModal()" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+                <button onclick="closeInboxModal()" class="mc-modal-close" aria-label="Close">✕</button>
             </div>
 
             <p class="text-white-50 small mb-3 flex-shrink-0" style="font-size: 0.78rem;">
@@ -1025,32 +1138,35 @@
 
     <!-- 📖 INBOX FULL MESSAGE VIEWER MODAL (ON-DEMAND LAZY LOADED) -->
     <div id="inboxMessageViewerModal" class="generic-modal-overlay d-none">
-        <div class="mc-panel p-4" style="max-width: 540px; width: 100%; border-color: var(--diamond);">
-            <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-light border-opacity-10 pb-2">
+        <div class="mc-panel modal-glass p-4" style="max-width: 540px; width: 100%; border-color: var(--diamond);">
+            <div class="d-flex justify-content-between align-items-center mc-modal-head">
                 <div>
                     <span class="badge bg-danger font-pixel mb-1" style="font-size: 0.55rem;">FROM Creator</span>
                     <h3 class="fs-5 fw-bold text-white mb-0 font-pixel" id="viewerAnnounceTitle">---</h3>
                 </div>
-                <span class="text-white-50 small" id="viewerAnnounceDate" style="font-size: 0.68rem;">--</span>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-white-50 small" id="viewerAnnounceDate" style="font-size: 0.68rem;">--</span>
+                    <button onclick="closeInboxViewerModal()" class="mc-modal-close" aria-label="Close">✕</button>
+                </div>
             </div>
 
-            <div class="p-3 mb-4 rounded-3 text-white-75" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255, 183, 197, 0.2); font-size: 0.92rem; line-height: 1.65; max-height: 250px; overflow-y: auto; word-break: break-word;" id="viewerAnnounceBody">
+            <div class="p-3 mb-4 rounded-3" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255, 183, 197, 0.2); font-size: 0.92rem; line-height: 1.65; max-height: 250px; overflow-y: auto; word-break: break-word; color: rgba(255,255,255,0.92);" id="viewerAnnounceBody">
                 Loading announcement from realm...
             </div>
 
             <div class="d-flex justify-content-between align-items-center">
-                <button onclick="backToInboxList()" class="mc-btn stone font-pixel btn-sm" style="font-size: 0.72rem;">← Back to Inbox</button>
-                <button onclick="closeInboxViewerModal()" class="mc-btn-gray font-pixel" style="font-size: 0.75rem;">Close</button>
+                <button onclick="backToInboxList()" class="mc-back-btn">← Back to Inbox</button>
+                <button onclick="closeInboxViewerModal()" class="mc-pill-btn">Done ✓</button>
             </div>
         </div>
     </div>
 
     <!-- 🔑 PLAYER CHANGE PASSWORD MODAL -->
     <div id="changePasswordModalOverlay" class="generic-modal-overlay d-none">
-        <div class="mc-panel p-4" style="max-width: 440px; width: 100%; border-color: var(--sakura);">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="mc-panel modal-glass p-4" style="max-width: 440px; width: 100%; border-color: var(--sakura);">
+            <div class="d-flex justify-content-between align-items-center mc-modal-head">
                 <span class="font-pixel text-sakura fs-5">🔑 Change Password</span>
-                <button onclick="closeChangePasswordModal()" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+                <button onclick="closeChangePasswordModal()" class="mc-modal-close" aria-label="Close">✕</button>
             </div>
             <p class="text-white-50 small mb-3">
                 Set a new password for your account. It updates immediately so you can log in on other devices anytime.
@@ -1078,10 +1194,10 @@
 
     <!-- ✏️ PLAYER CHANGE USERNAME MODAL -->
     <div id="changeUsernameModalOverlay" class="generic-modal-overlay d-none">
-        <div class="mc-panel p-4" style="max-width: 440px; width: 100%; border-color: var(--diamond);">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="mc-panel modal-glass p-4" style="max-width: 440px; width: 100%; border-color: var(--diamond);">
+            <div class="d-flex justify-content-between align-items-center mc-modal-head">
                 <span class="font-pixel text-sakura fs-5">✏️ Change Username</span>
-                <button onclick="closeChangeUsernameModal()" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+                <button onclick="closeChangeUsernameModal()" class="mc-modal-close" aria-label="Close">✕</button>
             </div>
             <p class="text-white-50 small mb-3">
                 Pick a new username. Letters, numbers, spaces, and underscores (3-16 characters). You can change it once per week.
@@ -1109,10 +1225,10 @@
 
     <!-- 💬 PLAYER FEEDBACK MODAL -->
     <div id="feedbackModalOverlay" class="generic-modal-overlay d-none">
-        <div class="mc-panel p-4" style="max-width: 500px; width: 100%;">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="mc-panel modal-glass p-4" style="max-width: 500px; width: 100%;">
+            <div class="d-flex justify-content-between align-items-center mc-modal-head">
                 <span class="font-pixel text-sakura fs-5">💬 Feedback & Suggestions</span>
-                <button onclick="toggleFeedbackModal(false)" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+                <button onclick="toggleFeedbackModal(false)" class="mc-modal-close" aria-label="Close">✕</button>
             </div>
             <p class="text-white-50 small mb-3">Found a bug? Have a game idea or item suggestion? Your feedback directly helps shape Mrivia!</p>
 
@@ -1129,10 +1245,10 @@
 
     <!-- 🚨 PLAYER REPORT MODAL -->
     <div id="reportModalOverlay" class="generic-modal-overlay d-none">
-        <div class="mc-panel p-4" style="max-width: 520px; width: 100%; border-color: var(--redstone);">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="mc-panel modal-glass p-4" style="max-width: 520px; width: 100%; border-color: var(--redstone);">
+            <div class="d-flex justify-content-between align-items-center mc-modal-head">
                 <span class="font-pixel text-danger fs-5">🚨 Report a Player</span>
-                <button onclick="toggleReportModal(false)" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+                <button onclick="toggleReportModal(false)" class="mc-modal-close" aria-label="Close">✕</button>
             </div>
             <p class="text-white-50 small mb-3">
                 Report toxic, exploiting, or inappropriate players. <b>All fields including a clean screenshot are required.</b> Reports go directly to the admin.
@@ -1171,10 +1287,10 @@
                     <div class="support-avatar">🌸</div>
                     <div>
                         <div class="support-contact-name">Creator</div>
-                        <div class="support-contact-status"><span class="online-dot"></span>Online • replies quickly</div>
+                        <div class="support-contact-status"><span class="status-dot amber"></span>Will respond as soon as possible</div>
                     </div>
                 </div>
-                <button onclick="closeSupportModal()" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+                <button onclick="closeSupportModal()" class="mc-modal-close" aria-label="Close">✕</button>
             </div>
             <p class="text-white-50 small mb-3 flex-shrink-0" style="font-size: 0.76rem;">
                 Need help or want to tell Creator something? Message them here.
