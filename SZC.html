@@ -812,7 +812,7 @@
                 <span class="font-pixel fs-4 text-warning">+250 POINTS</span>
             </div>
 
-            <button onclick="location.href='lobby.html'" class="mc-btn-sakura w-100 font-pixel" style="font-size: 0.8rem;">RETURN TO LOBBY</button>
+            <button onclick="location.href='/lobby'" class="mc-btn-sakura w-100 font-pixel" style="font-size: 0.8rem;">RETURN TO LOBBY</button>
         </div>
     </div>
 
@@ -955,7 +955,7 @@
 
         function leaveArena() {
             if (socket) socket.emit('player_leave_match');
-            window.location.href = 'lobby.html';
+            window.location.href = '/lobby';
         }
 
         function initSZCSockets() {
@@ -1010,7 +1010,7 @@
 
             socket.on('redirect_to_lobby', (data) => {
                 if (data && data.reason) alert(data.reason);
-                window.location.href = 'lobby.html';
+                window.location.href = '/lobby';
             });
         }
 

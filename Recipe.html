@@ -565,7 +565,7 @@
                 <span class="font-meta text-white-50 text-uppercase">Final Standings</span>
             </div>
             <div id="finalScoresStack" class="overflow-y-auto custom-scrollbar mb-4 pe-1" style="max-height: 200px; min-height: 80px;"></div>
-            <button onclick="location.href='lobby.html'" class="mc-btn-sakura w-100 font-pixel" style="font-size: 0.8rem;">RETURN TO LOBBY</button>
+            <button onclick="location.href='/lobby'" class="mc-btn-sakura w-100 font-pixel" style="font-size: 0.8rem;">RETURN TO LOBBY</button>
         </div>
     </div>
 
@@ -649,7 +649,7 @@
 
         function leaveArena() {
             if (socket) socket.emit('player_leave_match');
-            window.location.href = 'lobby.html';
+            window.location.href = '/lobby';
         }
 
         function initSocketEngine() {
@@ -802,7 +802,7 @@
 
             socket.on('redirect_to_lobby', (data) => {
                 if (data && data.reason) alert(data.reason);
-                location.href = 'lobby.html';
+                location.href = '/lobby';
             });
         }
 

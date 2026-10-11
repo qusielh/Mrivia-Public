@@ -558,7 +558,7 @@
             if (data && data.reason) {
                 alert(data.reason);
             }
-            window.location.href = 'lobby.html';
+            window.location.href = '/lobby';
         });
 
         socket.on('redirect_to_game', (data) => {
@@ -582,7 +582,7 @@
                     socket.emit('leave_queue');
                 }
             } catch (e) { }
-            window.location.href = 'lobby.html';
+            window.location.href = '/lobby';
         }
 
         // 🟢 ALWAYS generate slots on initial load (both public queue and custom room)

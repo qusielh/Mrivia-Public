@@ -11,16 +11,16 @@ const {
 } = require('./config');
 
 const GAME_MODE_URLS = {
-    0: 'Mrivia.html',
-    1: 'Pixelary.html',
-    2: 'Recipe.html',
-    3: 'Minele.html',
-    4: 'SZC.html',
-    'classic': 'Mrivia.html',
-    'pixelary': 'Pixelary.html',
-    'recipe': 'Recipe.html',
-    'minele': 'Minele.html',
-    'szc': 'SZC.html'
+    0: '/mrivia',
+    1: '/pixelary',
+    2: '/recipe',
+    3: '/minele',
+    4: '/szc',
+    'classic': '/mrivia',
+    'pixelary': '/pixelary',
+    'recipe': '/recipe',
+    'minele': '/minele',
+    'szc': '/szc'
 };
 
 let io, db;
@@ -71,7 +71,7 @@ function startRoomTimer(roomId) {
                 room.status = 'game_waiting';
                 room.gameWaitingClock = 10;
 
-                const targetUrl = GAME_MODE_URLS[room.mode] || 'Mrivia.html';
+                const targetUrl = GAME_MODE_URLS[room.mode] || '/mrivia';
 
                 io.to(roomId).emit('redirect_to_game', { url: targetUrl });
                 runGameWaitingPhase(roomId);

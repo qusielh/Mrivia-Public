@@ -229,7 +229,7 @@ function setupRoutes(db, io) {
     };
 
     const requireGuest = (req, res, next) => {
-        if (req.signedCookies.mt_user_id) return res.redirect('/lobby.html');
+        if (req.signedCookies.mt_user_id) return res.redirect('/lobby');
         next();
     };
 
@@ -237,7 +237,7 @@ function setupRoutes(db, io) {
         try {
             const rawUserId = req.signedCookies.mt_user_id;
             const userId = rawUserId ? Number(rawUserId) : null;
-            if (!userId || isNaN(userId)) return res.redirect('/lobby.html');
+            if (!userId || isNaN(userId)) return res.redirect('/lobby');
 
             if (userCache[userId] === 'Creator') {
                 return next();
@@ -245,12 +245,12 @@ function setupRoutes(db, io) {
 
             const user = await db.get('SELECT username FROM users WHERE id = ?', [userId]);
             if (!user || user.username !== 'Creator') {
-                return res.redirect('/lobby.html');
+                return res.redirect('/lobby');
             }
             userCache[userId] = user.username;
             next();
         } catch (e) {
-            return res.redirect('/lobby.html');
+            return res.redirect('/lobby');
         }
     };
 
@@ -263,26 +263,58 @@ function setupRoutes(db, io) {
         }
 
         if (req.signedCookies.mt_user_id && !checkDeviceBanned(req)) {
-            return res.redirect('/lobby.html');
+            return res.redirect('/lobby');
         }
         res.sendFile(path.resolve(__dirname, 'index.html'));
     });
 
-    router.get('/lobby.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'lobby.html')); });
-    router.get('/queue.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'queue.html')); });
-    router.get('/Mrivia.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'Mrivia.html')); });
-    router.get('/Pixelary.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'Pixelary.html')); });
-    router.get('/Recipe.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'Recipe.html')); });
-    router.get('/Minele.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'Minele.html')); });
-    router.get('/SZC.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'SZC.html')); });
-    router.get('/minele_solo.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'minele_solo.html')); });
-    router.get('/szc_solo.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'szc_solo.html')); });
-    router.get('/About%20me.html', (req, res) => { res.sendFile(path.resolve(__dirname, 'project-information.html')); });
-    router.get('/removed-admin.html', requireCreator, (req, res) => { res.sendFile(path.resolve(__dirname, 'removed-admin.html')); });
+    // 🌸 CLEAN URLS: pretty paths serve their page with the exact same guards as before
+    const pageRoutes = [
+        { url: '/lobby', file: 'lobby.html', guard: requireAuth },
+        { url: '/queue', file: 'queue.html', guard: requireAuth },
+        { url: '/mrivia', file: 'Mrivia.html', guard: requireAuth },
+        { url: '/pixelary', file: 'Pixelary.html', guard: requireAuth },
+        { url: '/recipe', file: 'Recipe.html', guard: requireAuth },
+        { url: '/minele', file: 'Minele.html', guard: requireAuth },
+        { url: '/minele-solo', file: 'minele_solo.html', guard: requireAuth },
+        { url: '/szc', file: 'SZC.html', guard: requireAuth },
+        { url: '/szc-solo', file: 'szc_solo.html', guard: requireAuth },
+        { url: '/about', file: 'project-information.html', guard: null },
+        { url: '/admin', file: 'removed-admin.html', guard: requireCreator },
+        { url: '/community', file: 'removed-page.html', guard: requireAuth }
+    ];
 
-    // 🍔 For community Route
-    router.get('/letter%20to%20community.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'removed-page.html')); });
-    router.get('/removed-page.html', requireAuth, (req, res) => { res.sendFile(path.resolve(__dirname, 'removed-page.html')); });
+    pageRoutes.forEach(({ url, file, guard }) => {
+        const handler = (req, res) => res.sendFile(path.resolve(__dirname, file));
+        if (guard) router.get(url, guard, handler);
+        else router.get(url, handler);
+    });
+
+    // 🔁 LEGACY: 301 the old .html URLs to the clean ones so old links/bookmarks keep working
+    const legacyRedirects = {
+        '/lobby.html': '/lobby',
+        '/queue.html': '/queue',
+        '/Mrivia.html': '/mrivia',
+        '/Pixelary.html': '/pixelary',
+        '/Recipe.html': '/recipe',
+        '/Minele.html': '/minele',
+        '/minele_solo.html': '/minele-solo',
+        '/SZC.html': '/szc',
+        '/szc_solo.html': '/szc-solo',
+        '/project-information.html': '/about',
+        '/About%20me.html': '/about',
+        '/removed-admin.html': '/admin',
+        '/removed-page.html': '/community',
+        '/letter%20to%20community.html': '/community'
+    };
+    router.use((req, res, next) => {
+        if (req.method !== 'GET') return next();
+        let cleanPath = req.path;
+        try { cleanPath = decodeURIComponent(cleanPath); } catch (e) { }
+        const target = legacyRedirects[cleanPath];
+        if (target) return res.redirect(301, target);
+        next();
+    });
 
     // 🟢 MATCHMAKING JOIN: Fast RAM Lookup with Turso fallback
     router.post('/api/matchmaking/join', async (req, res) => {
@@ -341,7 +373,7 @@ function setupRoutes(db, io) {
         });
 
         // 🟢 MODE 4 (SZC) BYPASSES queue.html DIRECTLY TO SZC.html
-        const destination = (modeId === 4) ? 'SZC.html' : 'queue.html';
+        const destination = (modeId === 4) ? '/szc' : '/queue';
         return res.json({ success: true, action: action, redirectUrl: destination });
     });
 
@@ -399,7 +431,7 @@ function setupRoutes(db, io) {
         });
 
         // 🟢 MODE 4 (SZC) BYPASSES queue.html DIRECTLY TO SZC.html
-        const destination = (modeId === 4) ? 'SZC.html' : 'queue.html';
+        const destination = (modeId === 4) ? '/szc' : '/queue';
         return res.json({ success: true, roomCode: roomCode, redirectUrl: destination });
     });
 
@@ -446,7 +478,7 @@ function setupRoutes(db, io) {
         });
 
         // 🟢 MODE 4 (SZC) BYPASSES queue.html DIRECTLY TO SZC.html
-        const destination = (targetRoom.mode === 4) ? 'SZC.html' : 'queue.html';
+        const destination = (targetRoom.mode === 4) ? '/szc' : '/queue';
         return res.json({ success: true, roomCode: cleanCode, redirectUrl: destination });
     });
 

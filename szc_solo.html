@@ -790,7 +790,7 @@
 
             <div class="d-flex gap-2">
                 <button onclick="restartSoloMatch()" class="mc-btn-stone w-50 font-pixel btn-sm" style="font-size: 0.78rem;">Play Again</button>
-                <button onclick="location.href='lobby.html'" class="mc-btn-sakura w-50 font-pixel" style="font-size: 0.78rem;">Lobby</button>
+                <button onclick="location.href='/lobby'" class="mc-btn-sakura w-50 font-pixel" style="font-size: 0.78rem;">Lobby</button>
             </div>
         </div>
     </div>
@@ -919,7 +919,7 @@
         };
 
         function leaveArena() {
-            window.location.href = 'lobby.html';
+            window.location.href = '/lobby';
         }
 
         // =========================================================
@@ -1076,7 +1076,7 @@
                     await fetch('/api/score/update', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ pointsToAdd: 100, word: "SZC_SOLO_WIN" })
+                        body: JSON.stringify({ pointsToAdd: 100 })
                     });
                 } catch (e) { }
             } else {

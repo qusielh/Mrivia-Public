@@ -1408,13 +1408,13 @@
                 </div>
 
                 <!-- 🌸 ALWAYS VISIBLE: ABOUT ME BUTTON -->
-                <a href="About%20me.html" class="mc-btn about-glow py-1 px-3 font-pixel" style="font-size: 0.75rem; width: auto;">🌸 About Me</a>
+                <a href="/about" class="mc-btn about-glow py-1 px-3 font-pixel" style="font-size: 0.75rem; width: auto;">🌸 About Me</a>
 
                 <!-- 🌸 ALWAYS VISIBLE: Creator creator area (Creator only) -->
-                <a id="Creatorcreator areaBtn" href="removed-admin.html" class="mc-btn sakura py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🌸 creator area</a>
+                <a id="Creatorcreator areaBtn" href="/admin" class="mc-btn sakura py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🌸 creator area</a>
 
                 <!-- 🍔 ALWAYS VISIBLE: FOR community (Creator & community only) -->
-                <a id="communityBtn" href="letter%20to%20community.html" class="mc-btn gold py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🍔 For community</a>
+                <a id="communityBtn" href="/community" class="mc-btn gold py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🍔 For community</a>
 
                 <!-- ☰ CLEAN MENU DROPDOWN (Rules, Inbox, Change Password, Feedback, Report, Sign Out) -->
                 <div class="dropdown d-inline-block">
@@ -2145,9 +2145,9 @@
         function handleSoloLaunch() {
             const activeMode = sessionStorage.getItem('selectedGameMode') || 'classic';
             if (activeMode === 'minele') {
-                window.location.href = 'minele_solo.html';
+                window.location.href = '/minele-solo';
             } else if (activeMode === 'szc') {
-                window.location.href = 'szc_solo.html';
+                window.location.href = '/szc-solo';
             }
         }
 
@@ -2185,7 +2185,7 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    window.location.href = data.redirectUrl || 'queue.html';
+                    window.location.href = data.redirectUrl || '/queue';
                 } else {
                     alert(data.message || "Matchmaking failed. Please try again.");
                     btn.innerText = "Matchmaking Queue";
@@ -2211,7 +2211,7 @@
                 });
                 const data = await response.json();
                 if (response.ok && data.success) {
-                    window.location.href = data.redirectUrl || 'queue.html';
+                    window.location.href = data.redirectUrl || '/queue';
                 } else {
                     alert("Could not create custom room.");
                 }
@@ -2250,7 +2250,7 @@
                 });
                 const data = await response.json();
                 if (response.ok && data.success) {
-                    window.location.href = data.redirectUrl || 'queue.html';
+                    window.location.href = data.redirectUrl || '/queue';
                 } else {
                     alert(data.message || "Room not found.");
                 }
@@ -2472,7 +2472,7 @@
                 updateBadgeStatus();
                 setInterval(updateBadgeStatus, 20000);
             } catch (err) {
-                window.location.href = 'index.html';
+                window.location.href = '/';
             }
         });
 
@@ -2536,7 +2536,7 @@
             } catch (err) {
                 console.error("Logout dispatch failure:", err);
             }
-            window.location.href = 'index.html';
+            window.location.href = '/';
         }
 
         const totalLeaves = 12;
