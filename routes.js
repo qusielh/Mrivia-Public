@@ -113,6 +113,19 @@ function setupRoutes(db, io) {
                 `);
             } catch (ignore) { }
 
+            try {
+                await db.run(`
+                    CREATE TABLE IF NOT EXISTS support_messages (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER NOT NULL,
+                        sender TEXT NOT NULL,
+                        message TEXT NOT NULL,
+                        is_read INTEGER DEFAULT 0,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    );
+                `);
+            } catch (ignore) { }
+
             const rows = await db.all('SELECT id FROM banned_devices');
             rows.forEach(r => {
                 if (r && r.id) bannedDeviceIdsSet.add(parseInt(r.id));
@@ -660,6 +673,66 @@ function setupRoutes(db, io) {
         }
     });
 
+    // 🎧 DIRECT SUPPORT: user opens their own conversation with Creator
+    router.get('/api/support/thread', requireAuth, async (req, res) => {
+        try {
+            const rawUserId = req.signedCookies.mt_user_id;
+            const userId = rawUserId ? Number(rawUserId) : null;
+            if (!userId || isNaN(userId)) return res.status(401).json({ error: "Unauthorized session" });
+
+            const messages = await db.all(
+                'SELECT id, sender, message, created_at FROM support_messages WHERE user_id = ? ORDER BY id ASC',
+                [userId]
+            );
+
+            await db.run("UPDATE support_messages SET is_read = 1 WHERE user_id = ? AND sender = 'admin' AND is_read = 0", [userId]);
+
+            return res.json({ messages });
+        } catch (e) {
+            return res.status(500).json({ error: "Could not load support thread." });
+        }
+    });
+
+    // 🎧 DIRECT SUPPORT: user sends a message straight to Creator
+    router.post('/api/support/send', requireAuth, async (req, res) => {
+        try {
+            const rawUserId = req.signedCookies.mt_user_id;
+            const userId = rawUserId ? Number(rawUserId) : null;
+            if (!userId || isNaN(userId)) return res.status(401).json({ error: "Unauthorized session" });
+
+            const cleanMessage = (req.body && req.body.message) ? String(req.body.message).trim() : "";
+            if (!cleanMessage) return res.status(400).json({ error: "Message cannot be empty." });
+            if (cleanMessage.length > 2000) return res.status(400).json({ error: "Message is too long (max 2000 characters)." });
+
+            const result = await db.run(
+                "INSERT INTO support_messages (user_id, sender, message, is_read) VALUES (?, 'user', ?, 0)",
+                [userId, cleanMessage]
+            );
+
+            const row = await db.get('SELECT id, sender, message, created_at FROM support_messages WHERE id = ?', [result.lastID]);
+            return res.json({ success: true, message: row });
+        } catch (e) {
+            return res.status(500).json({ error: "Could not send support message." });
+        }
+    });
+
+    // 🎧 DIRECT SUPPORT: lightweight unread badge count for the user
+    router.get('/api/support/status', requireAuth, async (req, res) => {
+        try {
+            const rawUserId = req.signedCookies.mt_user_id;
+            const userId = rawUserId ? Number(rawUserId) : null;
+            if (!userId || isNaN(userId)) return res.status(401).json({ error: "Unauthorized session" });
+
+            const row = await db.get(
+                "SELECT COUNT(*) AS unread FROM support_messages WHERE user_id = ? AND sender = 'admin' AND is_read = 0",
+                [userId]
+            );
+            return res.json({ unread: row ? Number(row.unread) : 0 });
+        } catch (e) {
+            return res.status(500).json({ error: "Could not load support status." });
+        }
+    });
+
     // 🟢 ADMIN MANUAL PASSWORD OVERRIDE
     router.post('/api/admin/set-user-password', requireCreator, async (req, res) => {
         try {
@@ -976,6 +1049,128 @@ function setupRoutes(db, io) {
             return res.json({ history: rows });
         } catch (e) {
             return res.status(500).json({ error: "Database audit error" });
+        }
+    });
+
+    // 🎧 ADMIN DIRECT SUPPORT: list all conversations (most recent first)
+    router.get('/api/admin/support/threads', requireCreator, async (req, res) => {
+        try {
+            const rows = await db.all(`
+                SELECT sm.user_id AS user_id,
+                       u.username AS username,
+                       MAX(sm.id) AS last_id,
+                       SUM(CASE WHEN sm.sender = 'user' AND sm.is_read = 0 THEN 1 ELSE 0 END) AS unread
+                FROM support_messages sm
+                LEFT JOIN users u ON u.id = sm.user_id
+                GROUP BY sm.user_id
+                ORDER BY last_id DESC
+            `);
+
+            const threads = [];
+            for (const r of rows) {
+                const last = await db.get('SELECT sender, message, created_at FROM support_messages WHERE id = ?', [r.last_id]);
+                threads.push({
+                    user_id: r.user_id,
+                    username: r.username || `Deleted User #${r.user_id}`,
+                    unread: Number(r.unread) || 0,
+                    last_message: last ? last.message : "",
+                    last_sender: last ? last.sender : "",
+                    last_at: last ? last.created_at : null
+                });
+            }
+
+            return res.json(threads);
+        } catch (e) {
+            return res.status(500).json({ error: "Could not load support conversations." });
+        }
+    });
+
+    // 🎧 ADMIN DIRECT SUPPORT: total unread badge count
+    router.get('/api/admin/support/unread', requireCreator, async (req, res) => {
+        try {
+            const row = await db.get("SELECT COUNT(*) AS unread FROM support_messages WHERE sender = 'user' AND is_read = 0");
+            return res.json({ unread: row ? Number(row.unread) : 0 });
+        } catch (e) {
+            return res.status(500).json({ error: "Could not load support count." });
+        }
+    });
+
+    // 🎧 ADMIN DIRECT SUPPORT: open one conversation (marks user messages read)
+    router.get('/api/admin/support/thread', requireCreator, async (req, res) => {
+        try {
+            const { username } = req.query;
+            if (!username) return res.status(400).json({ error: "Username required" });
+
+            const targetName = normalizeUsername(username);
+            const user = await db.get('SELECT id FROM users WHERE LOWER(username) = LOWER(?)', [targetName]);
+            if (!user) return res.status(404).json({ error: `Account "${targetName}" not found.` });
+
+            const messages = await db.all(
+                'SELECT id, sender, message, created_at FROM support_messages WHERE user_id = ? ORDER BY id ASC',
+                [user.id]
+            );
+
+            await db.run("UPDATE support_messages SET is_read = 1 WHERE user_id = ? AND sender = 'user' AND is_read = 0", [user.id]);
+
+            return res.json({ messages });
+        } catch (e) {
+            return res.status(500).json({ error: "Could not load support thread." });
+        }
+    });
+
+    // 🎧 ADMIN DIRECT SUPPORT: reply to a user as Creator
+    router.post('/api/admin/support/reply', requireCreator, async (req, res) => {
+        try {
+            const { username, message } = req.body;
+            if (!username) return res.status(400).json({ error: "Username required" });
+
+            const cleanMessage = (message ? String(message) : "").trim();
+            if (!cleanMessage) return res.status(400).json({ error: "Message cannot be empty." });
+            if (cleanMessage.length > 2000) return res.status(400).json({ error: "Message is too long (max 2000 characters)." });
+
+            const targetName = normalizeUsername(username);
+            const user = await db.get('SELECT id FROM users WHERE LOWER(username) = LOWER(?)', [targetName]);
+            if (!user) return res.status(404).json({ error: `Account "${targetName}" not found.` });
+
+            const result = await db.run(
+                "INSERT INTO support_messages (user_id, sender, message, is_read) VALUES (?, 'admin', ?, 0)",
+                [user.id, cleanMessage]
+            );
+
+            const row = await db.get('SELECT id, sender, message, created_at FROM support_messages WHERE id = ?', [result.lastID]);
+            return res.json({ success: true, message: row });
+        } catch (e) {
+            return res.status(500).json({ error: "Could not send reply." });
+        }
+    });
+
+    // 🎧 ADMIN DIRECT SUPPORT: delete a single message
+    router.post('/api/admin/support/delete-message', requireCreator, async (req, res) => {
+        try {
+            const id = parseInt(req.body && req.body.id);
+            if (isNaN(id)) return res.status(400).json({ error: "Message id required" });
+
+            await db.run('DELETE FROM support_messages WHERE id = ?', [id]);
+            return res.json({ success: true });
+        } catch (e) {
+            return res.status(500).json({ error: "Could not delete message." });
+        }
+    });
+
+    // 🎧 ADMIN DIRECT SUPPORT: delete an entire conversation
+    router.post('/api/admin/support/delete-thread', requireCreator, async (req, res) => {
+        try {
+            const { username } = req.body;
+            if (!username) return res.status(400).json({ error: "Username required" });
+
+            const targetName = normalizeUsername(username);
+            const user = await db.get('SELECT id FROM users WHERE LOWER(username) = LOWER(?)', [targetName]);
+            if (!user) return res.status(404).json({ error: `Account "${targetName}" not found.` });
+
+            await db.run('DELETE FROM support_messages WHERE user_id = ?', [user.id]);
+            return res.json({ success: true });
+        } catch (e) {
+            return res.status(500).json({ error: "Could not delete conversation." });
         }
     });
 

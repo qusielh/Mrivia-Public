@@ -640,6 +640,79 @@
             padding-top: 1rem;
             text-align: center;
         }
+
+        .notif-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff4d6d;
+            margin-left: 6px;
+            vertical-align: middle;
+            box-shadow: 0 0 6px #ff4d6d;
+        }
+
+        .notif-badge {
+            display: inline-block;
+            min-width: 16px;
+            height: 16px;
+            line-height: 16px;
+            padding: 0 4px;
+            border-radius: 8px;
+            background: #ff4d6d;
+            color: #fff;
+            font-size: 0.6rem;
+            font-family: var(--font-sans);
+            text-align: center;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .support-spinner {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.15);
+            border-top-color: var(--diamond);
+            animation: supportSpin 0.8s linear infinite;
+        }
+
+        @keyframes supportSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .support-bubble {
+            max-width: 78%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-family: var(--font-sans);
+        }
+
+        .support-bubble.is-mine {
+            background: rgba(77, 237, 226, 0.14);
+            border: 1px solid rgba(77, 237, 226, 0.4);
+        }
+
+        .support-bubble.is-admin {
+            background: rgba(255, 183, 197, 0.14);
+            border: 1px solid rgba(255, 183, 197, 0.4);
+        }
+
+        .support-bubble-text {
+            color: #fff;
+            font-size: 0.86rem;
+            line-height: 1.45;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .support-bubble-time {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.6rem;
+            margin-top: 3px;
+        }
     </style>
 </head>
 <body>
@@ -847,11 +920,11 @@
             <form onsubmit="submitUsernameChange(event)">
                 <div class="mb-2">
                     <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">CURRENT USERNAME:</label>
-                    <input type="text" id="lobbyCurrentUsernameDisplay" class="mc-input" disabled>
+                    <input type="text" id="lobbyCurrentUsernameDisplay" class="mc-input" style="font-family: var(--font-sans);" disabled>
                 </div>
                 <div class="mb-3">
                     <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">NEW USERNAME (3-16 CHARACTERS):</label>
-                    <input type="text" id="lobbyNewUsernameInput" class="mc-input mb-0" placeholder="New Username..." autocomplete="off" maxlength="16">
+                    <input type="text" id="lobbyNewUsernameInput" class="mc-input mb-0" placeholder="New Username..." style="font-family: var(--font-sans);" autocomplete="off" maxlength="16">
                 </div>
 
                 <div id="changeUsernameAlert" class="alert d-none py-2 small font-pixel text-center"></div>
@@ -920,6 +993,26 @@
         </div>
     </div>
 
+    <!-- 🎧 DIRECT SUPPORT MODAL -->
+    <div id="supportModalOverlay" class="generic-modal-overlay d-none">
+        <div class="mc-panel p-4" style="max-width: 560px; width: 100%; max-height: 86vh; display: flex; flex-direction: column; border-color: var(--diamond);">
+            <div class="d-flex justify-content-between align-items-center mb-2 border-bottom border-light border-opacity-10 pb-2 flex-shrink-0">
+                <span class="font-pixel text-sakura fs-5">🎧 Direct Support</span>
+                <button onclick="closeSupportModal()" class="btn btn-sm btn-outline-light font-pixel py-0 px-2">✕</button>
+            </div>
+            <p class="text-white-50 small mb-3 flex-shrink-0" style="font-size: 0.78rem;">
+                Need help or want to tell Creator something? Send a message here and it goes straight to Creator.
+            </p>
+            <div id="supportMessagesContainer" class="flex-grow-1 overflow-y-auto pe-1 mb-3" style="min-height: 220px;"></div>
+            <div class="flex-shrink-0">
+                <div class="d-flex gap-2 align-items-end">
+                    <textarea id="supportInput" class="mc-input mb-0" rows="2" placeholder="Type your message..." style="font-family: var(--font-sans); resize: none;" maxlength="2000"></textarea>
+                    <button onclick="sendSupportMessage()" id="supportSendBtn" class="mc-btn sakura font-pixel btn-sm" style="white-space: nowrap;">Send 🌸</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- NAVBAR: ANCHORED, RESPONSIVE, WITH community & CLEAN MENU -->
     <nav class="navbar navbar-expand-lg pt-4">
         <div class="container d-flex align-items-center justify-content-between">
@@ -944,7 +1037,7 @@
                 <!-- ☰ CLEAN MENU DROPDOWN (Rules, Inbox, Change Password, Feedback, Report, Sign Out) -->
                 <div class="dropdown d-inline-block">
                     <button class="mc-btn stone py-1 px-3 font-pixel dropdown-toggle" type="button" id="lobbyMenuDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.75rem; width: auto;">
-                        ☰ Menu
+                        ☰ Menu<span id="menuBadge" class="notif-dot d-none"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end mc-dropdown-menu" aria-labelledby="lobbyMenuDropdownBtn">
                         <li>
@@ -955,6 +1048,13 @@
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openInboxModal()">
                                 📬 Inbox News
+                                <span id="newsItemBadge" class="notif-badge d-none">0</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openSupportModal()">
+                                🎧 Direct Support
+                                <span id="supportItemBadge" class="notif-badge d-none">0</span>
                             </button>
                         </li>
                         <li>
@@ -1157,6 +1257,159 @@
             document.getElementById('inboxModalOverlay').classList.add('d-none');
         }
 
+        // --- 🎧 DIRECT SUPPORT (USER SIDE) ---
+        let supportPollTimer = null;
+
+        function openSupportModal() {
+            document.getElementById('supportModalOverlay').classList.remove('d-none');
+            setItemBadge('supportItemBadge', 0);
+            updateMenuDot();
+            loadSupportThread(true);
+            if (supportPollTimer) clearInterval(supportPollTimer);
+            supportPollTimer = setInterval(() => loadSupportThread(false), 5000);
+        }
+
+        function closeSupportModal() {
+            document.getElementById('supportModalOverlay').classList.add('d-none');
+            if (supportPollTimer) {
+                clearInterval(supportPollTimer);
+                supportPollTimer = null;
+            }
+        }
+
+        function supportEscape(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function supportFormatTime(value) {
+            if (!value) return "";
+            const raw = String(value);
+            const iso = raw.includes('T') ? raw : raw.replace(' ', 'T') + 'Z';
+            const d = new Date(iso);
+            if (isNaN(d.getTime())) return raw;
+            return d.toLocaleString();
+        }
+
+        function supportLoadingHtml() {
+            return `<div class="d-flex flex-column align-items-center justify-content-center h-100 py-5 text-center">
+                        <div class="support-spinner mb-3"></div>
+                        <span class="text-white-50 small font-pixel">Loading conversation...</span>
+                    </div>`;
+        }
+
+        function renderSupportMessages(messages) {
+            const container = document.getElementById('supportMessagesContainer');
+            if (!messages || messages.length === 0) {
+                container.innerHTML = `<div class="text-center py-5">
+                        <span class="text-white-50 small font-pixel d-block mb-1">No messages yet 🌸</span>
+                        <span class="text-white-50 small font-sans" style="font-size: 0.72rem;">Say hello to Creator!</span>
+                    </div>`;
+                return;
+            }
+            container.innerHTML = messages.map(m => {
+                const mine = m.sender === 'user';
+                const time = supportFormatTime(m.created_at);
+                return `
+                    <div class="d-flex ${mine ? 'justify-content-end' : 'justify-content-start'} mb-2">
+                        <div class="support-bubble ${mine ? 'is-mine' : 'is-admin'}">
+                            <div class="support-bubble-text">${supportEscape(m.message)}</div>
+                            <div class="support-bubble-time">${mine ? 'You' : 'Creator'} • ${supportEscape(time)}</div>
+                        </div>
+                    </div>`;
+            }).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function loadSupportThread(showLoading) {
+            const container = document.getElementById('supportMessagesContainer');
+            if (!container) return;
+            if (showLoading) container.innerHTML = supportLoadingHtml();
+            try {
+                const res = await fetch('/api/support/thread');
+                if (res.status === 401) return;
+                const data = await res.json();
+                renderSupportMessages(data.messages || []);
+            } catch (e) {
+                if (showLoading) container.innerHTML = `<span class="text-danger small font-pixel d-block p-3 text-center">Could not load conversation.</span>`;
+            }
+        }
+
+        async function sendSupportMessage() {
+            const input = document.getElementById('supportInput');
+            const btn = document.getElementById('supportSendBtn');
+            const text = (input.value || '').trim();
+            if (!text) return;
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/support/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    input.value = "";
+                    loadSupportThread(false);
+                } else {
+                    alert(data.error || "Could not send message.");
+                }
+            } catch (e) {
+                alert("Network error sending message.");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // --- 🔔 MENU / ITEM BADGES ---
+        function setItemBadge(id, count) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (count > 0) {
+                el.innerText = count > 99 ? '99+' : String(count);
+                el.classList.remove('d-none');
+            } else {
+                el.classList.add('d-none');
+            }
+        }
+
+        function updateMenuDot() {
+            const dot = document.getElementById('menuBadge');
+            if (!dot) return;
+            const supportEl = document.getElementById('supportItemBadge');
+            const newsEl = document.getElementById('newsItemBadge');
+            const anyUnread = (supportEl && !supportEl.classList.contains('d-none')) ||
+                              (newsEl && !newsEl.classList.contains('d-none'));
+            if (anyUnread) dot.classList.remove('d-none');
+            else dot.classList.add('d-none');
+        }
+
+        async function updateBadgeStatus() {
+            try {
+                const sres = await fetch('/api/support/status');
+                if (sres.ok) {
+                    const sdata = await sres.json();
+                    setItemBadge('supportItemBadge', Number(sdata.unread) || 0);
+                }
+                const nres = await fetch('/api/inbox/titles');
+                if (nres.ok) {
+                    const titles = await nres.json();
+                    if (Array.isArray(titles) && titles.length > 0) {
+                        const seen = parseInt(localStorage.getItem('mt_seen_news_id') || '0', 10) || 0;
+                        const unread = titles.filter(t => (Number(t.id) || 0) > seen).length;
+                        setItemBadge('newsItemBadge', unread);
+                    } else {
+                        setItemBadge('newsItemBadge', 0);
+                    }
+                }
+            } catch (e) { }
+            updateMenuDot();
+        }
+
         async function fetchInboxTitles() {
             const container = document.getElementById('inboxListContainer');
             try {
@@ -1164,6 +1417,11 @@
                 allInboxTitles = await res.json();
                 currentInboxPage = 1;
                 renderInboxPage();
+                if (Array.isArray(allInboxTitles) && allInboxTitles.length > 0) {
+                    const latestId = Math.max(...allInboxTitles.map(t => Number(t.id) || 0));
+                    localStorage.setItem('mt_seen_news_id', String(latestId));
+                }
+                updateBadgeStatus();
             } catch (e) {
                 container.innerHTML = `<span class="text-white-50 small font-pixel d-block p-3 text-center">Could not load announcements.</span>`;
             }
@@ -1780,6 +2038,8 @@
                 }
 
                 await fetchLeaderboard(globalUsername);
+                updateBadgeStatus();
+                setInterval(updateBadgeStatus, 20000);
             } catch (err) {
                 window.location.href = 'index.html';
             }
