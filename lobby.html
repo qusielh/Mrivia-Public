@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mrivia - Game Lobby</title>
 
+    <script>
+    /* lobby switching: remember choice in localStorage, no server/route changes */
+    (function () {
+        window.switchLobby = function (target) {
+            try {
+                var ov = document.createElement('div');
+                ov.style.cssText = 'position:fixed;inset:0;background:#0b0409;z-index:2147483647;opacity:0;transition:opacity .18s ease;';
+                document.body.appendChild(ov);
+                requestAnimationFrame(function () { ov.style.opacity = '1'; });
+            } catch (e) { }
+            try { localStorage.setItem('mrivia_lobby_pref', target); } catch (e) { }
+            setTimeout(function () { location.href = (target === 'bloom') ? '/bloom' : '/lobby'; }, 180);
+        };
+        try {
+            if (localStorage.getItem('mrivia_lobby_pref') === 'bloom') {
+                if (!sessionStorage.getItem('mrivia_bloom_bounce')) {
+                    sessionStorage.setItem('mrivia_bloom_bounce', '1');
+                    location.replace('/bloom');
+                } else {
+                    sessionStorage.removeItem('mrivia_bloom_bounce');
+                }
+            }
+        } catch (e) { }
+    })();
+    </script>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1469,6 +1495,12 @@
                             <button class="dropdown-item mc-dropdown-item font-pixel text-danger" onclick="toggleReportModal(true)">
                                 <span class="mc-dropdown-icon">🚨</span>
                                 <span class="mc-dropdown-label">Report Player</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="switchLobby('bloom')">
+                                <span class="mc-dropdown-icon">🌸</span>
+                                <span class="mc-dropdown-label">Switch to Bloom Lobby</span>
                             </button>
                         </li>
                         <li><hr class="dropdown-divider border-secondary border-opacity-25 my-1"></li>

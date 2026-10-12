@@ -4,6 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mrivia Bloom - Trial Lobby</title>
+<script>
+/* lobby switching: remember choice in localStorage, no server/route changes */
+(function () {
+    window.switchLobby = function (target) {
+        try {
+            var ov = document.createElement('div');
+            ov.style.cssText = 'position:fixed;inset:0;background:#0b0409;z-index:2147483647;opacity:0;transition:opacity .18s ease;';
+            document.body.appendChild(ov);
+            requestAnimationFrame(function () { ov.style.opacity = '1'; });
+        } catch (e) { }
+        try { localStorage.setItem('mrivia_lobby_pref', target); } catch (e) { }
+        setTimeout(function () { location.href = (target === 'bloom') ? '/bloom' : '/lobby'; }, 180);
+    };
+    try {
+        sessionStorage.removeItem('mrivia_bloom_bounce');
+        localStorage.setItem('mrivia_lobby_pref', 'bloom');
+    } catch (e) { }
+})();
+</script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -359,8 +378,9 @@ p,.text-white-75,.notice-point p,.lobby-notice-block p,.story-content p{
 /* monolith — hall of legends (hidden slide-in drawer) */
 .monolith-hall-panel{
     position:fixed;top:5.6rem;right:0;z-index:50;
-    width:min(352px,92vw);height:calc(100dvh - 7rem);
+    width:min(352px,92vw);height:auto;max-height:calc(100dvh - 7rem);
     display:flex;flex-direction:column;gap:.7rem;overflow:hidden;
+    padding:1rem 1rem .9rem;
     border-color:oklch(0.5 0.02 300 / .55) !important;
     border-radius:22px 0 0 22px;border-right:none;
     transform:translateX(105%);transition:transform .45s var(--ease);
@@ -371,7 +391,7 @@ p,.text-white-75,.notice-point p,.lobby-notice-block p,.story-content p{
 .monolith-head h3{font-family:var(--font-display);font-weight:600;font-size:1.2rem;margin:0;text-shadow:0 2px 8px rgba(0,0,0,.5)}
 .monolith-head .badge{font-family:var(--font-pixel);font-size:.44rem;letter-spacing:.1em;border:1px solid rgba(255,215,0,.5);color:var(--gold);border-radius:999px;padding:.4rem .6rem;background:rgba(255,215,0,.08)}
 .monolith-sub{font-family:var(--font-sans);font-weight:600;font-size:.74rem;color:var(--muted);line-height:1.55;margin:0}
-.hall-list{flex:1;display:flex;flex-direction:column;gap:.55rem;overflow-y:auto;overflow-x:hidden;min-height:0;max-height:none;padding-right:.4rem}
+.hall-list{flex:1;display:flex;flex-direction:column;gap:.55rem;overflow-y:auto;overflow-x:hidden;min-height:0;max-height:calc(100dvh - 14rem);padding-right:.4rem}
 .player-row{
     display:flex;align-items:center;justify-content:space-between;gap:.7rem;min-width:0;
     padding:.65rem .95rem;border-radius:10px;
@@ -785,13 +805,10 @@ input.file-input::-webkit-file-upload-button{background:rgba(255,94,94,.14);bord
     <div class="monolith-head">
       <h3>Hall of Legends</h3>
       <div style="display:flex;gap:.5rem;align-items:center">
-        <span class="badge">TOP 10 ALL-TIME</span>
         <button class="hall-close" onclick="toggleHall()" aria-label="Hide legends">✕</button>
       </div>
     </div>
-    <p class="monolith-sub">Decoded Overworld masters, ranked by accuracy, speed, and duel streaks.</p>
     <div class="hall-list" id="hallList"></div>
-    <div class="hall-refresh"><span class="p"></span><span>LIVE SCORES FROM THE GARDEN</span></div>
   </div>
 </main>
 
@@ -875,6 +892,12 @@ input.file-input::-webkit-file-upload-button{background:rgba(255,94,94,.14);bord
       <span class="rt"><b>creator area</b><span>Keeper's hall — restricted</span></span>
       <span class="arrow">›</span>
     </a>
+
+    <button class="relic r-rules" onclick="switchLobby('classic')">
+      <span class="ri"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9l8-5 8 5v11" stroke="#be8cff" stroke-width="1.7" fill="rgba(190,140,255,.08)"/><path d="M9 20v-6h6v6" stroke="#be8cff" stroke-width="1.7" fill="none"/></svg></span>
+      <span class="rt"><b>Switch to Classic Lobby</b><span>Return to the original hall</span></span>
+      <span class="arrow">›</span>
+    </button>
 
     <button class="relic r-sign" onclick="signOut()">
       <span class="ri"><svg viewBox="0 0 24 24" fill="none"><path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8" stroke="#ffb7c5" stroke-width="1.7" fill="none"/><path d="M10 12h11m0 0-3.5-3.5M21 12l-3.5 3.5" stroke="#ffb7c5" stroke-width="1.7"/></svg></span>
@@ -1295,7 +1318,7 @@ function startSky(){
   const cv = $('skyCanvas'); const ctx = cv.getContext('2d');
   let W = 0, H = 0, dpr = 1, raf = 0;
   let parts = [];
-  const density = () => Math.max(12, Math.round((W*H)/42000));
+  const density = () => Math.max(14, Math.round((W*H)/30000));
   const spawn = (n) => {
     for(let i=0;i<n;i++){
       parts.push({
@@ -1310,7 +1333,7 @@ function startSky(){
   };
   const resize = () => {
     const nextW = innerWidth, nextH = innerHeight;
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    dpr = window.devicePixelRatio || 1;
     if(W > 0 && H > 0){
       const sx = nextW / W, sy = nextH / H;
       for(const p of parts){ p.x *= sx; p.y *= sy; }
@@ -1334,18 +1357,15 @@ function startSky(){
       if(p.x < -10){ p.x = W+10; }
       const sz = p.r / dpr;
       if(p.kind === 'fly'){
-        ctx.globalAlpha = .5 + Math.sin(p.sway*2)*.35;
-        ctx.shadowColor = '#ffe9a8'; ctx.shadowBlur = 5; ctx.fillStyle = '#ffe7a3';
-        ctx.beginPath(); ctx.arc(p.x, p.y, sz*.7, 0, 7); ctx.fill();
+        ctx.save(); ctx.globalAlpha = .5 + Math.sin(p.sway*2)*.35;
+        ctx.shadowColor = '#ffe9a8'; ctx.shadowBlur = 8/dpr; ctx.fillStyle = '#ffe7a3';
+        ctx.beginPath(); ctx.arc(p.x, p.y, sz*.7, 0, 7); ctx.fill(); ctx.restore();
       } else {
-        ctx.globalAlpha = .75;
-        ctx.shadowColor = '#ff9dbb'; ctx.shadowBlur = 4; ctx.fillStyle = p.c;
-        ctx.translate(p.x, p.y); ctx.rotate(Math.sin(p.sway)*.9);
-        ctx.beginPath(); ctx.ellipse(0,0,sz,sz*.55,0,0,7); ctx.fill();
-        ctx.setTransform(dpr,0,0,dpr,0,0);
+        ctx.save(); ctx.globalAlpha = .75; ctx.translate(p.x, p.y); ctx.rotate(Math.sin(p.sway)*.9);
+        ctx.shadowColor = '#ff9dbb'; ctx.shadowBlur = 6/dpr; ctx.fillStyle = p.c;
+        ctx.beginPath(); ctx.ellipse(0,0,sz,sz*.55,0,0,7); ctx.fill(); ctx.restore();
       }
     }
-    ctx.globalAlpha = 1;
     raf = requestAnimationFrame(frame);
   };
   const play = () => { if(!raf) raf = requestAnimationFrame(frame); };

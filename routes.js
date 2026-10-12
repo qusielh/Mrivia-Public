@@ -282,7 +282,7 @@ function setupRoutes(db, io) {
         { url: '/about', file: 'project-information.html', guard: null },
         { url: '/admin', file: 'removed-admin.html', guard: requireCreator },
         { url: '/community', file: 'removed-page.html', guard: requireAuth },
-        { url: '/bloom', file: 'lobby_bloom.html', guard: requireCreator }
+        { url: '/bloom', file: 'lobby_bloom.html', guard: requireAuth }
     ];
 
     pageRoutes.forEach(({ url, file, guard }) => {
