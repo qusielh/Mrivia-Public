@@ -19,7 +19,7 @@
             setTimeout(function () { location.href = (target === 'bloom') ? '/bloom' : '/lobby'; }, 180);
         };
         try {
-            if (localStorage.getItem('mrivia_lobby_pref') === 'bloom') {
+            if (localStorage.getItem('mrivia_lobby_pref') !== 'classic') {
                 if (!sessionStorage.getItem('mrivia_bloom_bounce')) {
                     sessionStorage.setItem('mrivia_bloom_bounce', '1');
                     location.replace('/bloom');
