@@ -287,16 +287,25 @@ p,.text-white-75,.notice-point p,.lobby-notice-block p,.story-content p{
 
 /* Classic — runic slots */
 .classic-runic-slots{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;justify-content:center}
-.char,.blank{
+.rune,.blank{
     width:clamp(38px,5vw,54px);height:clamp(50px,6vw,64px);border-radius:10px;display:grid;place-items:center;
     font-family:var(--font-display);font-weight:600;font-size:clamp(1.1rem,2.4vw,1.6rem);
 }
-.char{
+.rune{
+    position:relative;
+    background:repeating-conic-gradient(rgba(255,255,255,.05) 0% 25%,transparent 0% 50%);
+    background-size:12px 12px;border:2px dashed rgba(77,237,226,.4);color:rgba(77,237,226,.5);
+}
+.rune .glyph{
+    position:absolute;inset:0;border-radius:10px;display:grid;place-items:center;
     background:linear-gradient(180deg,oklch(0.5 0.12 190 / .35),oklch(0.22 0.07 190 / .6));
     border:2px solid rgba(77,237,226,.7);color:var(--diamond);
     text-shadow:0 0 18px rgba(77,237,226,.8);box-shadow:0 6px 20px -6px rgba(77,237,226,.5);
+    opacity:0;transition:opacity .5s ease;
     animation:charPulse 2.2s ease-in-out infinite;
 }
+.rune.show .glyph{opacity:1}
+.rune.show{color:transparent}
 .blank{
     background:repeating-conic-gradient(rgba(255,255,255,.05) 0% 25%,transparent 0% 50%);
     background-size:12px 12px;border:2px dashed rgba(77,237,226,.4);color:rgba(77,237,226,.5);
@@ -442,6 +451,8 @@ p,.text-white-75,.notice-point p,.lobby-notice-block p,.story-content p{
 .mc-btn.stone:hover{color:#ffffff}
 .mc-btn.redstone{background:linear-gradient(180deg,#ff7b6b 0%,#f54834 45%,#c7261a 100%);border-color:#8b1508;color:#ffffff;box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -3px 0 rgba(0,0,0,.4),0 4px 0 #6b1005}
 .mc-btn.redstone:hover{color:#ffffff}
+.mc-btn.emerald{background:linear-gradient(180deg,#7bf08a 0%,#37c95a 45%,#159a3a 100%);border-color:#0b5a22;color:#06210f;text-shadow:0 1px 0 rgba(255,255,255,.35);box-shadow:inset 0 2px 0 rgba(255,255,255,.5),inset 0 -3px 0 rgba(0,0,0,.3),0 4px 0 #0a4a1c}
+.mc-btn.emerald:hover{color:#06210f}
 
 .mc-input,.mc-textarea{
     width:100%;background:oklch(0.14 0.03 340 / .85);border:2px solid rgba(255,183,197,.22);border-radius:8px;color:var(--foreground);
@@ -1316,13 +1327,14 @@ function closeModal(id){ $(id).classList.remove('show'); }
 /* ---------- sky canvas: petals + fireflies ---------- */
 function startSky(){
   const cv = $('skyCanvas'); const ctx = cv.getContext('2d');
-  let W = 0, H = 0, dpr = 1, raf = 0;
+  let PW = 0, PH = 0, raf = 0;
   let parts = [];
-  const density = () => Math.max(14, Math.round((W*H)/30000));
+  const MAX_PARTS = 150;
+  const density = () => Math.min(MAX_PARTS, Math.max(14, Math.round((PW*PH)/30000)));
   const spawn = (n) => {
     for(let i=0;i<n;i++){
       parts.push({
-        x: Math.random()*W, y: Math.random()*H,
+        x: Math.random()*PW, y: Math.random()*PH,
         r: 1.6 + Math.random()*2.6,
         vx: -.18 - Math.random()*.5, vy: .18 + Math.random()*.55,
         sway: Math.random()*Math.PI*2, dr: .02 + Math.random()*.03,
@@ -1332,37 +1344,37 @@ function startSky(){
     }
   };
   const resize = () => {
-    const nextW = innerWidth, nextH = innerHeight;
-    dpr = window.devicePixelRatio || 1;
-    if(W > 0 && H > 0){
-      const sx = nextW / W, sy = nextH / H;
+    const dpr = window.devicePixelRatio || 1;
+    const nextPW = Math.round(innerWidth*dpr), nextPH = Math.round(innerHeight*dpr);
+    if(PW > 0 && PH > 0){
+      const sx = nextPW / PW, sy = nextPH / PH;
       for(const p of parts){ p.x *= sx; p.y *= sy; }
     }
-    W = nextW; H = nextH;
-    cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
-    cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    ctx.setTransform(dpr,0,0,dpr,0,0);
+    PW = nextPW; PH = nextPH;
+    cv.width = PW; cv.height = PH;
+    cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px';
+    ctx.setTransform(1,0,0,1,0,0);
     if(!parts.length){ spawn(density()); return; }
     const want = density();
     if(want > parts.length) spawn(want - parts.length);
     else if(want < parts.length) parts.length = want;
   };
   const frame = () => {
-    ctx.clearRect(0,0,W,H);
+    ctx.clearRect(0,0,PW,PH);
     for(const p of parts){
       p.sway += p.dr;
       p.x += p.vx + Math.cos(p.sway)*.4;
       p.y += p.vy;
-      if(p.y > H+10){ p.y = -10; p.x = Math.random()*W; }
-      if(p.x < -10){ p.x = W+10; }
-      const sz = p.r / dpr;
+      if(p.y > PH+10){ p.y = -10; p.x = Math.random()*PW; }
+      if(p.x < -10){ p.x = PW+10; }
+      const sz = p.r;
       if(p.kind === 'fly'){
         ctx.save(); ctx.globalAlpha = .5 + Math.sin(p.sway*2)*.35;
-        ctx.shadowColor = '#ffe9a8'; ctx.shadowBlur = 8/dpr; ctx.fillStyle = '#ffe7a3';
+        ctx.shadowColor = '#ffe9a8'; ctx.shadowBlur = 8; ctx.fillStyle = '#ffe7a3';
         ctx.beginPath(); ctx.arc(p.x, p.y, sz*.7, 0, 7); ctx.fill(); ctx.restore();
       } else {
         ctx.save(); ctx.globalAlpha = .75; ctx.translate(p.x, p.y); ctx.rotate(Math.sin(p.sway)*.9);
-        ctx.shadowColor = '#ff9dbb'; ctx.shadowBlur = 6/dpr; ctx.fillStyle = p.c;
+        ctx.shadowColor = '#ff9dbb'; ctx.shadowBlur = 6; ctx.fillStyle = p.c;
         ctx.beginPath(); ctx.ellipse(0,0,sz,sz*.55,0,0,7); ctx.fill(); ctx.restore();
       }
     }
@@ -1397,7 +1409,7 @@ function selectMode(mode){
   const solo = (mode === 'minele' || mode === 'szc');
   const sb = $('soloBtn');
   sb.disabled = !solo;
-  sb.className = 'mc-btn ' + (solo ? 'gold' : 'stone');
+  sb.className = 'mc-btn ' + (solo ? 'emerald' : 'stone');
 
   renderDemo(mode, m.accent);
 
@@ -1416,18 +1428,22 @@ function renderDemo(mode, accent){
   if(mode === 'classic'){
     const seq = 'DIAMOND';
     let n = 2;
-    const mk = () => {
-      let html = '<div class="classic-runic-slots">';
-      for(let i=0;i<seq.length;i++){
-        if(i === 2 || i === 4){ html += '<div class="blank">_</div>'; }
-        else {
-          const shown = i < n;
-          html += '<div class="' + (shown ? 'char' : 'blank') + '">' + (shown ? seq[i] : '_') + '</div>';
-        }
+    let html = '<div class="classic-runic-slots">';
+    for(let i=0;i<seq.length;i++){
+      if(i === 2 || i === 4){ html += '<div class="blank">_</div>'; }
+      else {
+        html += '<div class="rune" data-i="' + i + '">_<span class="glyph">' + seq[i] + '</span></div>';
       }
-      html += '</div>';
-      box.innerHTML = html;
+    }
+    html += '</div>';
+    box.innerHTML = html;
+    const runes = Array.from(box.querySelectorAll('.rune'));
+    const mk = () => {
+      runes.forEach(el => {
+        el.classList.toggle('show', Number(el.getAttribute('data-i')) < n);
+      });
       n = (n + 1) % seq.length;
+      if(n < 2){ n = 2; }
     };
     mk(); demoHandle = setInterval(mk, 1300);
   } else if(mode === 'pixelary'){
