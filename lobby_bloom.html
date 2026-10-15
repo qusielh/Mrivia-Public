@@ -788,11 +788,11 @@ input.file-input::-webkit-file-upload-button{background:rgba(255,94,94,.14);bord
     <!-- ACTION PEDESTAL -->
     <div class="action-pedestal">
       <div>
-        <button class="mc-btn diamond" id="queueBtn" onclick="joinMatchmaking()">Public Matchmaking</button>
+        <button class="mc-btn diamond" id="queueBtn" onclick="joinMatchmaking()">Matchmaking Queue</button>
         <span class="action-caption" id="beeQueue"></span>
       </div>
       <div>
-        <button class="mc-btn stone" id="soloBtn" onclick="openSoloGate()">Solo Practice</button>
+        <button class="mc-btn stone" id="soloBtn" onclick="openSoloGate()">Solo Practice (Coming Soon)</button>
         <span class="action-caption" id="beeSolo"></span>
       </div>
     </div>
@@ -1175,7 +1175,7 @@ const MODES = {
   classic:{
     accent:'#4dede2', shadow:'rgba(77,237,226,.45)', accentGlow:'rgba(77,237,226,.22)',
     name:'Classic', badge:'6 PLAYERS MAX', cat:'TRIAL SHOWCASE',
-    tale:'One hidden treasure, a row of blank slots. <span class="hl">Letters peel back</span> one by one — first traveler to name the item correctly claims the round.',
+    tale:'Classic: Compete against other players to guess the Minecraft item name first!',
     traits:[
       ['Guess the hidden treasure first','The secret item\'s slots open letter by letter. Only quick eyes crown a champion.'],
       ['Every correct letter buys more time','Each find widens the window; every wrong one teaches the whole room.'],
@@ -1187,14 +1187,14 @@ const MODES = {
       'Type one full guess. The first correct answer calls the round.',
       'Win count up — then the shroud picks a brand new treasure.'
     ],
-    queue:'Compete live against real-time players — up to 6 per table.',
-    solo:'Solo facing is not open for this trial yet.',
+    queue:'Compete live against other real-time players.',
+    solo:'Solo practice mode for this game is coming soon!',
     demo:'classic'
   },
   pixelary:{
     accent:'#ff4081', shadow:'rgba(255,64,129,.45)', accentGlow:'rgba(255,64,129,.22)',
     name:'Pixelary', badge:'1 ARTIST + 3 GUESSERS', cat:'LIVE CANVAS',
-    tale:'One artist paints a secret word live on the <span class="hl">shared canvas</span> while everyone guesses. The drawings stay pure and Halal — imagination in pixels, nothing more.',
+    tale:'Pixelary: Draw the item on screen and guess what other players are sketching.',
     traits:[
       ['One of you draws, the rest chase the word','Every stroke is a clue and every pause is a tease on the shared canvas.'],
       ['A letter may be coaxed from the artist','The room stalls? The artist may tip one slot open to help it along.'],
@@ -1207,14 +1207,14 @@ const MODES = {
       'A letter may be coaxed out when the room stalls.',
       'First full guess wins — then the artist passes the brush.'
     ],
-    queue:'Drop into a live lobby with an artist ready to draw.',
-    solo:'Solo practice is still waiting for its canvas.',
+    queue:'Compete live against other real-time players.',
+    solo:'Solo practice mode for this game is coming soon!',
     demo:'pixelary'
   },
   recipe:{
     accent:'#ffd700', shadow:'rgba(255,215,0,.45)', accentGlow:'rgba(255,215,0,.2)',
     name:'Recipe', badge:'3×3 WORKBENCH', cat:'BLUEPRINT FORGE',
-    tale:'A crafting table lays out its <span class="hl">3×3 pockets of mystery</span>. Ingredients slide in, you and your crew stitch the blueprint together, and name the craft before the grid fills.',
+    tale:'Recipe Guess: Analyze the ingredients shown and guess the resulting crafted item.',
     traits:[
       ['Nine pockets, one blueprint','Ingredient icons drop into the grid one pocket at a time — shape the craft as a team.'],
       ['Cooperate to name the craft','Whisper between turns and call out the item before the last pocket lands.'],
@@ -1227,14 +1227,14 @@ const MODES = {
       'Talk it out — name the item before the final pocket.',
       'Score as a table, then the next blueprint shuffles in.'
     ],
-    queue:'Join a crafting table with kind strangers.',
-    solo:'Solo practice is not on the workbench yet.',
+    queue:'Compete live against other real-time players.',
+    solo:'Solo practice mode for this game is coming soon!',
     demo:'recipe'
   },
   minele:{
     accent:'#2ecc71', shadow:'rgba(46,204,113,.45)', accentGlow:'rgba(46,204,113,.2)',
     name:'Minele', badge:'SOLO & RACE', cat:'THE TENDER CIPHER',
-    tale:'A five-letter whisper waits in a column of tiles. Guess and the tiles <span class="hl">glow green, gold, or grey</span> — guiding you home gently. No bell, no timer, no sweat.',
+    tale:'Minele: Test your knowledge in this puzzle to guess the mystery word in limited attempts.',
     traits:[
       ['No timer, no rush, just letters','Minele moves at your own pace — the gentle sibling of the word family.'],
       ['Green, gold, and grey sing the truth','Each tile confesses: right spot, somewhere close, or not at all.'],
@@ -1247,14 +1247,14 @@ const MODES = {
       'Green locks in, gold comes close, grey lets go.',
       'Find the word in quiet triumph — then breathe and go again.'
     ],
-    queue:'A soft live race — same word, same pace, no timer.',
-    solo:'Solo Minele Practice is live — the gentle herb of calm.',
+    queue:'Compete live against other real-time players.',
+    solo:'Play casual Wordle at your own pace with no timer.',
     demo:'minele'
   },
   szc:{
     accent:'#ff914d', shadow:'rgba(255,145,77,.45)', accentGlow:'rgba(255,145,77,.22)',
     name:'SZC Duel', badge:'1V1 MOB DUEL', cat:'TRI-MOB PREDICTION',
-    tale:'Three mobs cycle forever: <span class="hl">Skeleton outwits Creeper, Creeper spooks Zombie, Zombie hunts Skeleton</span>. Pick yours against a rival — best of three flips crown the smarter hunter.',
+    tale:'SZC Duel: Real-time 1v1 Rock-Paper-Scissors! Skeleton beats Creeper, Creeper beats Zombie, Zombie beats Skeleton.',
     traits:[
       ['Skeleton, Creeper, Zombie — forever cycling','One beats the other in a tight, honest loop. Guess the order, claim the round.'],
       ['No decks, no cards, pure mind tricks','Read your rival while they read you. Rock-paper-feathers.'],
@@ -1267,8 +1267,8 @@ const MODES = {
       'Second flip, third flip — adapt or lose the rhythm.',
       'Best of three decides the smarter hunter.'
     ],
-    queue:'Find a rival fast in the live dueling lane.',
-    solo:'Solo SZC Practice is live — train against the bot.',
+    queue:'Compete live against other real-time players.',
+    solo:'Battle against the training bot at your own pace!',
     demo:'szc'
   }
 };
@@ -1410,6 +1410,7 @@ function selectMode(mode){
   const sb = $('soloBtn');
   sb.disabled = !solo;
   sb.className = 'mc-btn ' + (solo ? 'emerald' : 'stone');
+  sb.textContent = solo ? (mode === 'minele' ? 'Solo Minele Practice' : 'Solo SZC Practice') : 'Solo Practice (Coming Soon)';
 
   renderDemo(mode, m.accent);
 
