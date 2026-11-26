@@ -5,7 +5,7 @@ const fs = require('fs');
 const COOKIE_SECRET = process.env.COOKIE_SECRET;
 
 if (!COOKIE_SECRET) {
-    throw new Error('Missing COOKIE_SECRET. Copy env.example to .env and set your own value.');
+    throw new Error('Missing COOKIE_SECRET. See env.example for the required variable names.');
 }
 
 // 🟢 Centrally Configured Mode Player Caps & Round Counts

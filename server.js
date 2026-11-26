@@ -16,7 +16,7 @@ const DATABASE_URL = process.env.DATABASE_URL;
 const DATABASE_AUTH_TOKEN = process.env.DATABASE_AUTH_TOKEN;
 
 if (!DATABASE_URL || !DATABASE_AUTH_TOKEN) {
-    throw new Error('Missing DATABASE_URL or DATABASE_AUTH_TOKEN. Copy env.example to .env and fill in your own values.');
+    throw new Error('Missing DATABASE_URL or DATABASE_AUTH_TOKEN. See env.example for the required variable names.');
 }
 
 const app = express();
