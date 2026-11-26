@@ -12,7 +12,6 @@ const { COOKIE_SECRET } = require('./config');
 const setupRoutes = require('./routes');
 const setupSockets = require('./socketHandler');
 const { initCoreEngine } = require('./gameCore');
-const { initcommunityDatabase } = require('./communityService');
 
 const app = express();
 const server = http.createServer(app);
@@ -23,16 +22,9 @@ const io = new Server(server, {
 });
 
 app.use(cors());
-// Body limit to easily accept up to 5MB report screenshots
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(COOKIE_SECRET));
-
-// Ensure local reports storage folder exists
-const reportsDir = path.join(__dirname, 'reports_storage');
-if (!fs.existsSync(reportsDir)) {
-    fs.mkdirSync(reportsDir, { recursive: true });
-}
 
 // ========================================================
 // 🌸 TURSO CLOUD DATABASE CLIENT & STRICT COMPATIBILITY ADAPTER
@@ -106,32 +98,6 @@ const db = {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
-            CREATE TABLE IF NOT EXISTS feedback (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,
-                message TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            );
-
-            CREATE TABLE IF NOT EXISTS reports (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                reporter_username TEXT NOT NULL,
-                target_username TEXT NOT NULL,
-                context TEXT NOT NULL,
-                image_filename TEXT NOT NULL,
-                image_size_bytes INTEGER NOT NULL,
-                image_data TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            );
-
-            CREATE TABLE IF NOT EXISTS announcements (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                content TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            );
-
             CREATE TABLE IF NOT EXISTS username_changes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
@@ -140,19 +106,8 @@ const db = {
                 changed_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
-            CREATE TABLE IF NOT EXISTS support_messages (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                sender TEXT NOT NULL,
-                message TEXT NOT NULL,
-                is_read INTEGER DEFAULT 0,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            );
         `);
-        console.log("🟢 Connected to Turso Cloud DB & Verified Tables (Users, Devices, Feedback, Reports, Announcements, Username Changes, Support Messages).");
-
-        // 🌸 Initialize community & supporters ledger in Turso
-        await initcommunityDatabase(db);
+        console.log("🟢 Connected to Turso Cloud DB & Verified Tables (Users, Devices, Username Changes).");
 
         initCoreEngine(io, db);
 
