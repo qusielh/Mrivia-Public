@@ -16,7 +16,7 @@ const {
     fetchLatestLiveblockchainUSDCTransaction,
     submitCommunityQuestion,
     getPublicAnsweredQnA,
-    getAllcreator areaQnA,
+    getAllCreatorQnA,
     answerCommunityQuestion,
     deleteCommunityQuestion
 } = require('./communityService');
@@ -213,7 +213,7 @@ function setupRoutes(db, io) {
                 return res.redirect('/');
             }
 
-            if (user.username !== 'Creator' && user.is_suspended) {
+            if (user.is_suspended) {
                 res.clearCookie('mt_user_id', { path: '/' });
                 res.clearCookie('mt_room_id', { path: '/' });
                 return res.redirect('/');
@@ -279,9 +279,6 @@ function setupRoutes(db, io) {
         { url: '/minele-solo', file: 'minele_solo.html', guard: requireAuth },
         { url: '/szc', file: 'SZC.html', guard: requireAuth },
         { url: '/szc-solo', file: 'szc_solo.html', guard: requireAuth },
-        { url: '/about', file: 'project-information.html', guard: null },
-        { url: '/admin', file: 'removed-admin.html', guard: requireCreator },
-        { url: '/community', file: 'removed-page.html', guard: requireAuth },
         { url: '/bloom', file: 'lobby_bloom.html', guard: requireAuth }
     ];
 
@@ -302,11 +299,6 @@ function setupRoutes(db, io) {
         '/minele_solo.html': '/minele-solo',
         '/SZC.html': '/szc',
         '/szc_solo.html': '/szc-solo',
-        '/project-information.html': '/about',
-        '/About%20me.html': '/about',
-        '/removed-admin.html': '/admin',
-        '/removed-page.html': '/community',
-        '/letter%20to%20community.html': '/community',
         '/lobby_bloom.html': '/bloom'
     };
     router.use((req, res, next) => {
@@ -329,7 +321,7 @@ function setupRoutes(db, io) {
         let username = userCache[userId];
         if (!username) {
             const user = await db.get('SELECT username, is_suspended FROM users WHERE id = ?', [userId]);
-            if (!user || (user.username !== 'Creator' && user.is_suspended)) {
+            if (!user || user.is_suspended) {
                 res.clearCookie('mt_user_id', { path: '/' });
                 return res.status(401).json({ error: "Access restricted." });
             }
@@ -388,7 +380,7 @@ function setupRoutes(db, io) {
         let username = userCache[userId];
         if (!username) {
             const user = await db.get('SELECT username, is_suspended FROM users WHERE id = ?', [userId]);
-            if (!user || (user.username !== 'Creator' && user.is_suspended)) {
+            if (!user || user.is_suspended) {
                 res.clearCookie('mt_user_id', { path: '/' });
                 return res.status(401).json({ error: "Access restricted." });
             }
@@ -446,7 +438,7 @@ function setupRoutes(db, io) {
         let username = userCache[userId];
         if (!username) {
             const user = await db.get('SELECT username, is_suspended FROM users WHERE id = ?', [userId]);
-            if (!user || (user.username !== 'Creator' && user.is_suspended)) {
+            if (!user || user.is_suspended) {
                 res.clearCookie('mt_user_id', { path: '/' });
                 return res.status(401).json({ error: "Access restricted." });
             }
@@ -569,7 +561,7 @@ function setupRoutes(db, io) {
             }
 
             if (user) {
-                if (user.username !== 'Creator' && user.is_suspended) {
+                if (user.is_suspended) {
                     if (user.device_ban_id) setDeviceBanCookie(res, user.device_ban_id);
                     return res.status(403).json({ success: false, message: "This account has been temporarily suspended." });
                 }
@@ -648,9 +640,6 @@ function setupRoutes(db, io) {
             if (!me) return res.status(404).json({ error: "Account not found." });
 
             const oldName = me.username;
-            if (oldName === 'Creator') {
-                return res.status(409).json({ error: "That username is already taken." });
-            }
 
             if (cleanName.toLowerCase() === (oldName || '').toLowerCase()) {
                 return res.status(400).json({ error: "That is already your username." });
@@ -801,7 +790,7 @@ function setupRoutes(db, io) {
             }
 
             const user = await db.get('SELECT username, is_suspended FROM users WHERE id = ?', [userId]);
-            if (!user || (user.username !== 'Creator' && user.is_suspended)) {
+            if (!user || user.is_suspended) {
                 res.clearCookie('mt_user_id', { path: '/' });
                 res.clearCookie('mt_room_id', { path: '/' });
                 return res.status(401).json({ error: "Account suspended or not found" });
@@ -1690,7 +1679,7 @@ function setupRoutes(db, io) {
 
     router.get('/api/admin/qna/all', requireCreator, async (req, res) => {
         try {
-            const list = await getAllcreator areaQnA(db);
+            const list = await getAllCreatorQnA(db);
             return res.json(list || []);
         } catch (err) {
             return res.status(500).json([]);
