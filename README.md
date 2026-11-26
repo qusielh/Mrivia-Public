@@ -45,6 +45,10 @@ The server binds to `127.0.0.1:5000` by default. Use `HOST` and `PORT` to change
 
 Word pools and item data live in the JSON files at the project root. Game rules and mode logic live in `gameCore.js`, `socketHandler.js`, and the `modes/` directory.
 
+## Documentation
+
+Project documentation starts at `docs/INDEX.md`. It covers the current state, release contents, architecture, decisions, and cleanup notes.
+
 ## Credit
 
 Created by Qusie.
