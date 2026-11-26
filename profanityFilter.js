@@ -2,8 +2,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const community_TROLL_MESSAGE = "Shut up you simpleton you're a goober";
-
 const LEET_MAP = {
     '@': 'a', '4': 'a',
     '8': 'b',
@@ -149,6 +147,5 @@ function isProfane(text, isUsername = false) {
 }
 
 module.exports = {
-    isProfane,
-    community_TROLL_MESSAGE
+    isProfane
 };

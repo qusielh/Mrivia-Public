@@ -525,133 +525,6 @@
             }
         }
 
-        .lobby-note-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 4, 9, 0.85);
-            backdrop-filter: blur(14px);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-
-        .lobby-notice-card {
-            background: linear-gradient(180deg, rgba(42, 20, 36, 0.82), rgba(26, 11, 22, 0.86));
-            border: 3px solid var(--sakura);
-            border-radius: 24px;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(255, 183, 197, 0.25);
-            backdrop-filter: blur(20px);
-            max-width: 650px;
-            width: 100%;
-            max-height: 88vh;
-            display: flex;
-            flex-direction: column;
-            padding: 2rem;
-            position: relative;
-        }
-
-        .lobby-notice-scroll {
-            overflow-y: auto;
-            padding-right: 8px;
-        }
-
-        .kid-safety-box {
-            background: linear-gradient(135deg, rgba(255, 170, 0, 0.18), rgba(255, 80, 80, 0.18));
-            border: 2px solid var(--warning-gold);
-            border-radius: 14px;
-            box-shadow: 0 0 16px rgba(255, 202, 26, 0.35);
-            padding: 1.15rem;
-            margin-bottom: 1rem;
-            text-align: left;
-        }
-
-        .lobby-notice-block {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 183, 197, 0.2);
-            border-radius: 14px;
-            padding: 1rem 1.15rem;
-            margin-bottom: 1rem;
-            text-align: left;
-        }
-
-        @media (max-height: 540px) {
-            .lobby-note-overlay {
-                padding: 0.5rem !important;
-            }
-
-            .lobby-notice-card {
-                max-width: 780px !important;
-                max-height: 96vh !important;
-                max-height: 96dvh !important;
-                padding: 0.85rem 1.25rem !important;
-                border-radius: 16px !important;
-            }
-
-                .lobby-notice-card .text-center.mb-3 {
-                    margin-bottom: 0.4rem !important;
-                }
-
-                .lobby-notice-card h2 {
-                    font-size: 1.15rem !important;
-                    margin-bottom: 2px !important;
-                }
-
-            .lobby-notice-block, .kid-safety-box {
-                padding: 0.65rem 0.85rem !important;
-                margin-bottom: 0.5rem !important;
-            }
-        }
-
-        /* 📬 INBOX TITLE CARD STYLES */
-        .inbox-card-btn {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 183, 197, 0.25);
-            border-radius: 12px;
-            padding: 0.85rem 1.1rem;
-            margin-bottom: 0.65rem;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            text-align: left;
-            display: block;
-            width: 100%;
-        }
-
-            .inbox-card-btn:hover {
-                border-color: var(--sakura);
-                background: rgba(255, 183, 197, 0.15);
-                transform: translateX(3px);
-            }
-
-        .page-ctrl-btn {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 183, 197, 0.3);
-            color: #ffffff;
-            font-family: var(--font-pixel);
-            font-size: 0.65rem;
-            padding: 3px 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.12s ease;
-        }
-
-            .page-ctrl-btn:hover:not(:disabled) {
-                background: var(--sakura);
-                color: #140811;
-            }
-
-            .page-ctrl-btn.active {
-                background: var(--sakura);
-                color: #140811;
-                font-weight: bold;
-            }
-
-            .page-ctrl-btn:disabled {
-                opacity: 0.3;
-                cursor: not-allowed;
-            }
-
         #rotatePromptOverlay {
             display: none;
             position: fixed;
@@ -738,65 +611,6 @@
             vertical-align: middle;
         }
 
-        .support-spinner {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.15);
-            border-top-color: var(--diamond);
-            animation: supportSpin 0.8s linear infinite;
-        }
-
-        @keyframes supportSpin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .support-bubble {
-            max-width: 78%;
-            padding: 8px 12px 6px;
-            border-radius: 16px;
-            font-family: var(--font-sans);
-            position: relative;
-            line-height: 1.4;
-        }
-
-        .support-bubble.is-mine {
-            background: linear-gradient(135deg, rgba(255, 183, 197, 0.92), rgba(77, 237, 226, 0.85));
-            color: #17110f;
-            border-bottom-right-radius: 6px;
-            box-shadow: 0 6px 18px rgba(255, 183, 197, 0.18);
-        }
-
-        .support-bubble.is-admin {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #fff;
-            border-bottom-left-radius: 6px;
-        }
-
-        .support-bubble-text {
-            font-size: 0.86rem;
-            word-break: break-word;
-            white-space: pre-wrap;
-        }
-
-        .support-bubble-time {
-            font-size: 0.58rem;
-            margin-top: 3px;
-            text-align: right;
-            display: block;
-        }
-
-        .support-bubble.is-mine .support-bubble-time {
-            color: rgba(23, 17, 15, 0.65);
-        }
-
-        .support-bubble.is-admin .support-bubble-time {
-            color: rgba(255, 255, 255, 0.45);
-        }
-
         .chat-panel {
             background: rgba(26, 12, 22, 0.72) !important;
             backdrop-filter: blur(22px) !important;
@@ -804,59 +618,6 @@
             border: 2px solid oklch(0.5 0.09 340 / 0.6) !important;
             box-shadow: 0 22px 70px rgba(0, 0, 0, 0.65);
             overflow: hidden;
-        }
-
-        .support-contact {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-        }
-
-        .support-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255, 183, 197, 0.4), rgba(77, 237, 226, 0.35));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-            box-shadow: 0 0 0 2px rgba(255, 183, 197, 0.35), 0 4px 14px rgba(0, 0, 0, 0.45);
-        }
-
-        .support-contact-name {
-            font-family: var(--font-pixel);
-            color: #fff;
-            font-size: 0.82rem;
-            line-height: 1.2;
-            letter-spacing: 0.03em;
-        }
-
-        .support-contact-status {
-            color: rgba(255, 255, 255, 0.55);
-            font-family: var(--font-sans);
-            font-size: 0.62rem;
-            line-height: 1.2;
-            margin-top: 2px;
-        }
-
-        .online-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #3ddc84;
-            display: inline-block;
-            margin-right: 4px;
-            box-shadow: 0 0 6px #3ddc84;
-        }
-
-        .support-messages-area {
-            background: rgba(255, 255, 255, 0.045);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 16px;
-            padding: 0.8rem;
-            min-height: 240px;
         }
 
         .chat-composer {
@@ -944,30 +705,6 @@
                 pointer-events: none;
             }
 
-        /* ✉ LETTER — Official Announcements list + reader */
-        .panel-letter {
-            background: linear-gradient(180deg, oklch(0.26 0.05 350 / 0.78), oklch(0.2 0.04 350 / 0.88));
-            border-color: rgba(255, 183, 197, 0.7);
-        }
-
-        .wax-seal {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 30%, #ff9d9d, #c94f4f 70%);
-            border: 2px solid rgba(255, 183, 197, 0.6);
-            box-shadow: 0 0 8px rgba(255, 140, 140, 0.55);
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .letter-sheet {
-            background: rgba(255, 240, 225, 0.06);
-            border: 1px dashed rgba(255, 183, 197, 0.4);
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.92);
-        }
-
         /* 🔐 VAULT — Change Password */
         .panel-vault {
             background: linear-gradient(180deg, oklch(0.27 0.03 255 / 0.8), oklch(0.16 0.02 255 / 0.9));
@@ -990,32 +727,6 @@
             text-shadow: 0 0 8px rgba(212, 169, 79, 0.5);
         }
 
-        /* 🗳️ POSTBOX — Feedback */
-        .panel-postbox {
-            background: linear-gradient(180deg, oklch(0.28 0.06 350 / 0.8), oklch(0.2 0.045 350 / 0.9));
-            border-color: var(--sakura);
-            box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55), 0 0 26px rgba(255, 183, 197, 0.22);
-        }
-
-        /* 🚨 REDSTONE — Report */
-        .panel-report {
-            background: linear-gradient(180deg, oklch(0.28 0.06 25 / 0.84), oklch(0.17 0.05 25 / 0.92));
-            border-color: #e2533f;
-            animation: reportPulse 2.8s ease-in-out infinite;
-        }
-
-        @keyframes reportPulse {
-            0%, 100% { box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55), 0 0 14px rgba(226, 83, 63, 0.35); }
-            50% { box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55), 0 0 30px rgba(226, 83, 63, 0.65); }
-        }
-
-        .report-stripe {
-            background: repeating-linear-gradient(45deg, rgba(226, 83, 63, 0.12) 0 10px, transparent 10px 20px);
-            border: 1px solid rgba(226, 83, 63, 0.4);
-            border-radius: 10px;
-            padding: 0.7rem 0.9rem;
-        }
-
         /* Shared header row, accented per theme */
         .theme-head {
             display: flex;
@@ -1027,20 +738,12 @@
             flex-shrink: 0;
         }
 
-            .theme-head.letter-head, .theme-head.postbox-head {
-                border-bottom: 2px solid rgba(255, 183, 197, 0.45);
-            }
-
             .theme-head.vault-head {
                 border-bottom: 2px solid rgba(130, 145, 160, 0.4);
             }
 
             .theme-head.nametag-head {
                 border-bottom: 2px solid rgba(212, 169, 79, 0.4);
-            }
-
-            .theme-head.report-head {
-                border-bottom: 2px solid rgba(226, 83, 63, 0.5);
             }
 
         .mc-modal-close {
@@ -1135,147 +838,6 @@
 
     <div class="sakura-fx" id="lobbyLeavesContainer"></div>
 
-    <!-- 🌸 COMMUNITY GUIDELINES & ANTI-SCAM MODAL -->
-    <div id="lobbyNoticeOverlay" class="lobby-note-overlay d-none">
-        <div class="lobby-notice-card">
-            <div class="text-center mb-3">
-                <span class="font-pixel text-sakura small d-block mb-1">🌸 COMMUNITY GUIDELINES & SAFETY NOTICES 🌸</span>
-                <h2 class="fs-4 fw-bold text-white mb-1" style="font-family: var(--font-display);">Rules & Safety Guidelines</h2>
-                <p class="text-white-50 small mb-0">Please review these notes to keep your experience safe, fun, and secure:</p>
-            </div>
-
-            <div class="lobby-notice-scroll flex-grow-1">
-                <div class="lobby-notice-block" style="border-color: var(--sakura);">
-                    <div class="d-flex align-items-center gap-2 mb-1">
-                        <span style="font-size: 1.1rem;">🌸</span>
-                        <span class="font-pixel text-sakura small fw-bold">Official Website & Anti-Impersonation Notice</span>
-                    </div>
-                    <p class="text-white-75 small mb-2" style="font-size: 0.85rem; line-height: 1.55;">
-                        <b>This is the only official Mrivia website</b> created solely by <b>Creator</b>. Creator does <b>not</b> have public social media accounts, alternative community pages, or external payment links anywhere else on the internet.
-                    </p>
-                    <p class="text-white-75 small mb-0" style="font-size: 0.85rem; line-height: 1.55;">
-                        Never trust anyone claiming to represent Creator or soliciting funds outside of this website. If any official links or campaigns are ever launched, they will be announced right here! You can always reach out directly using the <b>Feedback or Q&A</b> button.
-                    </p>
-                </div>
-
-                <div class="lobby-notice-block">
-                    <div class="d-flex align-items-center gap-2 mb-1">
-                        <span style="font-size: 1.1rem;">🛡️</span>
-                        <span class="font-pixel text-sakura small fw-bold">Chat Safety & Reporting</span>
-                    </div>
-                    <p class="text-white-75 small mb-2" style="font-size: 0.85rem; line-height: 1.55;">
-                        Never share sensitive personal info in the chat. If you choose to share your Discord tag or social handle, that responsibility is entirely on you.
-                    </p>
-                    <p class="text-white-75 small mb-0" style="font-size: 0.85rem; line-height: 1.55;">
-                        Never listen to anyone attempting to lie, manipulate, or exploit you. Always report any troll, scammer, or harmful behavior by taking a clean screenshot that clearly shows both their username and the chat!
-                    </p>
-                </div>
-
-                <div class="kid-safety-box">
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="fs-5">⚠️</span>
-                        <span class="font-pixel fw-bold" style="color: var(--warning-gold); font-size: 0.78rem; letter-spacing: 0.05em;">
-                            IF YOU ARE A KID, PLEASE READ THIS:
-                        </span>
-                    </div>
-                    <p class="text-white fw-medium small mb-2" style="font-size: 0.85rem; line-height: 1.6;">
-                        I know you just want to play games and have fun, but <b>please do not share any personal info whatsoever</b>. You are completely protected from anything bad people might tell you.
-                    </p>
-                    <p class="text-white fw-medium small mb-0" style="font-size: 0.85rem; line-height: 1.6;">
-                        Do not answer personal questions strangers ask you, and don't let emotional tricks fool you. <b>Your safety matters above everything else</b>—you can always report them and I will ban them as soon as I can.
-                    </p>
-                </div>
-
-                <div class="lobby-notice-block">
-                    <div class="d-flex align-items-center gap-2 mb-1">
-                        <span style="font-size: 1.1rem;">⛏️</span>
-                        <span class="font-pixel text-diamond small fw-bold">Gameplay Optimization Notes</span>
-                    </div>
-                    <p class="text-white-75 small mb-2" style="font-size: 0.85rem; line-height: 1.55;">
-                        Word pools have been intentionally optimized so you don't need to stress over material variations. You don't guess <i>"DIAMOND PICKAXE"</i>—simply guess <b>"PICKAXE"</b>! The same applies to <b>SWORD, DOOR, STAIRS, SPEAR</b>, etc... Pixelary allows you to use custom colors and save them in the bottom slots, if you spend a whole round/attempt without submitting anything you will be disconnected (afk), and you can come back anytime by submitting an answer.
-                    </p>
-                    <p class="text-white-75 small mb-0" style="font-size: 0.85rem; line-height: 1.55;">
-                        If you ever spot a missing mob or item, please let me know! I will gladly update them. Feel free to leave feedback—my ultimate goal is to make sure everyone has fun.
-                    </p>
-                </div>
-
-                <!-- 📱 MOBILE FULLSCREEN & APP INSTALL GUIDE -->
-                <div class="lobby-notice-block" style="border-color: var(--diamond);">
-                    <div class="d-flex align-items-center gap-2 mb-1">
-                        <span style="font-size: 1.1rem;">📱</span>
-                        <span class="font-pixel text-diamond small fw-bold">Mobile Players: Permanent Fullscreen & App Install</span>
-                    </div>
-                    <p class="text-white-75 small mb-2" style="font-size: 0.85rem; line-height: 1.55;">
-                        Want to play without the browser address bar getting in your way? You can install Mrivia as a native-feeling app!
-                    </p>
-                    <p class="text-white-75 small mb-2" style="font-size: 0.85rem; line-height: 1.55;">
-                        <b>How to install:</b> Tap your mobile browser's menu (<b>⋮</b> three dots on Chrome or <b>Share</b> on Safari) and select <b>"Install app"</b> or <b>"Add to Home screen"</b>. Once installed, launching Mrivia from your home screen keeps the game in <b>permanent horizontal fullscreen</b> across all matches with zero browser clutter!
-                    </p>
-                    <p class="text-white-75 small mb-0" style="font-size: 0.85rem; line-height: 1.55;">
-                        <i>Troubleshooting:</i> If your browser doesn't show "Install app" immediately, tap <b>"Add shortcut"</b> or <b>"Add to Home screen"</b> first, or refresh the page and check the menu again.
-                    </p>
-                </div>
-
-                <p class="text-white-50 text-center small mb-0 mt-2" style="font-size: 0.65rem; letter-spacing: 0.04em;">
-                    NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
-                </p>
-            </div>
-
-            <div class="mt-3 pt-2 border-top border-light border-opacity-10">
-                <button id="closeLobbyNoticeBtn" onclick="dismissLobbyNotice()" class="mc-pill-btn">Close Notice 🌸</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 📬 INBOX ANNOUNCEMENTS TITLES MODAL (PAGINATED) -->
-    <div id="inboxModalOverlay" class="generic-modal-overlay d-none">
-        <div class="mc-panel theme-panel panel-letter p-4" style="max-width: 580px; width: 100%; max-height: 86vh; display: flex; flex-direction: column;">
-            <div class="d-flex justify-content-between align-items-center theme-head letter-head flex-shrink-0">
-                <span class="font-pixel text-sakura fs-5"><span class="wax-seal me-2"></span>Official Announcements</span>
-            </div>
-
-            <p class="text-white-50 small mb-3 flex-shrink-0" style="font-size: 0.78rem;">
-                Stay updated with patch notes, new word pools, and news directly from Creator! Tap any announcement to read.
-            </p>
-
-            <div id="inboxListContainer" class="flex-grow-1 overflow-y-auto pe-1" style="min-height: 200px;">
-                <span class="text-white-50 small font-pixel">Loading news...</span>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center pt-2 mt-2 border-top border-light border-opacity-10 flex-shrink-0" id="inboxPaginationControls">
-                <button id="inboxPrevBtn" onclick="changeInboxPage(-1)" class="page-ctrl-btn">‹ Prev</button>
-                <div id="inboxPageNumButtons" class="d-flex gap-1"></div>
-                <button id="inboxNextBtn" onclick="changeInboxPage(1)" class="page-ctrl-btn">Next ›</button>
-            </div>
-
-            <div class="text-center mt-2 flex-shrink-0">
-                <button onclick="closeInboxModal()" class="mc-btn stone font-pixel btn-sm" style="width: min(230px, 100%);">Close 📬</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 📖 INBOX FULL MESSAGE VIEWER MODAL (ON-DEMAND LAZY LOADED) -->
-    <div id="inboxMessageViewerModal" class="generic-modal-overlay d-none">
-        <div class="mc-panel theme-panel panel-letter p-4" style="max-width: 540px; width: 100%;">
-            <div class="d-flex justify-content-between align-items-center theme-head letter-head">
-                <div>
-                    <span class="badge bg-danger font-pixel mb-1" style="font-size: 0.55rem;"><span class="wax-seal me-1"></span>FROM Creator</span>
-                    <h3 class="fs-5 fw-bold text-white mb-0 font-pixel" id="viewerAnnounceTitle">---</h3>
-                </div>
-                <span class="text-white-50 small" id="viewerAnnounceDate" style="font-size: 0.68rem;">--</span>
-            </div>
-
-            <div class="p-3 mb-4 rounded-3 letter-sheet" style="font-size: 0.92rem; line-height: 1.65; max-height: 250px; overflow-y: auto; word-break: break-word;" id="viewerAnnounceBody">
-                Loading announcement from realm...
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center">
-                <button onclick="backToInboxList()" class="mc-btn stone font-pixel btn-sm" style="font-size: 0.72rem;">← Back to Inbox</button>
-                <button onclick="closeInboxViewerModal()" class="mc-btn sakura font-pixel btn-sm" style="font-size: 0.75rem;">Close ✉</button>
-            </div>
-        </div>
-    </div>
-
     <!-- 🔑 PLAYER CHANGE PASSWORD MODAL -->
     <div id="changePasswordModalOverlay" class="generic-modal-overlay d-none">
         <div class="mc-panel theme-panel panel-vault p-4" style="max-width: 440px; width: 100%;">
@@ -1336,92 +898,7 @@
         </div>
     </div>
 
-    <!-- 💬 PLAYER FEEDBACK MODAL -->
-    <div id="feedbackModalOverlay" class="generic-modal-overlay d-none">
-        <div class="mc-panel theme-panel panel-postbox p-4" style="max-width: 500px; width: 100%;">
-            <div class="d-flex justify-content-between align-items-center theme-head postbox-head">
-                <span class="font-pixel text-sakura fs-5">💬 Feedback Postbox</span>
-            </div>
-            <p class="text-white-50 small mb-3">Found a bug? Have a game idea or item suggestion? Your feedback directly helps shape Mrivia!</p>
-
-            <textarea id="feedbackTextarea" class="mc-input mb-3" rows="4" placeholder="Type your suggestion or bug report here..." style="font-family: var(--font-sans);"></textarea>
-
-            <div id="feedbackStatusAlert" class="alert d-none py-2 small font-pixel text-center"></div>
-
-            <div class="d-flex gap-2">
-                <button onclick="toggleFeedbackModal(false)" class="mc-btn stone w-50 font-pixel">Cancel</button>
-                <button onclick="submitFeedback()" class="mc-btn sakura w-50 font-pixel" id="sendFeedbackBtn">Send 🌸</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 🚨 PLAYER REPORT MODAL -->
-    <div id="reportModalOverlay" class="generic-modal-overlay d-none">
-        <div class="mc-panel theme-panel panel-report p-4" style="max-width: 520px; width: 100%;">
-            <div class="d-flex justify-content-between align-items-center theme-head report-head">
-                <span class="font-pixel text-danger fs-5">🚨 Report a Player</span>
-            </div>
-            <p class="text-white-50 small mb-3">
-                Report toxic, exploiting, or inappropriate players. <b>All fields including a clean screenshot are required.</b> Reports go directly to the admin.
-            </p>
-
-            <div class="mb-2">
-                <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">OFFENDING USERNAME:</label>
-                <input type="text" id="reportTargetUser" class="mc-input" placeholder="Exact username..." style="font-family: var(--font-sans);" autocomplete="off">
-            </div>
-
-            <div class="mb-2">
-                <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">EXPLANATION / CONTEXT:</label>
-                <textarea id="reportContext" class="mc-input" rows="3" placeholder="Explain what happened..." style="font-family: var(--font-sans);"></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label class="font-pixel text-white-50 small d-block mb-1" style="font-size: 0.65rem;">PROOF SCREENSHOT (MAX 5MB):</label>
-                <input type="file" id="reportScreenshotInput" accept="image/*" class="form-control form-control-sm font-sans" style="background: rgba(0,0,0,0.45); border: 1px solid rgba(226,83,63,0.55); color: #ffffff;" onchange="validateReportFile(this)">
-                <span id="fileSizeWarning" class="text-danger small font-pixel d-none mt-1" style="font-size: 0.65rem;">File exceeds 5MB limit!</span>
-            </div>
-
-            <div id="reportStatusAlert" class="alert d-none py-2 small font-pixel text-center"></div>
-
-            <div class="d-flex gap-2">
-                <button onclick="toggleReportModal(false)" class="mc-btn stone w-50 font-pixel">Cancel</button>
-                <button onclick="submitReport()" class="mc-btn redstone w-50 font-pixel" id="sendReportBtn">Submit Report</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 🎧 DIRECT SUPPORT MODAL -->
-    <div id="supportModalOverlay" class="generic-modal-overlay d-none">
-        <div class="mc-panel chat-panel p-4" style="max-width: 560px; width: 100%; max-height: 86vh; display: flex; flex-direction: column;">
-            <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom border-light border-opacity-10 flex-shrink-0">
-                <div class="support-contact">
-                    <div class="support-avatar">🌸</div>
-                    <div>
-                        <div class="support-contact-name">Creator</div>
-                        <div class="support-contact-status"><span class="status-dot amber"></span>Will respond as soon as possible</div>
-                    </div>
-                </div>
-                <button onclick="closeSupportModal()" class="mc-modal-close" aria-label="Close">✕</button>
-            </div>
-            <p class="text-white-50 small mb-3 flex-shrink-0" style="font-size: 0.76rem;">
-                Need help or want to tell Creator something? Message them here.
-            </p>
-            <div id="supportMessagesContainer" class="support-messages-area flex-grow-1 overflow-y-auto pe-1 mb-3"></div>
-            <div class="flex-shrink-0">
-                <div class="d-flex gap-2 align-items-end">
-                    <textarea id="supportInput" class="chat-composer mb-0" rows="1" placeholder="Type your message..." maxlength="2000" onkeydown="handleSupportKeydown(event)"></textarea>
-                    <button onclick="sendSupportMessage()" id="supportSendBtn" class="chat-send-btn" title="Send" aria-label="Send">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- NAVBAR: ANCHORED, RESPONSIVE, WITH community & CLEAN MENU -->
+    <!-- NAVBAR: ANCHORED, RESPONSIVE, CLEAN MENU -->
     <nav class="navbar navbar-expand-lg pt-4">
         <div class="container d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-3">
@@ -1433,45 +910,16 @@
                     <span id="navUsername" class="fw-bold text-white small">Loading...</span>
                 </div>
 
-                <!-- 🌸 ALWAYS VISIBLE: ABOUT ME BUTTON -->
-                <a href="/about" class="mc-btn about-glow py-1 px-3 font-pixel" style="font-size: 0.75rem; width: auto;">🌸 About Me</a>
-
-                <!-- 🌸 ALWAYS VISIBLE: Creator creator area (Creator only) -->
-                <a id="Creatorcreator areaBtn" href="/admin" class="mc-btn sakura py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🌸 creator area</a>
-
-                <!-- 🍔 ALWAYS VISIBLE: FOR community (Creator & community only) -->
-                <a id="communityBtn" href="/community" class="mc-btn gold py-1 px-3 d-none font-pixel" style="font-size: 0.75rem; width: auto;">🍔 For community</a>
-
-                <!-- ☰ CLEAN MENU DROPDOWN (Rules, Inbox, Change Password, Feedback, Report, Sign Out) -->
+                <!-- ☰ CLEAN MENU (Account, Lobby, Sign Out) -->
                 <div class="dropdown d-inline-block">
                     <button class="mc-btn stone py-1 px-3 font-pixel dropdown-toggle" type="button" id="lobbyMenuDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.75rem; width: auto;">
-                        ☰ Menu<span id="menuBadge" class="notif-dot d-none"></span>
+                        
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end mc-dropdown-menu" aria-labelledby="lobbyMenuDropdownBtn">
                         <li>
                             <div class="mc-dropdown-head">
                                 <span class="font-pixel text-sakura small" style="letter-spacing: 0.08em;">🌸 MRIVIA MENU</span>
                             </div>
-                        </li>
-                        <li>
-                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openLobbyNotice()">
-                                <span class="mc-dropdown-icon">🛡️</span>
-                                <span class="mc-dropdown-label">Rules & Notices</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openInboxModal()">
-                                <span class="mc-dropdown-icon">📬</span>
-                                <span class="mc-dropdown-label">Inbox News</span>
-                                <span id="newsItemBadge" class="notif-badge d-none">0</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openSupportModal()">
-                                <span class="mc-dropdown-icon">🎧</span>
-                                <span class="mc-dropdown-label">Direct Support</span>
-                                <span id="supportItemBadge" class="notif-badge d-none">0</span>
-                            </button>
                         </li>
                         <li>
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openChangePasswordModal()">
@@ -1483,18 +931,6 @@
                             <button class="dropdown-item mc-dropdown-item font-pixel" onclick="openChangeUsernameModal()">
                                 <span class="mc-dropdown-icon">✏️</span>
                                 <span class="mc-dropdown-label">Change Username</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button class="dropdown-item mc-dropdown-item font-pixel" onclick="toggleFeedbackModal(true)">
-                                <span class="mc-dropdown-icon">💬</span>
-                                <span class="mc-dropdown-label">Feedback</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button class="dropdown-item mc-dropdown-item font-pixel text-danger" onclick="toggleReportModal(true)">
-                                <span class="mc-dropdown-icon">🚨</span>
-                                <span class="mc-dropdown-label">Report Player</span>
                             </button>
                         </li>
                         <li>
@@ -1665,7 +1101,7 @@
                 NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
             </p>
             <p class="text-white-50 small mb-0" style="font-size: 0.62rem; opacity: 0.65;">
-                Mrivia is an independent fan project developed solely by Creator. Beware of impersonators—official updates are exclusively posted on this website.
+                Created by Qusie.
             </p>
         </footer>
     </div>
@@ -1689,296 +1125,6 @@
         };
 
         let globalUsername = "";
-
-        // --- 📬 INBOX CLIENT STATE ---
-        let allInboxTitles = [];
-        let currentInboxPage = 1;
-        const inboxPerPage = 4;
-
-        function openInboxModal() {
-            document.getElementById('inboxModalOverlay').classList.remove('d-none');
-            fetchInboxTitles();
-        }
-
-        function closeInboxModal() {
-            document.getElementById('inboxModalOverlay').classList.add('d-none');
-        }
-
-        // --- 🎧 DIRECT SUPPORT (USER SIDE) ---
-        let supportPollTimer = null;
-
-        function openSupportModal() {
-            document.getElementById('supportModalOverlay').classList.remove('d-none');
-            setItemBadge('supportItemBadge', 0);
-            updateMenuDot();
-            loadSupportThread(true);
-            if (supportPollTimer) clearInterval(supportPollTimer);
-            supportPollTimer = setInterval(() => loadSupportThread(false), 5000);
-        }
-
-        function closeSupportModal() {
-            document.getElementById('supportModalOverlay').classList.add('d-none');
-            if (supportPollTimer) {
-                clearInterval(supportPollTimer);
-                supportPollTimer = null;
-            }
-        }
-
-        function supportEscape(str) {
-            return String(str == null ? "" : str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;");
-        }
-
-        function supportFormatTime(value) {
-            if (!value) return "";
-            const raw = String(value);
-            const iso = raw.includes('T') ? raw : raw.replace(' ', 'T') + 'Z';
-            const d = new Date(iso);
-            if (isNaN(d.getTime())) return "";
-            const hh = String(d.getHours()).padStart(2, '0');
-            const mm = String(d.getMinutes()).padStart(2, '0');
-            return hh + ":" + mm;
-        }
-
-        function supportLoadingHtml() {
-            return `<div class="d-flex flex-column align-items-center justify-content-center h-100 py-5 text-center">
-                        <div class="support-spinner mb-3"></div>
-                        <span class="text-white-50 small font-pixel">Loading conversation...</span>
-                    </div>`;
-        }
-
-        function renderSupportMessages(messages) {
-            const container = document.getElementById('supportMessagesContainer');
-            if (!messages || messages.length === 0) {
-                container.innerHTML = `<div class="text-center py-5">
-                        <span class="text-white-50 small font-pixel d-block mb-1">No messages yet 🌸</span>
-                        <span class="text-white-50 small font-sans" style="font-size: 0.72rem;">Say hello to Creator!</span>
-                    </div>`;
-                return;
-            }
-            container.innerHTML = messages.map(m => {
-                const mine = m.sender === 'user';
-                const time = supportFormatTime(m.created_at);
-                return `
-                    <div class="d-flex ${mine ? 'justify-content-end' : 'justify-content-start'} mb-2">
-                        <div class="support-bubble ${mine ? 'is-mine' : 'is-admin'}">
-                            <div class="support-bubble-text">${supportEscape(m.message)}</div>
-                            <div class="support-bubble-time">${supportEscape(time)}</div>
-                        </div>
-                    </div>`;
-            }).join('');
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function handleSupportKeydown(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendSupportMessage();
-            }
-        }
-
-        async function loadSupportThread(showLoading) {
-            const container = document.getElementById('supportMessagesContainer');
-            if (!container) return;
-            if (showLoading) container.innerHTML = supportLoadingHtml();
-            try {
-                const res = await fetch('/api/support/thread');
-                if (res.status === 401) return;
-                const data = await res.json();
-                renderSupportMessages(data.messages || []);
-            } catch (e) {
-                if (showLoading) container.innerHTML = `<span class="text-danger small font-pixel d-block p-3 text-center">Could not load conversation.</span>`;
-            }
-        }
-
-        async function sendSupportMessage() {
-            const input = document.getElementById('supportInput');
-            const btn = document.getElementById('supportSendBtn');
-            const text = (input.value || '').trim();
-            if (!text) return;
-            btn.disabled = true;
-            try {
-                const res = await fetch('/api/support/send', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
-                });
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    input.value = "";
-                    loadSupportThread(false);
-                } else {
-                    alert(data.error || "Could not send message.");
-                }
-            } catch (e) {
-                alert("Network error sending message.");
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
-        // --- 🔔 MENU / ITEM BADGES ---
-        function setItemBadge(id, count) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            if (count > 0) {
-                el.innerText = count > 99 ? '99+' : String(count);
-                el.classList.remove('d-none');
-            } else {
-                el.classList.add('d-none');
-            }
-        }
-
-        function updateMenuDot() {
-            const dot = document.getElementById('menuBadge');
-            if (!dot) return;
-            const supportEl = document.getElementById('supportItemBadge');
-            const newsEl = document.getElementById('newsItemBadge');
-            const anyUnread = (supportEl && !supportEl.classList.contains('d-none')) ||
-                              (newsEl && !newsEl.classList.contains('d-none'));
-            if (anyUnread) dot.classList.remove('d-none');
-            else dot.classList.add('d-none');
-        }
-
-        async function updateBadgeStatus() {
-            try {
-                const sres = await fetch('/api/support/status');
-                if (sres.ok) {
-                    const sdata = await sres.json();
-                    setItemBadge('supportItemBadge', Number(sdata.unread) || 0);
-                }
-                const nres = await fetch('/api/inbox/titles');
-                if (nres.ok) {
-                    const titles = await nres.json();
-                    if (Array.isArray(titles) && titles.length > 0) {
-                        const seen = parseInt(localStorage.getItem('mt_seen_news_id') || '0', 10) || 0;
-                        const unread = titles.filter(t => (Number(t.id) || 0) > seen).length;
-                        setItemBadge('newsItemBadge', unread);
-                    } else {
-                        setItemBadge('newsItemBadge', 0);
-                    }
-                }
-            } catch (e) { }
-            updateMenuDot();
-        }
-
-        async function fetchInboxTitles() {
-            const container = document.getElementById('inboxListContainer');
-            try {
-                const res = await fetch('/api/inbox/titles');
-                allInboxTitles = await res.json();
-                currentInboxPage = 1;
-                renderInboxPage();
-                if (Array.isArray(allInboxTitles) && allInboxTitles.length > 0) {
-                    const latestId = Math.max(...allInboxTitles.map(t => Number(t.id) || 0));
-                    localStorage.setItem('mt_seen_news_id', String(latestId));
-                }
-                updateBadgeStatus();
-            } catch (e) {
-                container.innerHTML = `<span class="text-white-50 small font-pixel d-block p-3 text-center">Could not load announcements.</span>`;
-            }
-        }
-
-        function renderInboxPage() {
-            const container = document.getElementById('inboxListContainer');
-            container.innerHTML = "";
-
-            if (!allInboxTitles || allInboxTitles.length === 0) {
-                container.innerHTML = `<span class="text-white-50 small font-pixel d-block p-4 text-center">No announcements yet. Check back soon! 🌸</span>`;
-                renderInboxPaginationControls();
-                return;
-            }
-
-            const totalPages = Math.ceil(allInboxTitles.length / inboxPerPage) || 1;
-            if (currentInboxPage > totalPages) currentInboxPage = totalPages;
-
-            const startIdx = (currentInboxPage - 1) * inboxPerPage;
-            const pageItems = allInboxTitles.slice(startIdx, startIdx + inboxPerPage);
-
-            pageItems.forEach(item => {
-                const btn = document.createElement('button');
-                btn.className = "inbox-card-btn";
-                btn.onclick = () => openInboxMessageViewer(item.id);
-
-                btn.innerHTML = `
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-white fw-bold text-truncate pe-2 font-pixel" style="font-size: 0.85rem;">📢 ${item.title}</span>
-                            <span class="text-white-50 small font-sans" style="font-size: 0.65rem;">${new Date(item.created_at).toLocaleDateString()}</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-sakura small font-sans" style="font-size: 0.72rem; opacity: 0.85;">Official Update from Creator</span>
-                            <span class="text-diamond small font-pixel" style="font-size: 0.62rem;">Read →</span>
-                        </div>
-                    `;
-                container.appendChild(btn);
-            });
-
-            renderInboxPaginationControls();
-        }
-
-        function renderInboxPaginationControls() {
-            const totalPages = Math.ceil(allInboxTitles.length / inboxPerPage) || 1;
-            document.getElementById('inboxPrevBtn').disabled = (currentInboxPage === 1);
-            document.getElementById('inboxNextBtn').disabled = (currentInboxPage === totalPages);
-
-            const numBox = document.getElementById('inboxPageNumButtons');
-            numBox.innerHTML = "";
-
-            for (let i = 1; i <= totalPages; i++) {
-                const btn = document.createElement('button');
-                btn.className = `page-ctrl-btn ${i === currentInboxPage ? 'active' : ''}`;
-                btn.innerText = i;
-                btn.onclick = () => { currentInboxPage = i; renderInboxPage(); };
-                numBox.appendChild(btn);
-            }
-        }
-
-        function changeInboxPage(delta) {
-            const totalPages = Math.ceil(allInboxTitles.length / inboxPerPage) || 1;
-            const newP = currentInboxPage + delta;
-            if (newP >= 1 && newP <= totalPages) {
-                currentInboxPage = newP;
-                renderInboxPage();
-            }
-        }
-
-        async function openInboxMessageViewer(id) {
-            document.getElementById('inboxModalOverlay').classList.add('d-none');
-            const viewer = document.getElementById('inboxMessageViewerModal');
-            viewer.classList.remove('d-none');
-
-            document.getElementById('viewerAnnounceTitle').innerText = "Loading...";
-            document.getElementById('viewerAnnounceDate').innerText = "--";
-            document.getElementById('viewerAnnounceBody').innerText = "Fetching message from the realm...";
-
-            try {
-                const res = await fetch(`/api/inbox/message/${id}`);
-                const data = await res.json();
-
-                if (res.ok && data.title) {
-                    document.getElementById('viewerAnnounceTitle').innerText = data.title;
-                    document.getElementById('viewerAnnounceDate').innerText = new Date(data.created_at).toLocaleString();
-                    document.getElementById('viewerAnnounceBody').innerText = data.content;
-                } else {
-                    document.getElementById('viewerAnnounceBody').innerText = "Could not load announcement content.";
-                }
-            } catch (err) {
-                document.getElementById('viewerAnnounceBody').innerText = "Network error loading announcement.";
-            }
-        }
-
-        function backToInboxList() {
-            document.getElementById('inboxMessageViewerModal').classList.add('d-none');
-            document.getElementById('inboxModalOverlay').classList.remove('d-none');
-        }
-
-        function closeInboxViewerModal() {
-            document.getElementById('inboxMessageViewerModal').classList.add('d-none');
-        }
 
         function openChangePasswordModal() {
             document.getElementById('changePasswordModalOverlay').classList.remove('d-none');
@@ -2110,23 +1256,6 @@
             document.cookie = `mt_device_ban_client=${val}; path=/; max-age=31536000; SameSite=Lax`;
         }
 
-        function checkLobbyNotice() {
-            if (!localStorage.getItem('mt_notice_lobby_seen')) {
-                openLobbyNotice();
-            }
-        }
-
-        function openLobbyNotice() {
-            const overlay = document.getElementById('lobbyNoticeOverlay');
-            if (overlay) overlay.classList.remove('d-none');
-        }
-
-        function dismissLobbyNotice() {
-            localStorage.setItem('mt_notice_lobby_seen', 'true');
-            const overlay = document.getElementById('lobbyNoticeOverlay');
-            if (overlay) overlay.classList.add('d-none');
-        }
-
         const socket = io();
 
         socket.on('force_device_lock', (data) => {
@@ -2189,7 +1318,6 @@
             if (btnToSelect) {
                 selectMode(btnToSelect, activeMode);
             }
-            checkLobbyNotice();
         });
 
         async function joinMatchmaking() {
@@ -2291,191 +1419,6 @@
             }
         }
 
-        function toggleFeedbackModal(show) {
-            const el = document.getElementById('feedbackModalOverlay');
-            if (!el) return;
-            if (show) {
-                el.classList.remove('d-none');
-                document.getElementById('feedbackTextarea').value = "";
-                hideFeedbackStatus();
-            } else {
-                el.classList.add('d-none');
-            }
-        }
-
-        function showFeedbackStatus(msg, type) {
-            const el = document.getElementById('feedbackStatusAlert');
-            el.className = `alert alert-${type} py-2 small font-pixel text-center`;
-            el.innerText = msg;
-            el.classList.remove('d-none');
-        }
-
-        function hideFeedbackStatus() {
-            document.getElementById('feedbackStatusAlert').classList.add('d-none');
-        }
-
-        async function submitFeedback() {
-            const text = document.getElementById('feedbackTextarea').value.trim();
-            if (!text) {
-                showFeedbackStatus("Please write a message first.", "warning");
-                return;
-            }
-
-            const btn = document.getElementById('sendFeedbackBtn');
-            btn.disabled = true;
-
-            try {
-                const res = await fetch('/api/user/feedback', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
-                });
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    showFeedbackStatus(data.message, "success");
-                    setTimeout(() => toggleFeedbackModal(false), 1800);
-                } else {
-                    showFeedbackStatus(data.error || "Failed to send feedback.", "danger");
-                }
-            } catch (err) {
-                showFeedbackStatus("Network error sending feedback.", "danger");
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
-        function toggleReportModal(show) {
-            const el = document.getElementById('reportModalOverlay');
-            if (!el) return;
-            if (show) {
-                el.classList.remove('d-none');
-                document.getElementById('reportTargetUser').value = "";
-                document.getElementById('reportContext').value = "";
-                document.getElementById('reportScreenshotInput').value = "";
-                document.getElementById('fileSizeWarning').classList.add('d-none');
-                hideReportStatus();
-            } else {
-                el.classList.add('d-none');
-            }
-        }
-
-        function showReportStatus(msg, type) {
-            const el = document.getElementById('reportStatusAlert');
-            el.className = `alert alert-${type} py-2 small font-pixel text-center`;
-            el.innerText = msg;
-            el.classList.remove('d-none');
-        }
-
-        function hideReportStatus() {
-            document.getElementById('reportStatusAlert').classList.add('d-none');
-        }
-
-        function validateReportFile(input) {
-            const warning = document.getElementById('fileSizeWarning');
-            if (input.files && input.files[0]) {
-                if (input.files[0].size > 5 * 1024 * 1024) {
-                    warning.classList.remove('d-none');
-                    input.value = "";
-                } else {
-                    warning.classList.add('d-none');
-                }
-            }
-        }
-
-        async function submitReport() {
-            const targetUser = document.getElementById('reportTargetUser').value.trim();
-            const context = document.getElementById('reportContext').value.trim();
-            const fileInput = document.getElementById('reportScreenshotInput');
-            const btn = document.getElementById('sendReportBtn');
-
-            if (!targetUser) {
-                showReportStatus("Target username is required.", "warning");
-                return;
-            }
-            if (!context) {
-                showReportStatus("Context / explanation is required.", "warning");
-                return;
-            }
-            if (!fileInput.files || !fileInput.files[0]) {
-                showReportStatus("Please attach a screenshot proof.", "warning");
-                return;
-            }
-
-            const file = fileInput.files[0];
-            if (file.size > 5 * 1024 * 1024) {
-                showReportStatus("Screenshot exceeds 5MB limit.", "danger");
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerText = "Compressing & Sending...";
-            hideReportStatus();
-
-            const reader = new FileReader();
-            reader.onerror = function () {
-                showReportStatus("Could not read the image file.", "danger");
-                btn.disabled = false;
-                btn.innerText = "Submit Report";
-            };
-
-            reader.onload = function (e) {
-                const img = new Image();
-                img.onload = async function () {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-
-                    const maxDim = 900;
-                    if (width > maxDim || height > maxDim) {
-                        if (width > height) {
-                            height = Math.round((height * maxDim) / width);
-                            width = maxDim;
-                        } else {
-                            width = Math.round((width * maxDim) / height);
-                            height = maxDim;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
-
-                    try {
-                        btn.innerText = "Dispatching...";
-                        const res = await fetch('/api/user/report', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                targetUsername: targetUser,
-                                context: context,
-                                screenshotBase64: compressedBase64
-                            })
-                        });
-                        const data = await res.json();
-
-                        if (res.ok && data.success) {
-                            showReportStatus(data.message, "success");
-                            setTimeout(() => toggleReportModal(false), 2000);
-                        } else {
-                            showReportStatus(data.error || "Failed to submit report.", "danger");
-                        }
-                    } catch (err) {
-                        showReportStatus("Network timeout while submitting report.", "danger");
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerText = "Submit Report";
-                    }
-                };
-                img.src = e.target.result;
-            };
-
-            reader.readAsDataURL(file);
-        }
-
         document.addEventListener("DOMContentLoaded", async () => {
             try {
                 const response = await fetch('/api/user/profile');
@@ -2487,22 +1430,7 @@
                 globalUsername = userData.username;
                 document.getElementById('navUsername').innerText = globalUsername || "Guest";
 
-                const isCreator = (globalUsername && globalUsername.toLowerCase() === 'Creator');
-                const iscommunity = (globalUsername && globalUsername.toLowerCase() === 'community');
-
-                if (isCreator) {
-                    const btn = document.getElementById('Creatorcreator areaBtn');
-                    if (btn) btn.classList.remove('d-none');
-                }
-
-                if (isCreator || iscommunity) {
-                    const caseBtn = document.getElementById('communityBtn');
-                    if (caseBtn) caseBtn.classList.remove('d-none');
-                }
-
                 await fetchLeaderboard(globalUsername);
-                updateBadgeStatus();
-                setInterval(updateBadgeStatus, 20000);
             } catch (err) {
                 window.location.href = '/';
             }

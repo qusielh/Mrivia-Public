@@ -2,7 +2,7 @@
 const cookieParser = require('cookie-parser');
 const { COOKIE_SECRET, userCache, activeRooms, deletionTimeouts, generateMaskedPayload } = require('./config');
 const { startRoomTimer, getModeHandler, runGameWaitingPhase, initiateUniversalGameLoop } = require('./gameCore');
-const { isProfane, community_TROLL_MESSAGE } = require('./profanityFilter');
+const { isProfane } = require('./profanityFilter');
 
 const GAME_MODE_URLS = {
     0: '/mrivia',
@@ -430,7 +430,7 @@ function setupSockets(io, db) {
             if (isProfane(guessText, false)) {
                 socket.emit('chat_message', {
                     sender: "SYSTEM",
-                    text: community_TROLL_MESSAGE,
+                    text: 'Please keep chat appropriate.',
                     type: 'error'
                 });
                 return;
