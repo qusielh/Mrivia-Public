@@ -2,7 +2,11 @@
 const path = require('path');
 const fs = require('fs');
 
-const COOKIE_SECRET = 'REPLACE_WITH_COOKIE_SECRET';
+const COOKIE_SECRET = process.env.COOKIE_SECRET;
+
+if (!COOKIE_SECRET) {
+    throw new Error('Missing COOKIE_SECRET. Copy env.example to .env and set your own value.');
+}
 
 // 🟢 Centrally Configured Mode Player Caps & Round Counts
 const MODE_LIMITS = {

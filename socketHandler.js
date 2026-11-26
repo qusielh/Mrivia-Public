@@ -373,7 +373,7 @@ function setupSockets(io, db) {
                 io.to(roomId).emit('chat_message', { sender: "SYSTEM", text: `${username} left the match.`, type: 'default' });
             }
 
-            // 🟢 LEAK SHIELD: If all players leave during match, save all earned scores to Turso first, then destroy room
+            // 🟢 LEAK SHIELD: If all players leave during match, save all earned scores to the database first, then destroy room
             const activeSockets = await io.in(roomId).fetchSockets();
             const realSocketsRemaining = activeSockets.filter(s => s.data?.username && s.data.username !== username);
 

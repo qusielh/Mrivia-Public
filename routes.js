@@ -221,7 +221,7 @@ function setupRoutes(db, io) {
         next();
     });
 
-    // 🟢 MATCHMAKING JOIN: Fast RAM Lookup with Turso fallback
+    // 🟢 MATCHMAKING JOIN: Fast RAM Lookup with database fallback
     router.post('/api/matchmaking/join', async (req, res) => {
         const rawUserId = req.signedCookies.mt_user_id;
         const userId = rawUserId ? Number(rawUserId) : null;

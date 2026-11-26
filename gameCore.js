@@ -383,7 +383,7 @@ async function terminateMatchConcludes(roomId) {
     const room = activeRooms[roomId];
     if (!room) return;
 
-    // 🟢 SAFE PERSISTENCE: Updates points to Turso database before destroying room
+    // 🟢 SAFE PERSISTENCE: Updates points to the database before destroying room
     if (room.gameScores) {
         for (let user of Object.values(room.gameScores)) {
             if (user.score > 0) {
