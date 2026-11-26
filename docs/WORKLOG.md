@@ -8,7 +8,7 @@ Newest first. Append-only. Never rewrite history. One entry per meaningful chang
 - **Changes:** created "qusielh/Mrivia-Public" as a public repository, pushed all 97 commits, set "main" as the default branch, removed the temporary staging branch, and added this documentation set.
 - **Why:** the user wanted to share only the raw website and games. A separate public repository keeps the original private repository and its history out of the public surface.
 - **Files:** `README.md`, `AGENTS.md`, `docs/INDEX.md`, `docs/STATE.md`, `docs/WORKLOG.md`, `docs/DECISIONS.md`, `docs/DEVNOTES.md`, `docs/ARCHITECTURE.md`, `docs/RELEASES.md`, `docs/handoffs/2026-11-26-0657.md`.
-- **Commits:** `4230aa1` is the last published source commit; the documentation files are added in the commit that follows it.
+- **Commits:** `4230aa1` is the last published source commit; `a3f466a` adds the documentation set; tag `v1.0.0` is pushed on `a3f466a`.
 - **Verification:** `git ls-remote --heads origin` returned only "refs/heads/main" at `4230aa181e2d0800f66aba5883ffb3fb54ea2f4a`. `gh repo view` returned visibility "PUBLIC" and default branch "main". `git rev-list --count main` returned `97`.
 - **Follow-ups:** the owner must rotate the real database token in the original private repository and should review the public repository visually.
 - **Source:** direct session work on 2026-11-26. [verified]

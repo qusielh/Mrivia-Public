@@ -2,7 +2,7 @@
 
 - **Profile:** product
 - **Status:** working
-- **Last verified:** 2026-11-26 @ 4230aa1
+- **Last verified:** 2026-11-26 @ a3f466a
 - **Repository:** https://github.com/qusielh/Mrivia-Public
 - **Audience:** players, developers, and maintainers of the public source release
 

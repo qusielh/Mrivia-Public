@@ -1,7 +1,7 @@
 # State
 
 - **Profile:** product
-- **Last verified:** 2026-11-26 @ 4230aa1
+- **Last verified:** 2026-11-26 @ a3f466a
 - **Overall status:** working
 
 Current truth only. History belongs in [WORKLOG.md](WORKLOG.md); rationale belongs in [DECISIONS.md](DECISIONS.md). This file is the current truth for the public source release.
@@ -9,7 +9,8 @@ Current truth only. History belongs in [WORKLOG.md](WORKLOG.md); rationale belon
 ## Works
 
 - The public repository exists at https://github.com/qusielh/Mrivia-Public and is visible as "PUBLIC". Verified on 2026-11-26 with "gh repo view qusielh/Mrivia-Public --json nameWithOwner,visibility,defaultBranchRef,url".
-- The remote default branch is `main` and points to `4230aa181e2d0800f66aba5883ffb3fb54ea2f4a`. Verified on 2026-11-26 with `git ls-remote --heads origin`.
+- The remote default branch is "main" and points to `a3f466aef6a226e5255b59a3de83f06d0f9612d6`. Verified on 2026-11-26 with `git ls-remote --heads origin`.
+- Tag `v1.0.0` is pushed and resolves to commit `a3f466aef6a226e5255b59a3de83f06d0f9612d6`. Verified on 2026-11-26 with `git ls-remote --tags origin`.
 - All 97 local commits are present in the published history. Verified on 2026-11-26 with `git rev-list --count main`, which returned `97`.
 - No temporary public branches remain. Verified on 2026-11-26 with `git ls-remote --heads origin`, which returned only "refs/heads/main".
 - The tracked tree was checked before publication and contained no personal data, secrets, admin surfaces, donation or Web3 content, or private links. Verified on 2026-11-26 by the sanitizer result `RESULT: CLEAN`.
@@ -45,7 +46,7 @@ Current truth only. History belongs in [WORKLOG.md](WORKLOG.md); rationale belon
 ## Resume here
 
 - **Read first:** [INDEX.md](INDEX.md), then this file, then [handoffs/2026-11-26-0657.md](handoffs/2026-11-26-0657.md).
-- **Next command:** `git status -sb` followed by `git ls-remote --heads origin`.
+- **Next command:** `git status -sb`, `git ls-remote --heads origin`, then `git ls-remote --tags origin`.
 - **Blocked by:** nothing.
 
 Return to [INDEX.md](INDEX.md).
